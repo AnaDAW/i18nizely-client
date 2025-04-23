@@ -16,7 +16,6 @@ class LoginScreen extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            flex: 5,
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -32,7 +31,6 @@ class LoginScreen extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 4,
             child: Container(
               padding: const EdgeInsets.all(50.0),
               child: _LoginForm(),
@@ -56,12 +54,6 @@ class _LoginFormState extends State<_LoginForm> {
   String invalidMsg = '';
   bool isLoggind = false;
   bool showPassword = false;
-
-  @override
-  void initState() {
-    context.pushReplacement('/dashboard');
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

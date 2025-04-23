@@ -16,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   User? profile;
   bool isDrawerExpanded = false;
+  int selectedIndex = 1;
 
   @override
   void initState() {
@@ -29,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
       color: Colors.white,
       child: Row(
         children: [
-          AppDrawer(isExpanded: isDrawerExpanded, cahngeExpanded: cahngeExpanded,),
+          AppDrawer(isExpanded: isDrawerExpanded, expand: expandDrawer, selectedIndex: selectedIndex, getSelectedIndex: getSelectedIndex),
           Expanded(
             child: Padding(
               padding: EdgeInsets.all(10),
@@ -46,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
     res.fold((left) => print(left), (right) => setState(() => profile = right));
   }
 
-  void cahngeExpanded() {
-    setState(() => isDrawerExpanded = !isDrawerExpanded);
-  }
+  void expandDrawer() => setState(() => isDrawerExpanded = !isDrawerExpanded);
+
+  void getSelectedIndex(int index) => setState(() => selectedIndex = index);
 }

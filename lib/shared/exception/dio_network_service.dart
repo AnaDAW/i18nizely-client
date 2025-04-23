@@ -9,11 +9,11 @@ class ErrorInterceptor extends Interceptor {
     if (err.type == DioExceptionType.connectionTimeout ||
         err.type == DioExceptionType.receiveTimeout ||
         err.type == DioExceptionType.connectionError) {
-      errorMessage = "The connection has timed out. Please try again.";
+      errorMessage = 'The connection has timed out. Please try again.';
     } else if (err.type == DioExceptionType.badResponse) {
-      errorMessage = "An error occurred: ${err.response?.statusCode}";
+      errorMessage = 'An error occurred: ${err.response?.statusCode}';
     } else {
-      errorMessage = "An unexpected error occurred: ${err.message}";
+      errorMessage = 'An unexpected error occurred: ${err.message}';
     }
     
     if (kDebugMode) {

@@ -6,9 +6,11 @@ import 'package:i18nizely/src/domain/service/auth_api.dart';
 
 class AppDrawer extends StatelessWidget {
   final bool isExpanded;
-  final VoidCallback cahngeExpanded;
+  final VoidCallback expand;
+  final int selectedIndex;
+  final void Function(int) getSelectedIndex;
 
-  const AppDrawer({required this.isExpanded, required this.cahngeExpanded, super.key});
+  const AppDrawer({required this.isExpanded, required this.expand, required this.selectedIndex, required this.getSelectedIndex, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +27,10 @@ class AppDrawer extends StatelessWidget {
         borderRadius: BorderRadius.horizontal(right: Radius.circular(20),)
       ),
       child: Stack(
+        alignment: Alignment.topCenter,
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 60, left: 10),
+            padding: EdgeInsets.only(top: 60.0 * selectedIndex, left: 10, bottom: 40),
             child: DrawerSelector(height: 120, width: isExpanded ? 200 : 70,),
           ),
           Padding(
@@ -50,22 +53,52 @@ class AppDrawer extends StatelessWidget {
                             color: Colors.white,
                           ),
                           child: IconButton(
-                            onPressed: cahngeExpanded,
+                            onPressed: expand,
                             icon: Icon(isExpanded ? Icons.arrow_back_rounded : Icons.arrow_forward_rounded, color: AppColors.detail,),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(height: 40,),
+                    SizedBox(height: 30,),
                     buildDrawerButton(
                       icon: Icons.dashboard_rounded,
                       label: 'Dashboard',
-                      isSelected: true,
-                      onPressed: () {}
+                      isSelected: selectedIndex == 1,
+                      onPressed: () {
+                        context.pushReplacement('/dashboard');
+                        getSelectedIndex(1);
+                      },
+                    ),
+                    buildDrawerButton(
+                      icon: Icons.edit_document,
+                      label: 'Overview',
+                      isSelected: selectedIndex == 2,
+                      onPressed: () {
+                        context.pushReplacement('/overview');
+                        getSelectedIndex(2);
+                      },
+                    ),
+                    buildDrawerButton(
+                      icon: Icons.translate_rounded,
+                      label: 'Translations',
+                      isSelected: selectedIndex == 3,
+                      onPressed: () {
+                        context.pushReplacement('/translations');
+                        getSelectedIndex(3);
+                      },
+                    ),
+                    buildDrawerButton(
+                      icon: Icons.settings_rounded,
+                      label: 'Settings',
+                      isSelected: selectedIndex == 4,
+                      onPressed: () {
+                        context.pushReplacement('/settings');
+                        getSelectedIndex(4);
+                      },
                     ),
                   ],
                 ),
-                SizedBox(height: 40,),
+                SizedBox(height: 30,),
                 buildDrawerButton(
                   icon: Icons.logout_rounded,
                   label: 'Logout',
@@ -84,7 +117,9 @@ class AppDrawer extends StatelessWidget {
   }
 
   Widget buildDrawerButton({required IconData icon, required String label, required bool isSelected, required VoidCallback onPressed}) {
-    return SizedBox(
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 10),
+      height: 60,
       child: IconButton(
         onPressed: onPressed,
         icon: isExpanded ? Row(
