@@ -1,0 +1,129 @@
+
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:i18nizely/shared/data/remote/network_service.dart';
+import 'package:i18nizely/shared/exception/http_exception.dart';
+import 'package:i18nizely/shared/domain/models/either_model.dart';
+import 'package:i18nizely/shared/domain/models/response_model.dart' as r;
+import 'package:i18nizely/shared/mixins/exception_handler_mixin.dart';
+
+class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
+  final Dio dio;
+
+  DioNetworkService(this.dio) {
+      dio.options = dioBaseOptions;
+      if (kDebugMode) {
+        dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
+      }
+  }
+
+  BaseOptions get dioBaseOptions => BaseOptions(
+    baseUrl: 'http://localhost:8000/',
+    headers: {},
+  );
+
+  @override
+  String get baseUrl => dio.options.baseUrl;
+
+  @override
+  Map<String, dynamic> get headers => dio.options.headers;
+
+  @override
+  void updateBaseUrl(String newBaseUrl) async {
+    dio.options.baseUrl = newBaseUrl;
+  }
+
+  @override
+  Map<String, dynamic>? updateHeader(Map<String, dynamic> data) {
+    final header = {...headers, ...data};
+    dio.options.headers = header;
+    return header;
+  }
+
+  @override
+  Future<Either<AppException, r.Response>> get(String endpoint, { Map<String, dynamic>? queryParameters }) {
+    final res = handleException(
+      () => dio.get(
+        endpoint,
+        queryParameters: queryParameters,
+      ),
+      endpoint: endpoint,
+    );
+    return res;
+  }
+
+  @override
+  Future<Either<AppException, r.Response>> post(String endpoint, { Map<String, dynamic>? data }) {
+    final FormData? formData = data != null ? FormData.fromMap(data.map((key, value) => MapEntry(key, value.toString()))) : null;
+
+    final res = handleException(
+      () => dio.post(
+        endpoint,
+        data: formData,
+      ),
+      endpoint: endpoint,
+    );
+    return res;
+  }
+
+  @override
+  Future<Either<AppException, r.Response>> put(String endpoint, { Map<String, dynamic>? data }) {
+    final FormData? formData = data != null ? FormData.fromMap(data.map((key, value) => MapEntry(key, value.toString()))) : null;
+
+    final res = handleException(
+      () => dio.put(
+        endpoint,
+        data: formData,
+      ),
+      endpoint: endpoint,
+    );
+    return res;
+  }
+
+  @override
+  Future<Either<AppException, r.Response>> patch(String endpoint, { Map<String, dynamic>? data }) {
+    final FormData? formData = data != null ? FormData.fromMap(data.map((key, value) => MapEntry(key, value.toString()))): null;
+
+    final res = handleException(
+      () => dio.patch(
+        endpoint,
+        data: formData,
+      ),
+      endpoint: endpoint,
+    );
+    return res;
+  }
+
+  @override
+  Future<Either<AppException, r.Response>> delete(String endpoint, { Map<String, dynamic>? data }) {
+    final FormData? formData = data != null ? FormData.fromMap(data.map((key, value) => MapEntry(key, value.toString()))): null;
+
+    final res = handleException(
+      () => dio.delete(
+        endpoint,
+        data: formData,
+      ),
+      endpoint: endpoint,
+    );
+    return res;
+  }
+
+  @override
+  Future<Either<AppException, r.Response>> uploadFile(String endpoint, { Map<String, dynamic>? data, required Map<String, String> files }) async {
+    final FormData formData = data != null ? FormData.fromMap(data.map((key, value) => MapEntry(key, value.toString()))) : FormData();
+    
+    for(MapEntry<String, String> entry in files.entries) {
+      final MultipartFile file = await MultipartFile.fromFile(entry.value);
+      formData.files.add(MapEntry(entry.key, file));
+    }
+
+    final res = handleException(
+          () => dio.post(
+        endpoint,
+        data: formData,
+      ),
+      endpoint: endpoint,
+    );
+    return res;
+  }
+}

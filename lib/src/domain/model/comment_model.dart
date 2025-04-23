@@ -1,0 +1,37 @@
+import 'package:equatable/equatable.dart';
+import 'package:i18nizely/src/domain/model/user_model.dart';
+
+class Comment extends Equatable {
+  final int? id;
+  final String? text;
+  final User? createdBy;
+  final DateTime? createdAt;
+
+  const Comment({
+    required this.id,
+    required this.text,
+    required this.createdBy,
+    required this.createdAt
+  });
+
+  factory Comment.fromJson(Map<String, dynamic> json) {
+    return Comment(
+      id: json['id'],
+      text: json['text'],
+      createdBy: json['created_by'] != null ? User.fromJson(json['created_by']) : null,
+      createdAt: DateTime.parse(json['created_at'])
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+    id,
+    text,
+    createdBy,
+    createdAt
+  ];
+
+  Map<String, dynamic> toQueryMap() {
+    return { 'text': text };
+  }
+}
