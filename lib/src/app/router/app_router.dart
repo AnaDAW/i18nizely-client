@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
+import 'package:i18nizely/src/app/views/dashboard.dart';
 import 'package:i18nizely/src/app/views/home.dart';
 import 'package:i18nizely/src/app/views/login.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
@@ -25,10 +26,15 @@ final GoRouter appRouter = GoRouter(
       path: '/login',
       builder: (context, state) => const LoginScreen(),
     ),
-    GoRoute(
-      name: 'home',
-      path: '/',
-      builder: (context, state) => HomeScreen(),
+    ShellRoute(
+      builder: (context, state, child) => HomeScreen(child: child),
+      routes: [
+        GoRoute(
+          name: 'dashboard',
+          path: '/dashboard',
+          builder: (context, state) => const DashboardScreen(),
+        )
+      ]
     )
   ]
 );

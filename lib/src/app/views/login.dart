@@ -59,7 +59,7 @@ class _LoginFormState extends State<_LoginForm> {
 
   @override
   void initState() {
-    context.pushReplacement('/');
+    context.pushReplacement('/dashboard');
     super.initState();
   }
 
@@ -109,7 +109,7 @@ class _LoginFormState extends State<_LoginForm> {
 
               isLoggind = true;
               if(await login(email, password)) {
-                context.pushReplacement('/');
+                context.pushReplacement('/dashboard');
               } else {
                 setState(() => invalidMsg = 'No active account found with the given credentials.');
               }
