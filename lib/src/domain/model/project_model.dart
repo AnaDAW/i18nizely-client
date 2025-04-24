@@ -15,16 +15,16 @@ class Project extends Equatable {
   final DateTime? updatedAt;
 
   const Project({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.createdBy,
-    required this.mainLanguage,
-    required this.languages,
-    required this.collaborators,
-    required this.keys,
-    required this.createdAt,
-    required this.updatedAt
+    this.id,
+    this.name,
+    this.description,
+    this.createdBy,
+    this.mainLanguage,
+    this.languages,
+    this.collaborators,
+    this.keys,
+    this.createdAt,
+    this.updatedAt
   });
 
   factory Project.fromJson(Map<String, dynamic> json) {
@@ -81,7 +81,7 @@ class Collaborator extends Equatable {
   final List<Role> roles;
 
   const Collaborator({
-    required this.id,
+    this.id,
     required this.user,
     required this.roles
   });

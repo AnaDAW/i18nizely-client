@@ -2,6 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:i18nizely/shared/data/remote/network_service.dart';
 import 'package:i18nizely/shared/exception/http_exception.dart';
 import 'package:i18nizely/shared/domain/models/either_model.dart';
+import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/service/auth_api.dart';
 
 class AuthApiDataSource implements AuthApi {
@@ -98,6 +99,7 @@ class AuthApiDataSource implements AuthApi {
   Future<void> logout() async {
     await storage.delete(key: 'token_access');
     await storage.delete(key: 'token_refresh');
+    networkService.headers.remove('Authorization');
   }
   
   @override

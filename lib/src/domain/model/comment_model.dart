@@ -8,10 +8,10 @@ class Comment extends Equatable {
   final DateTime? createdAt;
 
   const Comment({
-    required this.id,
-    required this.text,
-    required this.createdBy,
-    required this.createdAt
+    this.id,
+    this.text,
+    this.createdBy,
+    this.createdAt
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) {

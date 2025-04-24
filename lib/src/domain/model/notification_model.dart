@@ -14,7 +14,7 @@ class Notification extends Equatable {
     required this.id,
     required this.type,
     required this.isRead,
-    required this.commentId,
+    this.commentId,
     required this.projectId,
     required this.createdAt
   });

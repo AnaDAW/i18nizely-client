@@ -12,7 +12,7 @@ class Record extends Equatable {
   const Record({
     required this.id,
     required this.type,
-    required this.user,
+    this.user,
     required this.createdAt
   });
 

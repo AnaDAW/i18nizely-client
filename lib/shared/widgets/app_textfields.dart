@@ -6,8 +6,9 @@ class AppOutlinedTextField extends StatelessWidget {
   final String? Function(String?) validator;
   final bool obscureText;
   final Widget? icon;
+  final TextEditingController? controller;
 
-  const AppOutlinedTextField({super.key, required this.label, required this.hint, required this.validator, this.obscureText = false, this.icon});
+  const AppOutlinedTextField({super.key, required this.label, required this.hint, required this.validator, this.obscureText = false, this.icon, this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +23,7 @@ class AppOutlinedTextField extends StatelessWidget {
         ),
         SizedBox(height: 10,),
         TextFormField(
+          controller: controller,
           validator: validator,
           decoration: InputDecoration(
             border: OutlineInputBorder(

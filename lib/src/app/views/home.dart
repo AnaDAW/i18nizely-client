@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:i18nizely/src/app/common/app_drawer.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
+import 'package:i18nizely/src/domain/model/project_model.dart';
 import 'package:i18nizely/src/domain/model/user_model.dart';
+import 'package:i18nizely/src/domain/service/auth_api.dart';
 import 'package:i18nizely/src/domain/service/user_api.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,7 +17,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  User? profile;
+  User profile = User();
+  Project ? selectedProject;
   bool isDrawerExpanded = false;
   int selectedIndex = 1;
 
@@ -30,10 +34,17 @@ class _HomeScreenState extends State<HomeScreen> {
       color: Colors.white,
       child: Row(
         children: [
-          AppDrawer(isExpanded: isDrawerExpanded, expand: expandDrawer, selectedIndex: selectedIndex, getSelectedIndex: getSelectedIndex),
+          AppDrawer(
+            isExpanded: isDrawerExpanded,
+            expand: expandDrawer,
+            selectedIndex: selectedIndex,
+            getSelectedIndex: getSelectedIndex,
+            profile: profile,
+            hasProject: selectedProject != null,
+          ),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.all(20),
               child: widget.child,
             ),
           ),
@@ -43,11 +54,30 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> getProfile() async {
-    final res = await locator<UserApi>().getProfile();
-    res.fold((left) => print(left), (right) => setState(() => profile = right));
+    final user = await locator<UserApi>().getProfile();
+    user.fold(
+      (left) async {
+        final refresh = await locator<AuthApi>().refresh();
+        refresh.fold(
+          (l) async {
+            await locator<AuthApi>().logout();
+            context.go('/login');
+          }, (r) => getProfile()
+        );
+      }, (right) {
+        setState(() => profile = right);
+      }
+    );
   }
 
   void expandDrawer() => setState(() => isDrawerExpanded = !isDrawerExpanded);
 
   void getSelectedIndex(int index) => setState(() => selectedIndex = index);
+
+  void getSelectedProject(Project project) {
+    setState(() {
+      selectedIndex = 2;
+      selectedProject = project;
+    });
+  }
 }

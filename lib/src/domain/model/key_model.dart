@@ -13,14 +13,14 @@ class Key extends Equatable {
   final DateTime? updatedAt;
 
   const Key({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.image,
-    required this.createdBy,
-    required this.translations,
-    required this.createdAt,
-    required this.updatedAt
+    this.id,
+    this.name,
+    this.description,
+    this.image,
+    this.createdBy,
+    this.translations,
+    this.createdAt,
+    this.updatedAt
   });
 
   factory Key.fromJson(Map<String, dynamic> json) {

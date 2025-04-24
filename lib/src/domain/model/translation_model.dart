@@ -13,15 +13,15 @@ class Translation extends Equatable {
   final DateTime? updatedAt;
 
   const Translation({
-    required this.id,
-    required this.text,
-    required this.language,
-    required this.isReviewed,
-    required this.reviewedBy,
-    required this.reviewedAt,
-    required this.createdBy,
-    required this.createdAt,
-    required this.updatedAt
+    this.id,
+    this.text,
+    this.language,
+    this.isReviewed,
+    this.reviewedBy,
+    this.reviewedAt,
+    this.createdBy,
+    this.createdAt,
+    this.updatedAt
   });
 
   factory Translation.fromJson(Map<String, dynamic> json) {

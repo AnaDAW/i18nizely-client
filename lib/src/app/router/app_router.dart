@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
+import 'package:i18nizely/src/app/views/account.dart';
 import 'package:i18nizely/src/app/views/dashboard.dart';
 import 'package:i18nizely/src/app/views/home.dart';
 import 'package:i18nizely/src/app/views/login.dart';
@@ -7,7 +8,10 @@ import 'package:i18nizely/src/app/views/overview.dart';
 import 'package:i18nizely/src/app/views/settings.dart';
 import 'package:i18nizely/src/app/views/translations.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
+import 'package:i18nizely/src/domain/model/user_model.dart';
 import 'package:i18nizely/src/domain/service/auth_api.dart';
+
+enum DrawerRoute { account, dashboard, overview, translations, settings }
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/login',
@@ -16,7 +20,7 @@ final GoRouter appRouter = GoRouter(
     final bool isLoginScreen = state.uri.toString() == '/login';
     try {
       if (isLoginScreen && isLogged) {
-        return '/dashboard';
+        return '/';
       }
 
       if (!isLoginScreen && !isLogged) {
@@ -39,23 +43,28 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state, child) => HomeScreen(child: child),
       routes: [
         GoRoute(
-          name: 'dashboard',
-          path: '/dashboard',
+          name: DrawerRoute.account.name,
+          path: '/${DrawerRoute.account.name}',
+          builder: (context, state) => AccountScreen(profile: state.extra as User,),
+        ),
+        GoRoute(
+          name: DrawerRoute.dashboard.name,
+          path: '/',
           builder: (context, state) => const DashboardScreen(),
         ),
         GoRoute(
-          name: 'overview',
-          path: '/overview',
+          name: DrawerRoute.overview.name,
+          path: '/${DrawerRoute.overview.name}',
           builder: (context, state) => const OverviewScreen(),
         ),
         GoRoute(
-          name: 'translations',
-          path: '/translations',
+          name: DrawerRoute.translations.name,
+          path: '/${DrawerRoute.translations.name}',
           builder: (context, state) => const TranslationsScreen(),
         ),
         GoRoute(
-          name: 'settings',
-          path: '/settings',
+          name: DrawerRoute.settings.name,
+          path: '/${DrawerRoute.settings.name}',
           builder: (context, state) => const SettingsScreen(),
         ),
       ]

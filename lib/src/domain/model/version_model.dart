@@ -10,7 +10,7 @@ class Version extends Equatable {
   const Version({
     required this.id,
     required this.text,
-    required this.createdBy,
+    this.createdBy,
     required this.createdAt
   });
 

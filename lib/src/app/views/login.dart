@@ -101,7 +101,7 @@ class _LoginFormState extends State<_LoginForm> {
 
               isLoggind = true;
               if(await login(email, password)) {
-                context.pushReplacement('/dashboard');
+                context.go('/');
               } else {
                 setState(() => invalidMsg = 'No active account found with the given credentials.');
               }

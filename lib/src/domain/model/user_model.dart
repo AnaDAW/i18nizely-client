@@ -15,16 +15,16 @@ class User extends Equatable {
   final DateTime? updatedAt;
 
   const User({
-    required this.id,
-    required this.email,
-    required this.firstName,
-    required this.lastName,
-    required this.image,
-    required this.language,
-    required this.format24h,
-    required this.dateFormat,
-    required this.createdAt,
-    required this.updatedAt
+    this.id,
+    this.email,
+    this.firstName,
+    this.lastName,
+    this.image,
+    this.language,
+    this.format24h,
+    this.dateFormat,
+    this.createdAt,
+    this.updatedAt
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
