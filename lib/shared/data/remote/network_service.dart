@@ -1,4 +1,4 @@
-import 'package:i18nizely/shared/exception/http_exception.dart';
+import 'package:i18nizely/shared/exceptions/http_exception.dart';
 import 'package:i18nizely/shared/domain/models/either_model.dart';
 import 'package:i18nizely/shared/domain/models/response_model.dart' as r;
 

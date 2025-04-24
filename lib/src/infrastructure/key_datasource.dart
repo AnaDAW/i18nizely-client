@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:i18nizely/shared/data/remote/network_service.dart';
-import 'package:i18nizely/shared/exception/http_exception.dart';
+import 'package:i18nizely/shared/exceptions/http_exception.dart';
 import 'package:i18nizely/shared/domain/models/either_model.dart';
-import 'package:i18nizely/src/domain/model/key_model.dart';
-import 'package:i18nizely/src/domain/service/key_api.dart';
+import 'package:i18nizely/src/domain/models/key_model.dart';
+import 'package:i18nizely/src/domain/services/key_api.dart';
 
 class KeyApiDataSource implements KeyApi {
   final NetworkService networkService;

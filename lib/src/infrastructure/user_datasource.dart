@@ -1,9 +1,9 @@
 import 'package:i18nizely/shared/data/remote/network_service.dart';
-import 'package:i18nizely/shared/exception/http_exception.dart';
+import 'package:i18nizely/shared/exceptions/http_exception.dart';
 import 'package:i18nizely/shared/domain/models/either_model.dart';
-import 'package:i18nizely/src/domain/model/notification_model.dart';
-import 'package:i18nizely/src/domain/model/user_model.dart';
-import 'package:i18nizely/src/domain/service/user_api.dart';
+import 'package:i18nizely/src/domain/models/notification_model.dart';
+import 'package:i18nizely/src/domain/models/user_model.dart';
+import 'package:i18nizely/src/domain/services/user_api.dart';
 
 class UserApiDataSource implements UserApi {
   final NetworkService networkService;
@@ -107,9 +107,12 @@ class UserApiDataSource implements UserApi {
   }
 
   @override
-  Future<Either<AppException, User>> updateUser({required User newUser}) async {
+  Future<Either<AppException, User>> updateUser({required User newUser, required String? password}) async {
     try {
-      final eitherType = await networkService.patch('users/${newUser.id}/', data: newUser.toQueryMap());
+      final Map<String, dynamic> data = newUser.toQueryMap();
+      if (password != null) data['password'] = password;
+      
+      final eitherType = await networkService.patch('users/${newUser.id}/', data: data);
       return eitherType.fold((exception) {
         return Left(exception);
       },
@@ -207,9 +210,12 @@ class UserApiDataSource implements UserApi {
   }
 
   @override
-  Future<Either<AppException, User>> updateProfile({required User newProfile}) async {
+  Future<Either<AppException, User>> updateProfile({required User newProfile, required String? password}) async {
     try {
-      final eitherType = await networkService.patch('users/profile/', data: newProfile.toQueryMap());
+      final Map<String, dynamic> data = newProfile.toQueryMap();
+      if (password != null) data['password'] = password;
+      
+      final eitherType = await networkService.patch('users/profile/', data: data);
       return eitherType.fold((exception) {
         return Left(exception);
       },

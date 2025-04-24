@@ -14,6 +14,7 @@ class AppStyledButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
       child: Container(
         width: double.infinity,
+        height: 60,
         padding: const EdgeInsets.symmetric(vertical: 16,),
         decoration: BoxDecoration(
           gradient: LinearGradient(

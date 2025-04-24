@@ -4,8 +4,8 @@ import 'package:i18nizely/shared/theme/app_colors.dart';
 import 'package:i18nizely/shared/widgets/app_icons.dart';
 import 'package:i18nizely/src/app/router/app_router.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
-import 'package:i18nizely/src/domain/model/user_model.dart';
-import 'package:i18nizely/src/domain/service/auth_api.dart';
+import 'package:i18nizely/src/domain/models/user_model.dart';
+import 'package:i18nizely/src/domain/services/auth_api.dart';
 
 class AppDrawer extends StatelessWidget {
   final bool isExpanded;
@@ -13,9 +13,10 @@ class AppDrawer extends StatelessWidget {
   final int selectedIndex;
   final void Function(int) getSelectedIndex;
   final User profile;
+  final void Function(User) updateProfile;
   final bool hasProject;
 
-  const AppDrawer({required this.isExpanded, required this.expand, required this.selectedIndex, required this.getSelectedIndex, required this.profile, required this.hasProject, super.key});
+  const AppDrawer({required this.isExpanded, required this.expand, required this.selectedIndex, required this.getSelectedIndex, required this.profile, required this.updateProfile, required this.hasProject, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +188,11 @@ class AppDrawer extends StatelessWidget {
           ),
           IconButton(
             onPressed: () {
-              context.goNamed(DrawerRoute.account.name, extra: profile);
+              Map<String, dynamic> data = {
+                'profile': profile,
+                'updateProfile': updateProfile
+              };
+              context.goNamed(DrawerRoute.account.name, extra: data);
               getSelectedIndex(DrawerRoute.account.index);
             },
             icon: Container(),

@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 class AppOutlinedTextField extends StatelessWidget {
   final String label;
   final String hint;
-  final String? Function(String?) validator;
+  final String? Function(String?)? validator;
   final bool obscureText;
   final Widget? icon;
   final TextEditingController? controller;
 
-  const AppOutlinedTextField({super.key, required this.label, required this.hint, required this.validator, this.obscureText = false, this.icon, this.controller});
+  const AppOutlinedTextField({super.key, required this.label, required this.hint, this.validator, this.obscureText = false, this.icon, this.controller});
 
   @override
   Widget build(BuildContext context) {

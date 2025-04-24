@@ -16,7 +16,7 @@ class AppUserIcon extends StatelessWidget {
         border: Border.all(width: 1, color: AppColors.detail,),
       ),
       child: Center(
-        child: image != null ? Image.network(image!) :
+        child: image != null && image!.isNotEmpty ? Image.network(image!) :
         FittedBox(
           child: Padding(
             padding: const EdgeInsets.all(20),

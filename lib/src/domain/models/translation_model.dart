@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:i18nizely/src/domain/model/user_model.dart';
+import 'package:i18nizely/src/domain/models/user_model.dart';
 
 class Translation extends Equatable {
   final int? id;

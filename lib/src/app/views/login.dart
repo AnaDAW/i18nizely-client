@@ -4,39 +4,41 @@ import 'package:i18nizely/shared/widgets/app_buttons.dart';
 import 'package:i18nizely/shared/widgets/app_textfields.dart';
 import 'package:i18nizely/shared/theme/app_colors.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
-import 'package:i18nizely/src/domain/service/auth_api.dart';
+import 'package:i18nizely/src/domain/services/auth_api.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.primary,
-                    AppColors.secondary
-                  ]
+    return Scaffold(
+      body: Container(
+        color: Colors.white,
+        child: Row(
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppColors.primary,
+                      AppColors.secondary
+                    ]
+                  ),
+                  borderRadius: BorderRadius.horizontal(right: Radius.circular(20),)
                 ),
-                borderRadius: BorderRadius.horizontal(right: Radius.circular(20),)
               ),
             ),
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(50.0),
-              child: _LoginForm(),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(50.0),
+                child: _LoginForm(),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -48,7 +50,7 @@ class _LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<_LoginForm> {
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late String email;
   late String password;
   String invalidMsg = '';

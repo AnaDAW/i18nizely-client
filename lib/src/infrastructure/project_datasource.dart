@@ -1,9 +1,9 @@
 import 'package:i18nizely/shared/data/remote/network_service.dart';
-import 'package:i18nizely/shared/exception/http_exception.dart';
+import 'package:i18nizely/shared/exceptions/http_exception.dart';
 import 'package:i18nizely/shared/domain/models/either_model.dart';
-import 'package:i18nizely/src/domain/model/project_model.dart';
-import 'package:i18nizely/src/domain/model/record_model.dart' as r;
-import 'package:i18nizely/src/domain/service/project_api.dart';
+import 'package:i18nizely/src/domain/models/project_model.dart';
+import 'package:i18nizely/src/domain/models/record_model.dart' as r;
+import 'package:i18nizely/src/domain/services/project_api.dart';
 
 class ProjectApiDataSource implements ProjectApi {
   final NetworkService networkService;

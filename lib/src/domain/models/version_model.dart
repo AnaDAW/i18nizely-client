@@ -1,21 +1,21 @@
 import 'package:equatable/equatable.dart';
-import 'package:i18nizely/src/domain/model/user_model.dart';
+import 'package:i18nizely/src/domain/models/user_model.dart';
 
-class Comment extends Equatable {
-  final int? id;
-  final String? text;
+class Version extends Equatable {
+  final int id;
+  final String text;
   final User? createdBy;
-  final DateTime? createdAt;
+  final DateTime createdAt;
 
-  const Comment({
-    this.id,
-    this.text,
+  const Version({
+    required this.id,
+    required this.text,
     this.createdBy,
-    this.createdAt
+    required this.createdAt
   });
 
-  factory Comment.fromJson(Map<String, dynamic> json) {
-    return Comment(
+  factory Version.fromJson(Map<String, dynamic> json) {
+    return Version(
       id: json['id'],
       text: json['text'],
       createdBy: json['created_by'] != null ? User.fromJson(json['created_by']) : null,
@@ -30,8 +30,4 @@ class Comment extends Equatable {
     createdBy,
     createdAt
   ];
-
-  Map<String, dynamic> toQueryMap() {
-    return { 'text': text };
-  }
 }

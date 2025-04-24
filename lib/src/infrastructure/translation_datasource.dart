@@ -1,10 +1,10 @@
 import 'package:i18nizely/shared/data/remote/network_service.dart';
-import 'package:i18nizely/shared/exception/http_exception.dart';
+import 'package:i18nizely/shared/exceptions/http_exception.dart';
 import 'package:i18nizely/shared/domain/models/either_model.dart';
-import 'package:i18nizely/src/domain/model/comment_model.dart';
-import 'package:i18nizely/src/domain/model/translation_model.dart';
-import 'package:i18nizely/src/domain/model/version_model.dart';
-import 'package:i18nizely/src/domain/service/translation_api.dart';
+import 'package:i18nizely/src/domain/models/comment_model.dart';
+import 'package:i18nizely/src/domain/models/translation_model.dart';
+import 'package:i18nizely/src/domain/models/version_model.dart';
+import 'package:i18nizely/src/domain/services/translation_api.dart';
 
 class TranslationApiDataSource implements TranslationApi {
   final NetworkService networkService;

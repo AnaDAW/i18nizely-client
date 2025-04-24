@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:i18nizely/src/domain/model/translation_model.dart';
-import 'package:i18nizely/src/domain/model/user_model.dart';
+import 'package:i18nizely/src/domain/models/translation_model.dart';
+import 'package:i18nizely/src/domain/models/user_model.dart';
 
 class Key extends Equatable {
   final int? id;

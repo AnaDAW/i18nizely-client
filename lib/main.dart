@@ -12,7 +12,7 @@ void main() {
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     setWindowTitle('i18nizely');
-    setWindowMinSize(const Size(1000, 800));
+    setWindowMinSize(const Size(1000, 650));
     setWindowMaxSize(Size.infinite);
   }
 

@@ -63,7 +63,7 @@ class User extends Equatable {
     if (lastName != null) map['last_name'] = lastName;
     if (language != null) map['language'] = language;
     if (format24h != null) map['format_24h'] = format24h;
-    if (dateFormat != null) map['date_format'] = dateFormat;
+    if (dateFormat != null) map['date_format'] = dateFormat!.index + 1;
     return map;
   }
 }
