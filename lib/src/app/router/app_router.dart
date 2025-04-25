@@ -8,7 +8,6 @@ import 'package:i18nizely/src/app/views/overview.dart';
 import 'package:i18nizely/src/app/views/settings.dart';
 import 'package:i18nizely/src/app/views/translations.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
-import 'package:i18nizely/src/domain/models/user_model.dart';
 import 'package:i18nizely/src/domain/services/auth_api.dart';
 
 enum DrawerRoute { account, dashboard, overview, translations, settings }
@@ -45,12 +44,7 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           name: DrawerRoute.account.name,
           path: '/${DrawerRoute.account.name}',
-          builder: (context, state) {
-            final Map<String, dynamic> data = state.extra as Map<String, dynamic>;
-            final User profile = data['profile'] as User;
-            final void Function(User) updateProfile = data['updateProfile'] as void Function(User);
-            return AccountScreen(profile: profile, updateProfile: updateProfile,);
-          },
+          builder: (context, state) => AccountScreen(),
         ),
         GoRoute(
           name: DrawerRoute.dashboard.name,

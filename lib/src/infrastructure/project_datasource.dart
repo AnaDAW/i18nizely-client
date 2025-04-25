@@ -28,7 +28,10 @@ class ProjectApiDataSource implements ProjectApi {
           );
         }
 
-        final List<Project> projects = response.data.map((project) => Project.fromJson(project)).toList();
+        final List<Project> projects = [];
+        for (var project in response.data) {
+          projects.add(Project.fromJson(project));
+        }
         return Right(projects);
       });
     } catch (e) {
@@ -263,7 +266,7 @@ class ProjectApiDataSource implements ProjectApi {
   }
 
   @override
-  Future<Either<AppException, List<Record>>> getRecord({required int projectId}) async {
+  Future<Either<AppException, List<r.Record>>> getRecord({required int projectId}) async {
     try {
       final eitherType = await networkService.get('projects/$projectId/record/');
       return eitherType.fold((exception) {
@@ -280,7 +283,10 @@ class ProjectApiDataSource implements ProjectApi {
           );
         }
 
-        List<Record> record = response.data.map((rec) => r.Record.fromJson(rec)).toList();
+        final List<r.Record> record = [];
+        for (var rec in response.data) {
+          record.add(r.Record.fromJson(rec));
+        }
         return Right(record);
       });
     } catch (e) {

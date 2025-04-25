@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:i18nizely/src/app/views/home.dart';
 import 'package:intl/intl.dart' as i;
 import 'package:i18nizely/shared/theme/app_colors.dart';
 import 'package:i18nizely/shared/widgets/app_buttons.dart';
@@ -11,10 +12,8 @@ import 'package:i18nizely/src/domain/models/user_model.dart';
 import 'package:i18nizely/src/domain/services/user_api.dart';
 
 class AccountScreen extends StatelessWidget {
-  final User profile;
-  final void Function(User) updateProfile;
 
-  const AccountScreen({required this.profile, required this.updateProfile, super.key});
+  const AccountScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,14 +32,13 @@ class AccountScreen extends StatelessWidget {
           ),
           child: Text(
             'Account Settings',
-            textAlign: TextAlign.left,
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,),
           ),
         ),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(70),
-            child: _AccountForm(profile: profile, updateProfile: updateProfile),
+            child: _AccountForm(),
           ),
         ),
       ],
@@ -49,10 +47,6 @@ class AccountScreen extends StatelessWidget {
 }
 
 class _AccountForm extends StatefulWidget {
-  final User profile;
-  final void Function(User) updateProfile;
-
-  const _AccountForm({required this.profile, required this.updateProfile});
 
   @override
   State<_AccountForm> createState() => _AccountFormState();
@@ -78,8 +72,8 @@ class _AccountFormState extends State<_AccountForm> {
   @override
   void initState() {
     getLanguages();
+    getProfile();
 
-    profile = widget.profile;
     firstName = profile.firstName ?? '';
     lastName = profile.lastName ?? '';
     email = profile.email ?? '';
@@ -277,8 +271,8 @@ class _AccountFormState extends State<_AccountForm> {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('There have been a problem.')));
                     },
                         (right) {
-                      widget.updateProfile(right);
                       setState(() => profile = right);
+                      HomeScreen.setProfile(context, right);
                       passwordCtl.clear();
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User updated.')));
                     }
@@ -318,6 +312,10 @@ class _AccountFormState extends State<_AccountForm> {
       dateFormat: profile.dateFormat != dateFormat ? dateFormat : null,
     );
   }
+
+
+
+  void getProfile() => profile = HomeScreen.getProfile(context) ?? User();
 
   String formatDate(DateTime? date) {
     final i.DateFormat dateFormatter = i.DateFormat(profile.dateFormat == DateFormat.dmy ? 'dd/MM/yyyy' : 'MM/dd/yyyy');

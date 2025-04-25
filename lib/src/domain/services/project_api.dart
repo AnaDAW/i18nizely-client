@@ -1,6 +1,7 @@
 import 'package:i18nizely/shared/exceptions/http_exception.dart';
 import 'package:i18nizely/shared/domain/models/either_model.dart';
 import 'package:i18nizely/src/domain/models/project_model.dart';
+import 'package:i18nizely/src/domain/models/record_model.dart' as r;
 
 abstract class ProjectApi {
   Future<Either<AppException, List<Project>>> getProjects({String? name});
@@ -19,5 +20,5 @@ abstract class ProjectApi {
   
   Future<Either<AppException, void>> removeCollaborator({required int projectId, required int id});
   
-  Future<Either<AppException, List<Record>>> getRecord({required int projectId});
+  Future<Either<AppException, List<r.Record>>> getRecord({required int projectId});
 }

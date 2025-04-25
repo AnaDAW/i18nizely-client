@@ -28,7 +28,10 @@ class UserApiDataSource implements UserApi {
           );
         }
 
-        final List<User> users = response.data.map((user) => User.fromJson(user)).toList();
+        final List<User> users = [];
+        for (var user in response.data) {
+          users.add(User.fromJson(user));
+        }
         return Right(users);
       });
     } catch (e) {
@@ -298,7 +301,10 @@ class UserApiDataSource implements UserApi {
           );
         }
 
-        final List<Notification> notifications = response.data.map((notification) => Notification.fromJson(notification)).toList();
+        final List<Notification> notifications = [];
+        for (var notification in response.data) {
+          notifications.add(Notification.fromJson(notification));
+        }
         return Right(notifications);
       });
     } catch (e) {

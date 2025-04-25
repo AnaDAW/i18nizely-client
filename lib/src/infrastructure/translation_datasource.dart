@@ -125,7 +125,10 @@ class TranslationApiDataSource implements TranslationApi {
           );
         }
 
-        final List<Version> versions = response.data.map((version) => Version.fromJson(version));
+        final List<Version> versions = [];
+        for (var version in response.data) {
+          versions.add(Version.fromJson(version));
+        }
         return Right(versions);
       });
     } catch (e) {
@@ -157,7 +160,10 @@ class TranslationApiDataSource implements TranslationApi {
           );
         }
 
-        final List<Comment> comments = response.data.map((comment) => Comment.fromJson(comment));
+        final List<Comment> comments = [];
+        for (var comment in response.data) {
+          comments.add(Comment.fromJson(comment));
+        }
         return Right(comments);
       });
     } catch (e) {
