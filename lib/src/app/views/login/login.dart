@@ -19,14 +19,7 @@ class LoginScreen extends StatelessWidget {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      AppColors.primary,
-                      AppColors.secondary
-                    ]
-                  ),
+                  gradient: AppColors.gradient,
                   borderRadius: BorderRadius.horizontal(right: Radius.circular(20),)
                 ),
               ),
@@ -54,7 +47,7 @@ class _LoginFormState extends State<_LoginForm> {
   late String email;
   late String password;
   String invalidMsg = '';
-  bool isLoggind = false;
+  bool isLogging = false;
   bool showPassword = false;
 
   @override
@@ -90,26 +83,13 @@ class _LoginFormState extends State<_LoginForm> {
               onPressed: () => setState(() => showPassword = !showPassword),
               icon: Icon(showPassword ? Icons.remove_red_eye_rounded : Icons.remove_red_eye_outlined)
             ),
+            onSubmit: (_) => login(),
           ),
           SizedBox(height: 55,),
           Text(invalidMsg, style: TextStyle(color: Colors.red, fontSize: 12),),
           SizedBox(height: 5,),
           AppStyledButton(
-            onPressed: () async {
-              if (isLoggind) return;
-
-              setState(() => invalidMsg = '');
-              if (!_formKey.currentState!.validate()) return;
-
-              isLoggind = true;
-              if(await login(email, password)) {
-                context.go('/');
-              } else {
-                setState(() => invalidMsg = 'No active account found with the given credentials.');
-              }
-
-              isLoggind = false;
-            },
+            onPressed: login,
             text: 'LOGIN',
           ),
           SizedBox(height: 10,),
@@ -125,8 +105,19 @@ class _LoginFormState extends State<_LoginForm> {
     );
   }
 
-  Future<bool> login(String email, String password) async {
+  Future<void> login() async {
+    if (isLogging) return;
+
+    setState(() => invalidMsg = '');
+    if (!_formKey.currentState!.validate()) return;
+    isLogging = true;
+
     final res = await locator<AuthApi>().login(email: email, password: password);
-    return res.fold((left) => false, (rigth) => true);
+    res.fold(
+      (left) => setState(() => invalidMsg = 'No active account found with the given credentials.'),
+      (rigth) => context.go('/')
+    );
+
+    isLogging = false;
   }
 }

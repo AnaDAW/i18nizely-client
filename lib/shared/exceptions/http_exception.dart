@@ -18,5 +18,5 @@ class AppException implements Exception {
 }
 
 extension HttpExceptionExtension on AppException {
-  Left<AppException, Response> get toLeft => Left<AppException, Response>(this);
+  Left<AppException, AppResponse> get toLeft => Left<AppException, AppResponse>(this);
 }

@@ -1,4 +1,4 @@
-import 'package:i18nizely/shared/data/remote/network_service.dart';
+import 'package:i18nizely/shared/domain/services/network_service.dart';
 import 'package:i18nizely/shared/exceptions/http_exception.dart';
 import 'package:i18nizely/shared/domain/models/either_model.dart';
 import 'package:i18nizely/src/domain/models/comment_model.dart';
@@ -17,18 +17,7 @@ class TranslationApiDataSource implements TranslationApi {
       final eitherType = await networkService.post('projects/$projectId/keys/$keyId/translations/', data: newTranslation.toQueryMap());
       return eitherType.fold((exception) {
         return Left(exception);
-      },
-      (response) async {
-        if (response.statusCode != 201) {
-          return Left(
-            AppException(
-              message: 'Failed to create translation.\nStatus: ${response.statusMessage}.\nResponse: ${response.data}',
-              statusCode: response.statusCode,
-              identifier: 'TranslationApiDataSource.createTranslation',
-            ),
-          );
-        }
-
+      }, (response) async {
         final Translation translation = Translation.fromJson(response.data);
         return Right(translation);
       });
@@ -49,18 +38,7 @@ class TranslationApiDataSource implements TranslationApi {
       final eitherType = await networkService.patch('projects/$projectId/keys/$keyId/translations/${newTranslation.id}/', data: newTranslation.toQueryMap());
       return eitherType.fold((exception) {
         return Left(exception);
-      },
-      (response) async {
-        if (response.statusCode != 200) {
-          return Left(
-            AppException(
-              message: 'Failed to update translation.\nStatus: ${response.statusMessage}.\nResponse: ${response.data}',
-              statusCode: response.statusCode,
-              identifier: 'TranslationApiDataSource.updateTranslation',
-            ),
-          );
-        }
-
+      }, (response) async {
         final Translation translation = Translation.fromJson(response.data);
         return Right(translation);
       });
@@ -81,18 +59,7 @@ class TranslationApiDataSource implements TranslationApi {
       final eitherType = await networkService.patch('projects/$projectId/keys/$keyId/translations/$id/', data: { 'is_reviewed': isReviewed });
       return eitherType.fold((exception) {
         return Left(exception);
-      },
-      (response) async {
-        if (response.statusCode != 200) {
-          return Left(
-            AppException(
-              message: 'Failed to review translation.\nStatus: ${response.statusMessage}.\nResponse: ${response.data}',
-              statusCode: response.statusCode,
-              identifier: 'TranslationApiDataSource.reviewTranslation',
-            ),
-          );
-        }
-
+      }, (response) async {
         final Translation translation = Translation.fromJson(response.data);
         return Right(translation);
       });
@@ -113,18 +80,7 @@ class TranslationApiDataSource implements TranslationApi {
       final eitherType = await networkService.get('projects/$projectId/keys/$keyId/translations/$translationId/versions/');
       return eitherType.fold((exception) {
         return Left(exception);
-      },
-      (response) async {
-        if (response.statusCode != 200) {
-          return Left(
-            AppException(
-              message: 'Failed to get versions.\nStatus: ${response.statusMessage}.\nResponse: ${response.data}',
-              statusCode: response.statusCode,
-              identifier: 'TranslationApiDataSource.getVersions',
-            ),
-          );
-        }
-
+      }, (response) async {
         final List<Version> versions = [];
         for (var version in response.data) {
           versions.add(Version.fromJson(version));
@@ -148,18 +104,7 @@ class TranslationApiDataSource implements TranslationApi {
       final eitherType = await networkService.get('projects/$projectId/keys/$keyId/translations/$translationId/comments/');
       return eitherType.fold((exception) {
         return Left(exception);
-      },
-      (response) async {
-        if (response.statusCode != 200) {
-          return Left(
-            AppException(
-              message: 'Failed to get comments.\nStatus: ${response.statusMessage}.\nResponse: ${response.data}',
-              statusCode: response.statusCode,
-              identifier: 'TranslationApiDataSource.getComments',
-            ),
-          );
-        }
-
+      }, (response) async {
         final List<Comment> comments = [];
         for (var comment in response.data) {
           comments.add(Comment.fromJson(comment));
@@ -183,18 +128,7 @@ class TranslationApiDataSource implements TranslationApi {
       final eitherType = await networkService.post('projects/$projectId/keys/$keyId/translations/$translationId/comments/', data: newComment.toQueryMap());
       return eitherType.fold((exception) {
         return Left(exception);
-      },
-      (response) async {
-        if (response.statusCode != 201) {
-          return Left(
-            AppException(
-              message: 'Failed to create comment.\nStatus: ${response.statusMessage}.\nResponse: ${response.data}',
-              statusCode: response.statusCode,
-              identifier: 'TranslationApiDataSource.createComment',
-            ),
-          );
-        }
-
+      }, (response) async {
         final Comment comment = Comment.fromJson(response.data);
         return Right(comment);
       });
@@ -215,18 +149,7 @@ class TranslationApiDataSource implements TranslationApi {
       final eitherType = await networkService.patch('projects/$projectId/keys/$keyId/translations/$translationId/comments/${newComment.id}', data: newComment.toQueryMap());
       return eitherType.fold((exception) {
         return Left(exception);
-      },
-      (response) async {
-        if (response.statusCode != 200) {
-          return Left(
-            AppException(
-              message: 'Failed to update comment.\nStatus: ${response.statusMessage}.\nResponse: ${response.data}',
-              statusCode: response.statusCode,
-              identifier: 'TranslationApiDataSource.updateComment',
-            ),
-          );
-        }
-
+      }, (response) async {
         final Comment comment = Comment.fromJson(response.data);
         return Right(comment);
       });
@@ -247,17 +170,7 @@ class TranslationApiDataSource implements TranslationApi {
       final eitherType = await networkService.delete('projects/$projectId/keys/$keyId/translations/$translationId/comments/$id/');
       return eitherType.fold((exception) {
         return Left(exception);
-      },
-      (response) async {
-        if (response.statusCode != 204) {
-          return Left(
-            AppException(
-              message: 'Failed to delete comment.\nStatus: ${response.statusMessage}.\nResponse: ${response.data}',
-              statusCode: response.statusCode,
-              identifier: 'TranslationApiDataSource.deleteComment',
-            ),
-          );
-        }
+      }, (response) async {
         return Right(null);
       });
     } catch (e) {

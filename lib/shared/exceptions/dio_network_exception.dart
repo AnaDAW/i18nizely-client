@@ -15,11 +15,10 @@ class ErrorInterceptor extends Interceptor {
     } else {
       errorMessage = 'An unexpected error occurred: ${err.message}';
     }
-    
+
     if (kDebugMode) {
       print(errorMessage);
     }
-
     super.onError(err, handler);
   }
 }

@@ -4,7 +4,9 @@ import 'package:i18nizely/src/domain/models/project_model.dart';
 import 'package:i18nizely/src/domain/models/record_model.dart' as r;
 
 abstract class ProjectApi {
-  Future<Either<AppException, List<Project>>> getProjects({String? name});
+  Future<Either<AppException, List<Project>>> getProjects({String? name, int page = 1});
+
+  Future<Either<AppException, List<Project>>> getCollabProjects({String? name, int page = 1});
   
   Future<Either<AppException, Project>> createProject({required Project newProject});
   
@@ -16,7 +18,7 @@ abstract class ProjectApi {
   
   Future<Either<AppException, Collaborator>> addCollaborator({required int projectId, required Collaborator newCollaborator});
   
-  Future<Either<AppException, Collaborator>> updateCollaborator({required int projectId, required int id, required List<Role> roles});
+  Future<Either<AppException, Collaborator>> updateCollaborator({required int projectId, required int id, required List<CollabRole> roles});
   
   Future<Either<AppException, void>> removeCollaborator({required int projectId, required int id});
   

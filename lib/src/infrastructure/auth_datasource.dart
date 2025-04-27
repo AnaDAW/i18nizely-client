@@ -1,5 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:i18nizely/shared/data/remote/network_service.dart';
+import 'package:i18nizely/shared/domain/services/network_service.dart';
 import 'package:i18nizely/shared/exceptions/http_exception.dart';
 import 'package:i18nizely/shared/domain/models/either_model.dart';
 import 'package:i18nizely/src/domain/services/auth_api.dart';
@@ -13,21 +13,10 @@ class AuthApiDataSource implements AuthApi {
   @override
   Future<Either<AppException, void>> login({required String email, required String password}) async {
     try {
-      final eitherType = await networkService.post('auth/login/', data: { 'email': email, 'password': password });
+      final eitherType = await networkService.post('auth/login/', data: {'email': email, 'password': password});
       return eitherType.fold((exception) {
         return Left(exception);
-      },
-      (response) async {
-        if (response.statusCode != 200) {
-          return Left(
-            AppException(
-              message: 'Failed to get token.\nStatus: ${response.statusMessage}.\nResponse: ${response.data}',
-              statusCode: response.statusCode,
-              identifier: 'AuthApiDataSource.login',
-            ),
-          );
-        }
-
+      }, (response) async {
         final String tokenAccess = response.data['access'];
         final String tokenRefresh = response.data['refresh'];
 
@@ -61,22 +50,10 @@ class AuthApiDataSource implements AuthApi {
         ));
       }
 
-      final eitherType = await networkService.post('auth/refresh/', data: { 'refresh': tokenRefresh });
+      final eitherType = await networkService.post('auth/refresh/', data: {'refresh': tokenRefresh});
       return eitherType.fold((exception) {
         return Left(exception);
-      },
-      (response) async {
-        if (response.statusCode != 200) {
-          await logout();
-          return Left(
-            AppException(
-              message: 'Failed to refresh token.\nStatus: ${response.statusMessage}.\nResponse: ${response.data}',
-              statusCode: response.statusCode,
-              identifier: 'AuthApiDataSource.refresh',
-            ),
-          );
-        }
-
+      }, (response) async {
         final String tokenAccess = response.data['access'];
         await storage.write(key: 'token_access', value: tokenAccess);
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:i18nizely/shared/widgets/app_textfields.dart';
 
-class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+class OverviewScreen extends StatelessWidget {
+  const OverviewScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,10 +13,10 @@ class SettingsScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Settings'),
+            Text('Overview'),
             SizedBox(
               width: 600,
-              child: AppSearchTextField(hint: 'Search something'),
+              child: AppSearchTextField(hint: 'Search something', onSubmit: (_) {},),
               ),
             Text('User'),
           ],

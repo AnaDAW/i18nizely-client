@@ -22,7 +22,7 @@ class Notification extends Equatable {
   factory Notification.fromJson(Map<String, dynamic> json) {
     return Notification(
       id: json['id'],
-      type: json['type'],
+      type: NotificationType.values[json['type'] - 1],
       isRead: json['is_read'],
       commentId: json['comment'],
       projectId: json['project'],

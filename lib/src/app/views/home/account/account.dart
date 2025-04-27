@@ -1,15 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:i18nizely/src/app/views/home.dart';
-import 'package:intl/intl.dart' as i;
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
+import 'package:i18nizely/src/app/views/home/account/bloc/profile_event.dart';
+import 'package:i18nizely/src/app/views/home/account/bloc/profile_state.dart';
+import 'package:intl/intl.dart';
 import 'package:i18nizely/shared/theme/app_colors.dart';
 import 'package:i18nizely/shared/widgets/app_buttons.dart';
 import 'package:i18nizely/shared/widgets/app_icons.dart';
 import 'package:i18nizely/shared/widgets/app_textfields.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/user_model.dart';
-import 'package:i18nizely/src/domain/services/user_api.dart';
 
 class AccountScreen extends StatelessWidget {
 
@@ -17,6 +19,8 @@ class AccountScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final User profile = context.select((ProfileBloc bloc) => (bloc.state as ProfileLoaded).profile);
+
     return Column(
       mainAxisSize: MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,7 +42,7 @@ class AccountScreen extends StatelessWidget {
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(70),
-            child: _AccountForm(),
+            child: _AccountForm(profile: profile,),
           ),
         ),
       ],
@@ -47,6 +51,9 @@ class AccountScreen extends StatelessWidget {
 }
 
 class _AccountForm extends StatefulWidget {
+  final User profile;
+
+  const _AccountForm({required this.profile});
 
   @override
   State<_AccountForm> createState() => _AccountFormState();
@@ -54,36 +61,27 @@ class _AccountForm extends StatefulWidget {
 
 class _AccountFormState extends State<_AccountForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController firstNameCtl = TextEditingController();
-  final TextEditingController lastNameCtl = TextEditingController();
-  final TextEditingController emailCtl = TextEditingController();
   final TextEditingController passwordCtl = TextEditingController();
 
   Map<String, dynamic> languages = {};
   bool showPassword = false;
-  late User profile;
   late String firstName;
   late String lastName;
   late String email;
   late String language;
   late bool format24h;
-  late DateFormat dateFormat;
+  late UserDateFormat dateFormat;
 
   @override
   void initState() {
     getLanguages();
-    getProfile();
 
-    firstName = profile.firstName ?? '';
-    lastName = profile.lastName ?? '';
-    email = profile.email ?? '';
-    language = profile.language ?? 'en';
-    format24h = profile.format24h ?? true;
-    dateFormat = profile.dateFormat ?? DateFormat.dmy;
-
-    firstNameCtl.text = firstName;
-    lastNameCtl.text = lastName;
-    emailCtl.text = email;
+    firstName = widget.profile.firstName ?? '';
+    lastName = widget.profile.lastName ?? '';
+    email = widget.profile.email ?? '';
+    language = widget.profile.language ?? 'en';
+    format24h = widget.profile.format24h ?? true;
+    dateFormat = widget.profile.dateFormat ?? UserDateFormat.dmy;
     super.initState();
   }
 
@@ -104,8 +102,8 @@ class _AccountFormState extends State<_AccountForm> {
                         height: 200,
                         width: 200,
                         child: AppUserIcon(
-                          image: profile.image,
-                          userName: '${profile.firstName?[0]}${profile.lastName?[0]}',
+                          image: widget.profile.image,
+                          userName: '${widget.profile.firstName?[0]}${widget.profile.lastName?[0]}',
                         )
                     ),
                     AppIconButton(icon: Icons.edit_rounded, onPressed: () {
@@ -114,8 +112,8 @@ class _AccountFormState extends State<_AccountForm> {
                   ],
                 ),
                 SizedBox(height: 40,),
-                buildDate('Created at: ${formatDate(profile.createdAt)}'),
-                buildDate('Last update: ${formatDate(profile.updatedAt)}'),
+                buildDate('Created at: ${formatDate(widget.profile.createdAt)}'),
+                buildDate('Last update: ${formatDate(widget.profile.updatedAt)}'),
               ],
             ),
             SizedBox(width: 50,),
@@ -132,12 +130,12 @@ class _AccountFormState extends State<_AccountForm> {
                           child: AppOutlinedTextField(
                             label: 'First Name',
                             hint: 'Type your first name',
+                            initialValue: firstName,
                             validator: (value) {
                               if (value == null || value.isEmpty) return 'The first name can\'t be empty.';
                               firstName = value;
                               return null;
                             },
-                            controller: firstNameCtl,
                           ),
                         ),
                         SizedBox(width: 20,),
@@ -145,12 +143,12 @@ class _AccountFormState extends State<_AccountForm> {
                           child: AppOutlinedTextField(
                             label: 'Last Name',
                             hint: 'Type your last name',
+                            initialValue: lastName,
                             validator: (value) {
                               if (value == null || value.isEmpty) return 'The last name can\'t be empty.';
                               lastName = value;
                               return null;
                             },
-                            controller: lastNameCtl,
                           ),
                         ),
                       ],
@@ -163,6 +161,7 @@ class _AccountFormState extends State<_AccountForm> {
                           child: AppOutlinedTextField(
                             label: 'Email',
                             hint: 'Type your email',
+                            initialValue: email,
                             validator: (value) {
                               if (value == null || value.isEmpty) return 'The email can\'t be empty.';
                               final RegExp regExp = RegExp(r"^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$");
@@ -170,7 +169,6 @@ class _AccountFormState extends State<_AccountForm> {
                               email = value;
                               return null;
                             },
-                            controller: emailCtl,
                           ),
                         ),
                         SizedBox(width: 20,),
@@ -221,8 +219,8 @@ class _AccountFormState extends State<_AccountForm> {
                             DropdownButton(
                               value: dateFormat,
                               items: [
-                                DropdownMenuItem(value: DateFormat.dmy, child: Text('DD/MM/YYYY')),
-                                DropdownMenuItem(value: DateFormat.mdy, child: Text('MM/DD/YYYY')),
+                                DropdownMenuItem(value: UserDateFormat.dmy, child: Text('DD/MM/YYYY')),
+                                DropdownMenuItem(value: UserDateFormat.mdy, child: Text('MM/DD/YYYY')),
                               ],
                               onChanged: (value) => setState(() => dateFormat = value!),
                             ),
@@ -241,7 +239,7 @@ class _AccountFormState extends State<_AccountForm> {
                               onChanged: (value) => setState(() => language = value!),
                             ),
                           ],
-                        )
+                        ),
                       ],
                     ),
                   ],
@@ -256,27 +254,16 @@ class _AccountFormState extends State<_AccountForm> {
             child: SizedBox(
               width: 200,
               child: AppStyledButton(
-                onPressed: () async {
+                onPressed: () {
                   if (!_formKey.currentState!.validate()) return;
 
                   final User updatedUser = getUpdatedUser();
                   if (updatedUser == User()) return;
 
-                  final res = await locator<UserApi>().updateProfile(
-                      newProfile: updatedUser,
-                      password: passwordCtl.text.isNotEmpty ? passwordCtl.text : null
-                  );
-                  res.fold(
-                    (left) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('There have been a problem.')));
-                    },
-                        (right) {
-                      setState(() => profile = right);
-                      HomeScreen.setProfile(context, right);
-                      passwordCtl.clear();
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User updated.')));
-                    }
-                  );
+                  locator<ProfileBloc>().add(UpdateProfile(
+                    newProfile: updatedUser,
+                    password: passwordCtl.text.isNotEmpty ? passwordCtl.text : null
+                  ));
                 },
                 text: 'Save',
               ),
@@ -304,23 +291,19 @@ class _AccountFormState extends State<_AccountForm> {
 
   User getUpdatedUser() {
     return User(
-      email: profile.email != email ? email : null,
-      firstName: profile.firstName != firstName ? firstName : null,
-      lastName: profile.lastName != lastName ? lastName : null,
-      language: profile.language != language ? language : null,
-      format24h: profile.format24h != format24h ? format24h : null,
-      dateFormat: profile.dateFormat != dateFormat ? dateFormat : null,
+      email: widget.profile.email != email ? email : null,
+      firstName: widget.profile.firstName != firstName ? firstName : null,
+      lastName: widget.profile.lastName != lastName ? lastName : null,
+      language: widget.profile.language != language ? language : null,
+      format24h: widget.profile.format24h != format24h ? format24h : null,
+      dateFormat: widget.profile.dateFormat != dateFormat ? dateFormat : null,
     );
   }
 
-
-
-  void getProfile() => profile = HomeScreen.getProfile(context) ?? User();
-
   String formatDate(DateTime? date) {
-    final i.DateFormat dateFormatter = i.DateFormat(profile.dateFormat == DateFormat.dmy ? 'dd/MM/yyyy' : 'MM/dd/yyyy');
+    final DateFormat dateFormatter = DateFormat(widget.profile.dateFormat == UserDateFormat.dmy ? 'dd/MM/yyyy' : 'MM/dd/yyyy');
 
-    if (profile.format24h == null || profile.format24h!) {
+    if (widget.profile.format24h == null || widget.profile.format24h!) {
       dateFormatter.add_Hm();
     } else {
       dateFormatter.add_jm();

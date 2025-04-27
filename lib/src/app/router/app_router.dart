@@ -1,14 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
-import 'package:i18nizely/src/app/views/account.dart';
-import 'package:i18nizely/src/app/views/dashboard.dart';
-import 'package:i18nizely/src/app/views/home.dart';
-import 'package:i18nizely/src/app/views/login.dart';
-import 'package:i18nizely/src/app/views/overview.dart';
-import 'package:i18nizely/src/app/views/settings.dart';
-import 'package:i18nizely/src/app/views/translations.dart';
+import 'package:i18nizely/src/app/views/home/account/account.dart';
+import 'package:i18nizely/src/app/views/home/dashboard/dashboard.dart';
+import 'package:i18nizely/src/app/views/home/home.dart';
+import 'package:i18nizely/src/app/views/login/login.dart';
+import 'package:i18nizely/src/app/views/home/project/settings.dart';
+import 'package:i18nizely/src/app/views/home/translations/translations.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/services/auth_api.dart';
+
+import '../views/home/project/overview.dart';
 
 enum DrawerRoute { account, dashboard, overview, translations, settings }
 
@@ -19,7 +20,7 @@ final GoRouter appRouter = GoRouter(
     final bool isLoginScreen = state.uri.toString() == '/login';
     try {
       if (isLoginScreen && isLogged) {
-        return '/';
+        //return '/';
       }
 
       if (!isLoginScreen && !isLogged) {

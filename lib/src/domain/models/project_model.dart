@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:i18nizely/src/domain/models/key_model.dart';
 import 'package:i18nizely/src/domain/models/user_model.dart';
 
 class Project extends Equatable {
@@ -10,7 +9,6 @@ class Project extends Equatable {
   final String? mainLanguage;
   final List<String>? languages;
   final List<Collaborator>? collaborators;
-  final List<Key>? keys;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -22,7 +20,6 @@ class Project extends Equatable {
     this.mainLanguage,
     this.languages,
     this.collaborators,
-    this.keys,
     this.createdAt,
     this.updatedAt
   });
@@ -33,11 +30,6 @@ class Project extends Equatable {
       collaboratorList.add(Collaborator.fromJson(collaborator));
     }
 
-    List<Key> keyList = [];
-    for (Map<String, dynamic> key in json['keys']) {
-      keyList.add(Key.fromJson(key));
-    }
-
     return Project(
       id: json['id'],
       name: json['name'],
@@ -46,7 +38,6 @@ class Project extends Equatable {
       mainLanguage: json['main_language'],
       languages: json['languages'],
       collaborators: collaboratorList,
-      keys: keyList,
       createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
       updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null
     );
@@ -73,12 +64,12 @@ class Project extends Equatable {
   }
 }
 
-enum Role { admin, developer, reviewer, translator }
+enum CollabRole { admin, developer, reviewer, translator }
 
 class Collaborator extends Equatable {
   final int? id;
   final User user;
-  final List<Role> roles;
+  final List<CollabRole> roles;
 
   const Collaborator({
     this.id,
@@ -87,10 +78,15 @@ class Collaborator extends Equatable {
   });
 
   factory Collaborator.fromJson(Map<String, dynamic> json) {
+    List<CollabRole> roleList = [];
+    for (var role in json['roles']) {
+      roleList.add(CollabRole.values[role - 1]);
+    }
+
     return Collaborator(
       id: json['id'],
       user: User.fromJson(json['user']),
-      roles: json['roles']
+      roles: roleList
     );
   }
 
@@ -102,6 +98,6 @@ class Collaborator extends Equatable {
   ];
 
   Map<String, dynamic>  toQueryMap() {
-    return {'user': user, 'roles': roles};
+    return {'user': user, 'roles': roles.map((role) => role.index + 1).toList()};
   }
 }

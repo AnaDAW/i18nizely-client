@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-enum DateFormat { dmy, mdy }
+enum UserDateFormat { dmy, mdy }
 
 class User extends Equatable {
   final int? id;
@@ -10,7 +10,7 @@ class User extends Equatable {
   final String? image;
   final String? language;
   final bool? format24h;
-  final DateFormat? dateFormat;
+  final UserDateFormat? dateFormat;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -36,7 +36,7 @@ class User extends Equatable {
       image: json['image'],
       language: json['language'],
       format24h: json['format_24h'],
-      dateFormat: json['date_format'] != null ? DateFormat.values[json['date_format'] - 1] : null,
+      dateFormat: json['date_format'] != null ? UserDateFormat.values[json['date_format'] - 1] : null,
       createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
       updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null
     );

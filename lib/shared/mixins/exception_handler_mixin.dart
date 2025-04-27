@@ -3,21 +3,21 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:i18nizely/shared/data/remote/network_service.dart';
+import 'package:i18nizely/shared/domain/services/network_service.dart';
 import 'package:i18nizely/shared/exceptions/http_exception.dart';
 import 'package:i18nizely/shared/domain/models/either_model.dart';
-import 'package:i18nizely/shared/domain/models/response_model.dart' as r;
+import 'package:i18nizely/shared/domain/models/response_model.dart';
 
 
 mixin ExceptionHandlerMixin on NetworkService {
-  Future<Either<AppException, r.Response>> handleException<T extends Object>(
+  Future<Either<AppException, AppResponse>> handleException<T extends Object>(
     Future<Response<dynamic>> Function() handler, {String endpoint = ''}
   ) async {
     try {
       final res = await handler();
 
       return Right(
-        r.Response(
+        AppResponse(
           statusCode: res.statusCode ?? 200,
           data: res.data,
           statusMessage: res.statusMessage,

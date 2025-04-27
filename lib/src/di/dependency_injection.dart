@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
-import 'package:i18nizely/shared/data/remote/dio_network_service.dart';
-import 'package:i18nizely/shared/data/remote/network_service.dart';
-import 'package:i18nizely/shared/exceptions/dio_network_service.dart';
+import 'package:i18nizely/shared/domain/services/dio_network_service.dart';
+import 'package:i18nizely/shared/domain/services/network_service.dart';
+import 'package:i18nizely/shared/exceptions/dio_network_exception.dart';
+import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
 import 'package:i18nizely/src/domain/services/auth_api.dart';
 import 'package:i18nizely/src/domain/services/key_api.dart';
 import 'package:i18nizely/src/domain/services/project_api.dart';
@@ -28,39 +29,24 @@ initInjection() {
 
   initToken();
 
-  locator.registerFactory<AuthApi>(() {
-    final networkService = locator<NetworkService>();
-    final storage = locator<FlutterSecureStorage>();
-    return AuthApiDataSource(networkService, storage);
-  });
+  locator.registerLazySingleton<AuthApi>(() => AuthApiDataSource(locator<NetworkService>(), locator<FlutterSecureStorage>()));
 
-  locator.registerFactory<UserApi>(() {
-    final networkService = locator<NetworkService>();
-    return UserApiDataSource(networkService);
-  });
+  locator.registerLazySingleton<UserApi>(() => UserApiDataSource(locator<NetworkService>()));
 
-  locator.registerFactory<ProjectApi>(() {
-    final networkService = locator<NetworkService>();
-    return ProjectApiDataSource(networkService);
-  });
+  locator.registerLazySingleton<ProjectApi>(() => ProjectApiDataSource(locator<NetworkService>()));
 
-  locator.registerFactory<KeyApi>(() {
-    final networkService = locator<NetworkService>();
-    return KeyApiDataSource(networkService);
-  });
+  locator.registerLazySingleton<KeyApi>(() => KeyApiDataSource(locator<NetworkService>()));
 
-  locator.registerFactory<TranslationApi>(() {
-    final networkService = locator<NetworkService>();
-    return TranslationApiDataSource(networkService);
-  });
+  locator.registerLazySingleton<TranslationApi>(() => TranslationApiDataSource(locator<NetworkService>()));
+
+  locator.registerLazySingleton<ProfileBloc>(() => ProfileBloc(locator<UserApi>()));
 }
 
 Future<void> initToken() async {
-  var network = locator<NetworkService>();
   var storage = locator<FlutterSecureStorage>();
 
   if (await storage.containsKey(key: 'token_access')) {
     final String? token = await storage.read(key: 'token_access');
-    network.updateHeader({'Authorization': "Bearer $token"});
+    locator<NetworkService>().updateHeader({'Authorization': "Bearer $token"});
   }
 }

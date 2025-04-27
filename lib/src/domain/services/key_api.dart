@@ -5,6 +5,8 @@ import 'package:i18nizely/shared/domain/models/either_model.dart';
 import 'package:i18nizely/src/domain/models/key_model.dart';
 
 abstract class KeyApi {
+  Future<Either<AppException, List<Key>>> getKeys({required int projectId, int page = 1});
+
   Future<Either<AppException, Key>> createKey({required int projectId, required Key newKey});
   
   Future<Either<AppException, Key>> updateKey({required int projectId, required Key newKey});

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:i18nizely/shared/data/remote/network_service.dart';
+import 'package:i18nizely/shared/domain/services/network_service.dart';
 import 'package:i18nizely/shared/exceptions/http_exception.dart';
 import 'package:i18nizely/shared/domain/models/either_model.dart';
 import 'package:i18nizely/src/domain/models/key_model.dart';
@@ -12,23 +12,36 @@ class KeyApiDataSource implements KeyApi {
   const KeyApiDataSource(this.networkService);
 
   @override
+  Future<Either<AppException, List<Key>>> getKeys({required int projectId, int page = 1}) async {
+    try {
+      final eitherType = await networkService.post('projects/$projectId/keys/', data: {'page': page});
+      return eitherType.fold((exception) {
+        return Left(exception);
+      }, (response) async {
+        final List<Key> keys = [];
+        for (var key in response.data) {
+          keys.add(Key.fromJson(key));
+        }
+        return Right(keys);
+      });
+    } catch (e) {
+      return Left(
+        AppException(
+          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          statusCode: 500,
+          identifier: 'KeyApiDataSource.getKeys',
+        ),
+      );
+    }
+  }
+
+  @override
   Future<Either<AppException, Key>> createKey({required int projectId, required Key newKey}) async {
     try {
       final eitherType = await networkService.post('projects/$projectId/keys/', data: newKey.toQueryMap());
       return eitherType.fold((exception) {
         return Left(exception);
-      },
-      (response) async {
-        if (response.statusCode != 201) {
-          return Left(
-            AppException(
-              message: 'Failed to create key.\nStatus: ${response.statusMessage}.\nResponse: ${response.data}',
-              statusCode: response.statusCode,
-              identifier: 'KeyApiDataSource.createKey',
-            ),
-          );
-        }
-
+      }, (response) async {
         final Key key = Key.fromJson(response.data);
         return Right(key);
       });
@@ -49,18 +62,7 @@ class KeyApiDataSource implements KeyApi {
       final eitherType = await networkService.patch('projects/$projectId/keys/${newKey.id}/', data: newKey.toQueryMap());
       return eitherType.fold((exception) {
         return Left(exception);
-      },
-      (response) async {
-        if (response.statusCode != 200) {
-          return Left(
-            AppException(
-              message: 'Failed to update key.\nStatus: ${response.statusMessage}.\nResponse: ${response.data}',
-              statusCode: response.statusCode,
-              identifier: 'KeyApiDataSource.updateKey',
-            ),
-          );
-        }
-
+      }, (response) async {
         final Key key = Key.fromJson(response.data);
         return Right(key);
       });
@@ -87,17 +89,7 @@ class KeyApiDataSource implements KeyApi {
       final eitherType = await networkService.delete('projects/$projectId/keys/$id/');
       return eitherType.fold((exception) {
         return Left(exception);
-      },
-      (response) async {
-        if (response.statusCode != 204) {
-          return Left(
-            AppException(
-              message: 'Failed to delete key.\nStatus: ${response.statusMessage}.\nResponse: ${response.data}',
-              statusCode: response.statusCode,
-              identifier: 'KeyApiDataSource.deleteKey',
-            ),
-          );
-        }
+      }, (response) async {
         return Right(null);
       });
     } catch (e) {

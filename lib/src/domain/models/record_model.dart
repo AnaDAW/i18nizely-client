@@ -19,7 +19,7 @@ class Record extends Equatable {
   factory Record.fromJson(Map<String, dynamic> json) {
     return Record(
       id: json['id'],
-      type: json['type'],
+      type: RecordType.values[json['type'] - 1],
       user: json['user'] != null ? User.fromJson(json['user']) : null,
       createdAt: DateTime.parse(json['created_at'])
     );

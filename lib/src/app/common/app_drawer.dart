@@ -1,38 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:i18nizely/shared/theme/app_colors.dart';
 import 'package:i18nizely/shared/widgets/app_icons.dart';
 import 'package:i18nizely/src/app/router/app_router.dart';
-import 'package:i18nizely/src/app/views/home.dart';
+import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
+import 'package:i18nizely/src/app/views/home/account/bloc/profile_state.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/user_model.dart';
 import 'package:i18nizely/src/domain/services/auth_api.dart';
 
-class AppDrawer extends StatelessWidget {
-  final bool isExpanded;
-  final VoidCallback expand;
-  final int selectedIndex;
-  final bool hasProject;
+class AppDrawer extends StatefulWidget {
+  final User profile;
 
-  const AppDrawer({required this.isExpanded, required this.expand, required this.selectedIndex, required this.hasProject, super.key});
+  const AppDrawer({super.key, required this.profile});
+
+  @override
+  State<AppDrawer> createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> {
+  bool isExpanded = false;
+  int selectedIndex = 1;
+  int selectedProject = 0;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: isExpanded ? 210 : 80,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.primary,
-            AppColors.secondary,
-          ]
-        ),
+        gradient: AppColors.gradient,
         borderRadius: BorderRadius.horizontal(right: Radius.circular(20),)
       ),
       child: Stack(
-        alignment: selectedIndex == 0 ? Alignment.bottomLeft : Alignment.topLeft,
+        alignment: selectedIndex == DrawerRoute.account.index ?
+          Alignment.bottomLeft : Alignment.topLeft,
         children: [
           Padding(
             padding: EdgeInsets.only(top: 60.0 * selectedIndex, left: 10, bottom: 40),
@@ -54,48 +56,43 @@ class AppDrawer extends StatelessWidget {
                           color: Colors.white,
                         ),
                         child: IconButton(
-                          onPressed: expand,
+                          onPressed: () => setState(() => isExpanded = !isExpanded),
                           icon: Icon(isExpanded ? Icons.arrow_back_rounded : Icons.arrow_forward_rounded, color: AppColors.detail,),
                         ),
                       ),
                     ),
                     SizedBox(height: 20,),
                     buildDrawerButton(
-                      context,
                       icon: Icons.dashboard_rounded,
                       label: 'Dashboard',
                       drawerRoute: DrawerRoute.dashboard
                     ),
-                    if (hasProject)
-                    Column(
-                      children: [
-                        buildDrawerButton(
-                          context,
-                          icon: Icons.edit_document,
-                          label: 'Overview',
-                          drawerRoute: DrawerRoute.overview
-                        ),
-                        buildDrawerButton(
-                          context,
-                          icon: Icons.translate_rounded,
-                          label: 'Translations',
-                          drawerRoute: DrawerRoute.translations
-                        ),
-                        buildDrawerButton(
-                          context,
-                          icon: Icons.settings_rounded,
-                          label: 'Settings',
-                          drawerRoute: DrawerRoute.settings
-                        ),
-                      ],
+                    buildDrawerButton(
+                      icon: Icons.edit_document,
+                      label: 'Overview',
+                      drawerRoute: DrawerRoute.overview,
+                      enabled: selectedProject != 0
+                    ),
+                    buildDrawerButton(
+                      icon: Icons.translate_rounded,
+                      label: 'Translations',
+                      drawerRoute: DrawerRoute.translations,
+                      enabled: selectedProject != 0
+                    ),
+                    buildDrawerButton(
+                      icon: Icons.settings_rounded,
+                      label: 'Settings',
+                      drawerRoute: DrawerRoute.settings,
+                      enabled: selectedProject != 0
                     ),
                   ],
                 ),
                 SizedBox(height: 30,),
                 Column(
                   children: [
-                    buildAccountButton(context),
-                    buildIconButton(
+                    buildAccountButton(),
+                    AppDrawerIcon(
+                      isExpanded: isExpanded,
                       icon: Icons.logout_rounded,
                       label: 'Logout',
                       onPressed: () async {
@@ -113,42 +110,21 @@ class AppDrawer extends StatelessWidget {
     );
   }
 
-  Widget buildIconButton({required IconData icon, required String label, bool isSelected = false, required VoidCallback onPressed}) {
-    return Container(
-      padding: EdgeInsets.only(top: 20),
-      height: 60,
-      child: IconButton(
-        onPressed: onPressed,
-        icon: Row(
-          children: [
-            Icon(icon, color: Colors.white),
-            if (isExpanded)
-              Row(
-                children: [
-                  SizedBox(width: 15,),
-                  Text(label, style: TextStyle(color: isSelected ? Colors.black : Colors.white, fontWeight: FontWeight.bold),),
-                ],
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildDrawerButton(BuildContext context, {required IconData icon, required String label, required DrawerRoute drawerRoute}) {
-    return buildIconButton(
+  Widget buildDrawerButton({required IconData icon, required String label, required DrawerRoute drawerRoute, bool enabled = true}) {
+    return AppDrawerIcon(
+      isExpanded: isExpanded,
       icon: icon,
       label: label,
       isSelected: selectedIndex == drawerRoute.index,
       onPressed: () {
         context.goNamed(drawerRoute.name);
-        HomeScreen.selectIndex(context, drawerRoute.index);
-      }
+        setState(() => selectedIndex = drawerRoute.index);
+      },
+      enabled: enabled
     );
   }
 
-  Widget buildAccountButton(BuildContext context) {
-    final User profile = HomeScreen.getProfile(context) ?? User();
+  Widget buildAccountButton() {
     final bool isSelected = selectedIndex == DrawerRoute.account.index;
 
     return Container(
@@ -161,7 +137,7 @@ class AppDrawer extends StatelessWidget {
               SizedBox(
                 height: 40,
                 width: 40,
-                child: AppUserIcon(image: profile.image, userName: '${profile.firstName?[0]}${profile.lastName?[0]}',)
+                child: AppUserIcon(image: widget.profile.image, userName: '${widget.profile.firstName?[0]}${widget.profile.lastName?[0]}',)
               ),
               if (isExpanded)
                 Row(
@@ -173,7 +149,7 @@ class AppDrawer extends StatelessWidget {
                       children: [
                         Text('Account', style: TextStyle(color: isSelected ? Colors.black : Colors.white, fontWeight: FontWeight.bold),),
                         Text(
-                          '${profile.firstName} ${profile.lastName}',
+                          '${widget.profile.firstName} ${widget.profile.lastName}',
                           style: TextStyle(
                             color: isSelected ? Colors.black : Colors.white,
                             fontSize: 12,
@@ -189,7 +165,7 @@ class AppDrawer extends StatelessWidget {
           IconButton(
             onPressed: () {
               context.goNamed(DrawerRoute.account.name);
-              HomeScreen.selectIndex(context, DrawerRoute.account.index);
+              setState(() => selectedIndex = DrawerRoute.account.index);
             },
             icon: Container(),
           ),
@@ -218,14 +194,7 @@ class DrawerSelector extends StatelessWidget {
             height: (height / 2) - 20,
             width: (height / 2) - 20,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.primary,
-                  AppColors.secondary
-                ]
-              ),
+              gradient: AppColors.gradient,
               borderRadius: BorderRadius.circular(height / 4)
             ),
           ),

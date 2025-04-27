@@ -1,12 +1,12 @@
 import 'package:i18nizely/shared/exceptions/http_exception.dart';
 import 'package:i18nizely/shared/domain/models/either_model.dart';
 
-class Response {
+class AppResponse {
   final int statusCode;
   final String? statusMessage;
   final dynamic data;
 
-  Response({required this.statusCode, this.statusMessage, this.data = const {}});
+  AppResponse({required this.statusCode, this.statusMessage, this.data = const {}});
 
   @override
   String toString() {
@@ -14,6 +14,6 @@ class Response {
   }
 }
 
-extension ResponseExtension on Response {
-  Right<AppException, Response> get toRight => Right(this);
+extension AppResponseExtension on AppResponse {
+  Right<AppException, AppResponse> get toRight => Right(this);
 }

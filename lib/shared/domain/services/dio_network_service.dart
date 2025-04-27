@@ -1,10 +1,10 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:i18nizely/shared/data/remote/network_service.dart';
+import 'package:i18nizely/shared/domain/services/network_service.dart';
 import 'package:i18nizely/shared/exceptions/http_exception.dart';
 import 'package:i18nizely/shared/domain/models/either_model.dart';
-import 'package:i18nizely/shared/domain/models/response_model.dart' as r;
+import 'package:i18nizely/shared/domain/models/response_model.dart';
 import 'package:i18nizely/shared/mixins/exception_handler_mixin.dart';
 
 class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
@@ -41,7 +41,7 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
   }
 
   @override
-  Future<Either<AppException, r.Response>> get(String endpoint, { Map<String, dynamic>? queryParameters }) {
+  Future<Either<AppException, AppResponse>> get(String endpoint, { Map<String, dynamic>? queryParameters }) {
     final res = handleException(
       () => dio.get(
         endpoint,
@@ -53,7 +53,7 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
   }
 
   @override
-  Future<Either<AppException, r.Response>> post(String endpoint, { Map<String, dynamic>? data }) {
+  Future<Either<AppException, AppResponse>> post(String endpoint, { Map<String, dynamic>? data }) {
     final FormData? formData = data != null ? FormData.fromMap(data.map((key, value) => MapEntry(key, value.toString()))) : null;
 
     final res = handleException(
@@ -67,7 +67,7 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
   }
 
   @override
-  Future<Either<AppException, r.Response>> put(String endpoint, { Map<String, dynamic>? data }) {
+  Future<Either<AppException, AppResponse>> put(String endpoint, { Map<String, dynamic>? data }) {
     final FormData? formData = data != null ? FormData.fromMap(data.map((key, value) => MapEntry(key, value.toString()))) : null;
 
     final res = handleException(
@@ -81,7 +81,7 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
   }
 
   @override
-  Future<Either<AppException, r.Response>> patch(String endpoint, { Map<String, dynamic>? data }) {
+  Future<Either<AppException, AppResponse>> patch(String endpoint, { Map<String, dynamic>? data }) {
     final FormData? formData = data != null ? FormData.fromMap(data.map((key, value) => MapEntry(key, value.toString()))): null;
 
     final res = handleException(
@@ -95,7 +95,7 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
   }
 
   @override
-  Future<Either<AppException, r.Response>> delete(String endpoint, { Map<String, dynamic>? data }) {
+  Future<Either<AppException, AppResponse>> delete(String endpoint, { Map<String, dynamic>? data }) {
     final FormData? formData = data != null ? FormData.fromMap(data.map((key, value) => MapEntry(key, value.toString()))): null;
 
     final res = handleException(
@@ -109,7 +109,7 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
   }
 
   @override
-  Future<Either<AppException, r.Response>> uploadFile(String endpoint, { Map<String, dynamic>? data, required Map<String, String> files }) async {
+  Future<Either<AppException, AppResponse>> uploadFile(String endpoint, { Map<String, dynamic>? data, required Map<String, String> files }) async {
     final FormData formData = data != null ? FormData.fromMap(data.map((key, value) => MapEntry(key, value.toString()))) : FormData();
     
     for(MapEntry<String, String> entry in files.entries) {
