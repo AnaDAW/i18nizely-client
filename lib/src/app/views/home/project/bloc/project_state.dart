@@ -41,7 +41,7 @@ class ProjectUpdated extends ProjectLoaded {
 class ProjectUpdateError extends ProjectLoaded {
   final String message;
 
-  const ProjectUpdateError(super.project, this.message);
+  const ProjectUpdateError(super.project, {required this.message});
 
   @override
   List<Object?> get props => [message, project];
@@ -54,7 +54,7 @@ class ProjectDeleted extends ProjectState {
 class ProjectDeleteError extends ProjectLoaded {
   final String message;
 
-  const ProjectDeleteError(super.project, this.message);
+  const ProjectDeleteError(super.project, {required this.message});
 
   @override
   List<Object?> get props => [message, project];

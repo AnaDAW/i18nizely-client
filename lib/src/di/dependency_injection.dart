@@ -5,6 +5,9 @@ import 'package:i18nizely/shared/domain/services/dio_network_service.dart';
 import 'package:i18nizely/shared/domain/services/network_service.dart';
 import 'package:i18nizely/shared/exceptions/dio_network_exception.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
+import 'package:i18nizely/src/app/views/home/dashboard/bloc/collab_project_list_bloc.dart';
+import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_bloc.dart';
+import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
 import 'package:i18nizely/src/domain/services/auth_api.dart';
 import 'package:i18nizely/src/domain/services/key_api.dart';
 import 'package:i18nizely/src/domain/services/project_api.dart';
@@ -18,7 +21,7 @@ import 'package:i18nizely/src/infrastructure/user_datasource.dart';
 
 final locator = GetIt.instance;
 
-initInjection() {
+void initInjection() {
   locator.registerLazySingleton<Dio>(() => Dio());
   
   locator<Dio>().interceptors.add(ErrorInterceptor());
@@ -40,6 +43,12 @@ initInjection() {
   locator.registerLazySingleton<TranslationApi>(() => TranslationApiDataSource(locator<NetworkService>()));
 
   locator.registerLazySingleton<ProfileBloc>(() => ProfileBloc(locator<UserApi>()));
+  
+  locator.registerLazySingleton<ProjectBloc>(() => ProjectBloc(locator<ProjectApi>()));
+
+  locator.registerLazySingleton<ProjectListBloc>(() => ProjectListBloc(locator<ProjectApi>()));
+
+  locator.registerLazySingleton<CollabProjectListBloc>(() => CollabProjectListBloc(locator<ProjectApi>()));
 }
 
 Future<void> initToken() async {

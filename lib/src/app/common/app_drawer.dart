@@ -5,7 +5,10 @@ import 'package:i18nizely/shared/theme/app_colors.dart';
 import 'package:i18nizely/shared/widgets/app_icons.dart';
 import 'package:i18nizely/src/app/router/app_router.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
-import 'package:i18nizely/src/app/views/home/account/bloc/profile_state.dart';
+import 'package:i18nizely/src/app/views/home/dashboard/bloc/collab_project_list_bloc.dart';
+import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_bloc.dart';
+import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
+import 'package:i18nizely/src/app/views/home/project/bloc/project_state.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/user_model.dart';
 import 'package:i18nizely/src/domain/services/auth_api.dart';
@@ -22,7 +25,6 @@ class AppDrawer extends StatefulWidget {
 class _AppDrawerState extends State<AppDrawer> {
   bool isExpanded = false;
   int selectedIndex = 1;
-  int selectedProject = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -67,23 +69,40 @@ class _AppDrawerState extends State<AppDrawer> {
                       label: 'Dashboard',
                       drawerRoute: DrawerRoute.dashboard
                     ),
-                    buildDrawerButton(
-                      icon: Icons.edit_document,
-                      label: 'Overview',
-                      drawerRoute: DrawerRoute.overview,
-                      enabled: selectedProject != 0
-                    ),
-                    buildDrawerButton(
-                      icon: Icons.translate_rounded,
-                      label: 'Translations',
-                      drawerRoute: DrawerRoute.translations,
-                      enabled: selectedProject != 0
-                    ),
-                    buildDrawerButton(
-                      icon: Icons.settings_rounded,
-                      label: 'Settings',
-                      drawerRoute: DrawerRoute.settings,
-                      enabled: selectedProject != 0
+                    BlocBuilder<ProjectBloc, ProjectState>(
+                      buildWhen: (previous, current) {
+                        return (previous is ProjectInitial && current is! ProjectInitial) || (previous is! ProjectInitial && current is ProjectInitial);
+                      },
+                      builder: (context, state) {
+                        late final bool isProjectSelected;
+                        if (state is ProjectInitial) {
+                          isProjectSelected = false;
+                        } else {
+                          isProjectSelected = true;
+                        }
+                        return Column(
+                          children: [
+                            buildDrawerButton(
+                              icon: Icons.edit_document,
+                              label: 'Overview',
+                              drawerRoute: DrawerRoute.overview,
+                              enabled: isProjectSelected
+                            ),
+                            buildDrawerButton(
+                              icon: Icons.translate_rounded,
+                              label: 'Translations',
+                              drawerRoute: DrawerRoute.translations,
+                              enabled: isProjectSelected
+                            ),
+                            buildDrawerButton(
+                              icon: Icons.settings_rounded,
+                              label: 'Settings',
+                              drawerRoute: DrawerRoute.settings,
+                              enabled: isProjectSelected
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -97,6 +116,7 @@ class _AppDrawerState extends State<AppDrawer> {
                       label: 'Logout',
                       onPressed: () async {
                         await locator<AuthApi>().logout();
+                        await closeBlocs();
                         context.go('/login');
                       },
                     ),
@@ -172,6 +192,13 @@ class _AppDrawerState extends State<AppDrawer> {
         ],
       ),
     );
+  }
+
+  Future<void> closeBlocs() async {
+    await locator<ProfileBloc>().close();
+    await locator<ProjectBloc>().close();
+    await locator<ProjectListBloc>().close();
+    await locator<CollabProjectListBloc>().close();
   }
 }
 
