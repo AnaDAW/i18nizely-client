@@ -19,6 +19,8 @@ import 'package:i18nizely/src/infrastructure/project_datasource.dart';
 import 'package:i18nizely/src/infrastructure/translation_datasource.dart';
 import 'package:i18nizely/src/infrastructure/user_datasource.dart';
 
+import '../app/views/home/translations/bloc/translations_bloc.dart';
+
 final locator = GetIt.instance;
 
 void initInjection() {
@@ -49,6 +51,8 @@ void initInjection() {
   locator.registerLazySingleton<ProjectListBloc>(() => ProjectListBloc(locator<ProjectApi>()));
 
   locator.registerLazySingleton<CollabProjectListBloc>(() => CollabProjectListBloc(locator<ProjectApi>()));
+
+  locator.registerLazySingleton<TranslationsBloc>(() => TranslationsBloc(locator<KeyApi>()));
 }
 
 Future<void> initToken() async {

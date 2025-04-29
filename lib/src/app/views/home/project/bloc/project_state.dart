@@ -47,10 +47,6 @@ class ProjectUpdateError extends ProjectLoaded {
   List<Object?> get props => [message, project];
 }
 
-class ProjectDeleted extends ProjectState {
-  const ProjectDeleted();
-}
-
 class ProjectDeleteError extends ProjectLoaded {
   final String message;
 

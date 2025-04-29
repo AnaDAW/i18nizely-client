@@ -8,10 +8,10 @@ import 'package:i18nizely/src/domain/services/project_api.dart';
 class CollabProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
   final ProjectApi projectApi;
 
-  CollabProjectListBloc(this.projectApi) : super(const ProjectListInitial(page: 1, totalPages: 1)) {
+  CollabProjectListBloc(this.projectApi) : super(const ProjectListInitial()) {
     on<GetProjects>(_onGetProjects);
-    on<UpdateProject>(_onUpdateProject);
-    on<DeleteProject>(_onDeleteProject);
+    on<UpdateProjectFromList>(_onUpdateProject);
+    on<DeleteProjectFromList>(_onDeleteProject);
   }
 
   Future<void> _onGetProjects(GetProjects event, Emitter<ProjectListState> emit) async {
@@ -31,7 +31,7 @@ class CollabProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
     }
   }
 
-  Future<void> _onUpdateProject(UpdateProject event, Emitter<ProjectListState> emit) async {
+  Future<void> _onUpdateProject(UpdateProjectFromList event, Emitter<ProjectListState> emit) async {
     if (state is! ProjectListLoaded) return;
     for (Project project in (state as ProjectListLoaded).projects) {
       if (project.id == event.id) {
@@ -41,7 +41,7 @@ class CollabProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
     }
   }
 
-  Future<void> _onDeleteProject(DeleteProject event, Emitter<ProjectListState> emit) async {
+  Future<void> _onDeleteProject(DeleteProjectFromList event, Emitter<ProjectListState> emit) async {
     if (state is! ProjectListLoaded) return;
     for (Project project in (state as ProjectListLoaded).projects) {
       if (project.id != null && project.id! >= event.id) {

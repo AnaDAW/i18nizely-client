@@ -12,15 +12,15 @@ class KeyApiDataSource implements KeyApi {
   const KeyApiDataSource(this.networkService);
 
   @override
-  Future<Either<AppException, List<Key>>> getKeys({required int projectId, int page = 1}) async {
+  Future<Either<AppException, List<TransKey>>> getKeys({required int projectId, int page = 1}) async {
     try {
-      final eitherType = await networkService.post('projects/$projectId/keys/', data: {'page': page});
+      final eitherType = await networkService.get('projects/$projectId/keys/', queryParameters: {'page': page});
       return eitherType.fold((exception) {
         return Left(exception);
       }, (response) async {
-        final List<Key> keys = [];
+        final List<TransKey> keys = [];
         for (var key in response.data) {
-          keys.add(Key.fromJson(key));
+          keys.add(TransKey.fromJson(key));
         }
         return Right(keys);
       });
@@ -36,13 +36,13 @@ class KeyApiDataSource implements KeyApi {
   }
 
   @override
-  Future<Either<AppException, Key>> createKey({required int projectId, required Key newKey}) async {
+  Future<Either<AppException, TransKey>> createKey({required int projectId, required TransKey newKey}) async {
     try {
       final eitherType = await networkService.post('projects/$projectId/keys/', data: newKey.toQueryMap());
       return eitherType.fold((exception) {
         return Left(exception);
       }, (response) async {
-        final Key key = Key.fromJson(response.data);
+        final TransKey key = TransKey.fromJson(response.data);
         return Right(key);
       });
     } catch (e) {
@@ -57,13 +57,13 @@ class KeyApiDataSource implements KeyApi {
   }
 
   @override
-  Future<Either<AppException, Key>> updateKey({required int projectId, required Key newKey}) async {
+  Future<Either<AppException, TransKey>> updateKey({required int projectId, required TransKey newKey}) async {
     try {
       final eitherType = await networkService.patch('projects/$projectId/keys/${newKey.id}/', data: newKey.toQueryMap());
       return eitherType.fold((exception) {
         return Left(exception);
       }, (response) async {
-        final Key key = Key.fromJson(response.data);
+        final TransKey key = TransKey.fromJson(response.data);
         return Right(key);
       });
     } catch (e) {
@@ -78,7 +78,7 @@ class KeyApiDataSource implements KeyApi {
   }
 
   @override
-  Future<Either<AppException, Key>> addImage({required int projectId, required int id, required File image}) async {
+  Future<Either<AppException, TransKey>> addImage({required int projectId, required int id, required File image}) async {
     // TODO: implement addImage
     throw UnimplementedError();
   }

@@ -37,9 +37,10 @@ class UpdateProject extends ProjectEvent {
 
 class DeleteProject extends ProjectEvent {
   final int id;
+  final bool refresh;
 
-  const DeleteProject(this.id);
+  const DeleteProject(this.id, {this.refresh = false});
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [id, refresh];
 }

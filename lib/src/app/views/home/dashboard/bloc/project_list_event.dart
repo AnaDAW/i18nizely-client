@@ -14,23 +14,28 @@ class GetProjects extends ProjectListEvent {
   const GetProjects({required this.page, this.name});
 
   @override
-  List<Object?> get props => [page];
+  List<Object?> get props => [page, name];
 }
 
-class UpdateProject extends ProjectListEvent {
+class CreatedProjectFromList extends ProjectListEvent {
+  const CreatedProjectFromList();
+}
+
+class UpdateProjectFromList extends ProjectListEvent {
   final int id;
 
-  const UpdateProject({required this.id});
+  const UpdateProjectFromList(this.id);
 
   @override
   List<Object?> get props => [id];
 }
 
-class DeleteProject extends ProjectListEvent {
+class DeleteProjectFromList extends ProjectListEvent {
   final int id;
+  final bool refresh;
 
-  const DeleteProject({required this.id});
+  const DeleteProjectFromList(this.id, {this.refresh = false});
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [id, refresh];
 }

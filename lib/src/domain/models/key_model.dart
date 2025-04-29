@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:i18nizely/src/domain/models/translation_model.dart';
 import 'package:i18nizely/src/domain/models/user_model.dart';
 
-class Key extends Equatable {
+class TransKey extends Equatable {
   final int? id;
   final String? name;
   final String? description;
@@ -12,7 +12,7 @@ class Key extends Equatable {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  const Key({
+  const TransKey({
     this.id,
     this.name,
     this.description,
@@ -23,7 +23,7 @@ class Key extends Equatable {
     this.updatedAt
   });
 
-  factory Key.fromJson(Map<String, dynamic> json) {
+  factory TransKey.fromJson(Map<String, dynamic> json) {
     List<Translation> translationList = [];
     if (json['translations'] != null) {
       for (Map<String, dynamic> translation in json['translations']) {
@@ -31,7 +31,7 @@ class Key extends Equatable {
       }
     }
 
-    return Key(
+    return TransKey(
       id: json['id'],
       name: json['name'],
       description: json['description'],

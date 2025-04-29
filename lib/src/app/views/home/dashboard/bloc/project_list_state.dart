@@ -12,7 +12,7 @@ class ProjectListState extends Equatable {
 }
 
 class ProjectListInitial extends ProjectListState {
-  const ProjectListInitial({required super.page, required super.totalPages});
+  const ProjectListInitial({super.page = 1, super.totalPages = 1});
 }
 
 class ProjectListLoading extends ProjectListState {
@@ -35,4 +35,13 @@ class ProjectListError extends ProjectListState {
 
   @override
   List<Object?> get props => [message, page, totalPages];
+}
+
+class ProjectListDeleteError extends ProjectListLoaded {
+  final String message;
+
+  const ProjectListDeleteError(super.projects, {required this.message, required super.page, required super.totalPages});
+
+  @override
+  List<Object?> get props => [projects, message, page, totalPages];
 }

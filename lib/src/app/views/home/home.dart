@@ -7,6 +7,7 @@ import 'package:i18nizely/src/app/views/home/account/bloc/profile_state.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/collab_project_list_bloc.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
+import 'package:i18nizely/src/app/views/home/translations/bloc/translations_bloc.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 
 import 'account/bloc/profile_event.dart';
@@ -24,6 +25,7 @@ class HomeScreen extends StatelessWidget {
         BlocProvider<ProjectListBloc>(create: (_) => locator<ProjectListBloc>()),
         BlocProvider<CollabProjectListBloc>(create: (_) => locator<CollabProjectListBloc>()),
         BlocProvider<ProjectBloc>(create: (_) => locator<ProjectBloc>()),
+        BlocProvider<TranslationsBloc>(create: (_) => locator<TranslationsBloc>()),
       ],
       child: Scaffold(
         body: BlocConsumer<ProfileBloc, ProfileState>(

@@ -32,13 +32,20 @@ class Project extends Equatable {
       }
     }
 
+    List<String> languageList = [];
+    if (json['languages'] != null) {
+      for (String language in json['languages']) {
+        languageList.add(language);
+      }
+    }
+
     return Project(
       id: json['id'],
       name: json['name'],
       description: json['description'],
-      createdBy: User.fromJson(json['created_by']),
+      createdBy: json['created_by'] != null ? User.fromJson(json['created_by']) : null,
       mainLanguage: json['main_language'],
-      languages: json['languages'],
+      languages: languageList,
       collaborators: collaboratorList,
       createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
       updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:i18nizely/shared/domain/models/date_utils.dart';
 import 'package:i18nizely/shared/theme/app_colors.dart';
 import 'package:i18nizely/shared/widgets/app_cards.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_state.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_event.dart';
+import 'package:i18nizely/src/app/views/home/translations/bloc/translations_bloc.dart';
+import 'package:i18nizely/src/app/views/home/translations/bloc/translations_event.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/project_model.dart';
 
@@ -13,8 +14,9 @@ class AppListCard extends StatelessWidget {
   final String emptyText;
   final ProjectListState state;
   final void Function(int) changePage;
+  final void Function(int) deleteProject;
   
-  const AppListCard({super.key, required this.title, required this.emptyText, required this.state, required this.changePage});
+  const AppListCard({super.key, required this.title, required this.emptyText, required this.state, required this.changePage, required this.deleteProject});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class AppListCard extends StatelessWidget {
         children: [
           AppCardTitle(title: title),
           Expanded(
-            child: state is ProjectListLoading ?Center(
+            child: state is ProjectListLoading ? Center(
                 child: CircularProgressIndicator(color: AppColors.detail,),
               ) :
               state is ProjectListError ? Center(
@@ -105,13 +107,16 @@ class AppListCard extends StatelessWidget {
     return Column(
       children: [
         ListTile(
-          title: Text(project.name ?? ''),
+          title: Text(project.name ?? '', overflow: TextOverflow.ellipsis,),
           subtitle: Text(
             'by ${project.createdBy?.firstName} ${project.createdBy?.lastName}',
             style: TextStyle(color: Colors.black45),
           ),
-          trailing: IconButton(onPressed: () {}, icon: Icon(Icons.delete_rounded, color: Colors.red.shade400,)),
-          onTap: () => locator<ProjectBloc>().add(GetProject(project.id ?? 0)),
+          trailing: IconButton(onPressed: () => deleteProject(project.id ?? 0), icon: Icon(Icons.delete_rounded, color: Colors.red.shade400,)),
+          onTap: () {
+            locator<ProjectBloc>().add(GetProject(project.id ?? 0));
+            locator<TranslationsBloc>().add(GetTranslations(projectId: project.id ?? 0, page: 1));
+          },
         ),
         Divider(color: Colors.black45, indent: 10, endIndent: 10,)
       ],

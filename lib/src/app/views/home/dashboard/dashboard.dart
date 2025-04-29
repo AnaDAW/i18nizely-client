@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -18,6 +19,9 @@ import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_event.d
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_state.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_event.dart';
+import 'package:i18nizely/src/app/views/home/project/bloc/project_state.dart';
+import 'package:i18nizely/src/app/views/home/translations/bloc/translations_bloc.dart';
+import 'package:i18nizely/src/app/views/home/translations/bloc/translations_event.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/project_model.dart';
 import 'package:i18nizely/src/domain/models/user_model.dart';
@@ -83,6 +87,10 @@ class DashboardScreen extends StatelessWidget {
                             emptyText: 'No projects created yet.',
                             state: state,
                             changePage: (page) => locator<ProjectListBloc>().add(GetProjects(page: page)),
+                            deleteProject: (id) {
+                              locator<ProjectListBloc>().add(DeleteProjectFromList(id));
+                              locator<ProjectBloc>().add(DeleteProject(id, refresh: true));
+                            },
                           );
                         }
                       ),
@@ -90,7 +98,13 @@ class DashboardScreen extends StatelessWidget {
                         padding: const EdgeInsets.only(bottom: 70, right: 20),
                         child: AppIconButton(
                           icon: Icons.add,
-                          onPressed: () => showCreateDialog(context, profile.language ?? 'en')),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => _DashboardDialog(profileLang: profile.language ?? 'en'),
+                            );
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -107,6 +121,9 @@ class DashboardScreen extends StatelessWidget {
                         emptyText: 'No projects shared with me.',
                         state: state,
                         changePage: (page) => locator<CollabProjectListBloc>().add(GetProjects(page: page)),
+                        deleteProject: (id) {
+                          locator<CollabProjectListBloc>().add(DeleteProjectFromList(id));
+                        },
                       );
                     }
                   ),
@@ -116,15 +133,6 @@ class DashboardScreen extends StatelessWidget {
           ),
         )
       ],
-    );
-  }
-
-  void showCreateDialog(BuildContext context, String profileLang) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return _DashboardDialog(profileLang: profileLang,);
-      },
     );
   }
 }
@@ -222,20 +230,13 @@ class _DashboardDialogState extends State<_DashboardDialog> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(child: AppOutlinedButton(onPressed: () => context.pop(false), text: 'Cancel')),
+                  Expanded(child: AppOutlinedButton(onPressed: () => context.pop(), text: 'Cancel')),
                   SizedBox(width: 50,),
-                  Expanded(child: AppStyledButton(onPressed: () {
+                  Expanded(child: AppStyledButton(text: 'Create', onPressed: () async {
                     if (!_formKey.currentState!.validate()) return;
-
-                    Project project = Project(
-                      name: name,
-                      description: null,
-                      mainLanguage: mainLanguage,
-                      languages: ['es', 'it']
-                    );
-                    locator<ProjectBloc>().add(CreateProject(project));
-                    context.pop(true);
-                  }, text: 'Create')),
+                    await createProject();
+                    context.pop();
+                  })),
                 ],
               ),
             )
@@ -248,5 +249,32 @@ class _DashboardDialogState extends State<_DashboardDialog> {
   Future<void> getLanguages() async {
     String json = await DefaultAssetBundle.of(context).loadString('assets/languages.json');
     setState(() => languages = jsonDecode(json));
+  }
+
+  Future<void> createProject() async {
+    late StreamSubscription subscription;
+    final completer = Completer<void>();
+
+    subscription = locator<ProjectBloc>().stream.listen((state) {
+      if (state is ProjectLoaded) {
+        subscription.cancel();
+        locator<ProjectListBloc>().add(CreatedProjectFromList());
+        locator<TranslationsBloc>().add(GetTranslations(projectId: state.project.id ?? 0, page: 1));
+        completer.complete();
+      } else if (state is ProjectError) {
+        subscription.cancel();
+        completer.completeError(state.message);
+      }
+    });
+
+    Project project = Project(
+        name: name,
+        description: null,
+        mainLanguage: mainLanguage,
+        languages: ['es', 'it']
+    );
+
+    locator<ProjectBloc>().add(CreateProject(project));
+    return completer.future;
   }
 }

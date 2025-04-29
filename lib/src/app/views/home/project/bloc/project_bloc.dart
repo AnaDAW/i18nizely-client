@@ -2,7 +2,6 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_event.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_state.dart';
-import 'package:i18nizely/src/domain/models/project_model.dart';
 import 'package:i18nizely/src/domain/services/project_api.dart';
 
 class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
@@ -67,20 +66,18 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
   }
 
   Future<void> _onDeleteProject(DeleteProject event, Emitter<ProjectState> emit) async {
-    if (state is! ProjectLoaded) return;
-    final Project project = (state as ProjectLoaded).project;
+    if (state is! ProjectLoaded || (state as ProjectLoaded).project.id != event.id) return;
     try {
-      final res = await projectApi.deleteProject(id: event.id);
-      res.fold((left) {
-        emit(ProjectDeleteError((state as ProjectLoaded).project, message: left.message.toString()));
-      }, (right) { 
-        emit(ProjectDeleted());
-        if (event.id == project.id) {
+      if (event.refresh) {
+        emit(ProjectInitial());
+      } else {
+        final res = await projectApi.deleteProject(id: event.id);
+        res.fold((left) {
+          emit(ProjectDeleteError((state as ProjectLoaded).project, message: left.message.toString()));
+        }, (right) {
           emit(ProjectInitial());
-        } else {
-          emit(ProjectLoaded(project));
-        }
-      });
+        });
+      }
     } catch (e) {
       if (kDebugMode) {
         print(e.toString());
