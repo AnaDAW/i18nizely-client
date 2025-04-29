@@ -2,9 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:i18nizely/shared/theme/app_colors.dart';
+import 'package:i18nizely/shared/widgets/app_buttons.dart';
 import 'package:i18nizely/shared/widgets/app_cards.dart';
 import 'package:i18nizely/shared/widgets/app_icons.dart';
 import 'package:i18nizely/shared/widgets/app_textfields.dart';
+import 'package:i18nizely/src/app/common/app_languages_chip.dart';
 import 'package:i18nizely/src/app/common/app_list_card.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_state.dart';
@@ -12,7 +16,10 @@ import 'package:i18nizely/src/app/views/home/dashboard/bloc/collab_project_list_
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_bloc.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_event.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_state.dart';
+import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
+import 'package:i18nizely/src/app/views/home/project/bloc/project_event.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
+import 'package:i18nizely/src/domain/models/project_model.dart';
 import 'package:i18nizely/src/domain/models/user_model.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -151,12 +158,12 @@ class _DashboardDialogState extends State<_DashboardDialog> {
       backgroundColor: Colors.white,
       child: SizedBox(
         width: 800,
-        height: 600,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             AppCardTitle(title: 'New Project'),
             Padding(
-              padding: const EdgeInsets.only(left: 40, bottom: 40, right: 40, top: 20),
+              padding: const EdgeInsets.only(left: 40, bottom: 20, right: 40, top: 20),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -185,12 +192,14 @@ class _DashboardDialogState extends State<_DashboardDialog> {
                       ),
                     ),
                   ),
+                  SizedBox(width: 50,),
                   Expanded(
                     flex: 2,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Main Language', style: TextStyle(fontWeight: FontWeight.bold),),
+                        SizedBox(height: 10,),
                         DropdownButton(
                           value: mainLanguage,
                           items: [
@@ -199,13 +208,37 @@ class _DashboardDialogState extends State<_DashboardDialog> {
                           ],
                           onChanged: (value) => setState(() => mainLanguage = value!),
                         ),
-
+                        SizedBox(height: 30,),
+                        AppLanguagesChip(availableLanguages: ['test', 'prueba'], onChanged: (value) => print('$value'))
                       ],
                     ),
                   ),
                 ],
               ),
             ),
+            Divider(color: AppColors.detail,),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(child: AppOutlinedButton(onPressed: () => context.pop(false), text: 'Cancel')),
+                  SizedBox(width: 50,),
+                  Expanded(child: AppStyledButton(onPressed: () {
+                    if (!_formKey.currentState!.validate()) return;
+
+                    Project project = Project(
+                      name: name,
+                      description: null,
+                      mainLanguage: mainLanguage,
+                      languages: ['es', 'it']
+                    );
+                    locator<ProjectBloc>().add(CreateProject(project));
+                    context.pop(true);
+                  }, text: 'Create')),
+                ],
+              ),
+            )
           ],
         ),
       ),

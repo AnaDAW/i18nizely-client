@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:i18nizely/shared/domain/models/date_utils.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_event.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_state.dart';
-import 'package:intl/intl.dart';
 import 'package:i18nizely/shared/theme/app_colors.dart';
 import 'package:i18nizely/shared/widgets/app_buttons.dart';
 import 'package:i18nizely/shared/widgets/app_icons.dart';
@@ -112,8 +112,12 @@ class _AccountFormState extends State<_AccountForm> {
                   ],
                 ),
                 SizedBox(height: 40,),
-                buildDate('Created at: ${formatDate(widget.profile.createdAt)}'),
-                buildDate('Last update: ${formatDate(widget.profile.updatedAt)}'),
+                buildDate(
+                  'Created at: ${widget.profile.createdAt?.toFormatStringDate(context) ?? 'Unknown'}'
+                ),
+                buildDate(
+                  'Last update: ${widget.profile.updatedAt?.toFormatStringDate(context) ?? 'Unknown'}'
+                ),
               ],
             ),
             SizedBox(width: 50,),
@@ -298,18 +302,5 @@ class _AccountFormState extends State<_AccountForm> {
       format24h: widget.profile.format24h != format24h ? format24h : null,
       dateFormat: widget.profile.dateFormat != dateFormat ? dateFormat : null,
     );
-  }
-
-  String formatDate(DateTime? date) {
-    final DateFormat dateFormatter = DateFormat(widget.profile.dateFormat == UserDateFormat.dmy ? 'dd/MM/yyyy' : 'MM/dd/yyyy');
-
-    if (widget.profile.format24h == null || widget.profile.format24h!) {
-      dateFormatter.add_Hm();
-    } else {
-      dateFormatter.add_jm();
-    }
-
-    final Duration timeZoneOffset = DateTime.now().timeZoneOffset;
-    return date != null ? dateFormatter.format(date.add(timeZoneOffset)) : 'Unknown';
   }
 }

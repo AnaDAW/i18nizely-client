@@ -25,8 +25,10 @@ class Key extends Equatable {
 
   factory Key.fromJson(Map<String, dynamic> json) {
     List<Translation> translationList = [];
-    for (Map<String, dynamic> translation in json['translations']) {
-      translationList.add(Translation.fromJson(translation));
+    if (json['translations'] != null) {
+      for (Map<String, dynamic> translation in json['translations']) {
+        translationList.add(Translation.fromJson(translation));
+      }
     }
 
     return Key(

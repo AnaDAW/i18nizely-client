@@ -43,10 +43,11 @@ class AppOutlinedButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(10),
       child: Container(
         width: double.infinity,
+        height: 60,
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(width: 2,)
+          border: Border.all(width: 1,)
         ),
         alignment: Alignment.center,
         child: Text(

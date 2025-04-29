@@ -54,12 +54,10 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
 
   @override
   Future<Either<AppException, AppResponse>> post(String endpoint, { Map<String, dynamic>? data }) {
-    final FormData? formData = data != null ? FormData.fromMap(data.map((key, value) => MapEntry(key, value.toString()))) : null;
-
     final res = handleException(
       () => dio.post(
         endpoint,
-        data: formData,
+        data: data,
       ),
       endpoint: endpoint,
     );
@@ -68,12 +66,10 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
 
   @override
   Future<Either<AppException, AppResponse>> put(String endpoint, { Map<String, dynamic>? data }) {
-    final FormData? formData = data != null ? FormData.fromMap(data.map((key, value) => MapEntry(key, value.toString()))) : null;
-
     final res = handleException(
       () => dio.put(
         endpoint,
-        data: formData,
+        data: data,
       ),
       endpoint: endpoint,
     );
@@ -82,12 +78,10 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
 
   @override
   Future<Either<AppException, AppResponse>> patch(String endpoint, { Map<String, dynamic>? data }) {
-    final FormData? formData = data != null ? FormData.fromMap(data.map((key, value) => MapEntry(key, value.toString()))): null;
-
     final res = handleException(
       () => dio.patch(
         endpoint,
-        data: formData,
+        data: data,
       ),
       endpoint: endpoint,
     );
@@ -96,12 +90,10 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
 
   @override
   Future<Either<AppException, AppResponse>> delete(String endpoint, { Map<String, dynamic>? data }) {
-    final FormData? formData = data != null ? FormData.fromMap(data.map((key, value) => MapEntry(key, value.toString()))): null;
-
     final res = handleException(
       () => dio.delete(
         endpoint,
-        data: formData,
+        data: data,
       ),
       endpoint: endpoint,
     );

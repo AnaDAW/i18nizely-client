@@ -26,8 +26,10 @@ class Project extends Equatable {
 
   factory Project.fromJson(Map<String, dynamic> json) {
     List<Collaborator> collaboratorList = [];
-    for (Map<String, dynamic> collaborator in json['collaborators']) {
-      collaboratorList.add(Collaborator.fromJson(collaborator));
+    if (json['collaborators'] != null) {
+      for (Map<String, dynamic> collaborator in json['collaborators']) {
+        collaboratorList.add(Collaborator.fromJson(collaborator));
+      }
     }
 
     return Project(
@@ -59,6 +61,7 @@ class Project extends Equatable {
     Map<String, dynamic> map = {};
     if (name != null) map['name'] = name;
     if (description != null) map['description'] = description;
+    if (mainLanguage != null) map['main_language'] = mainLanguage;
     if (languages != null) map['languages'] = languages;
     return map;
   }

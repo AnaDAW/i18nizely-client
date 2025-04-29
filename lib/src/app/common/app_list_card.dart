@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:i18nizely/shared/domain/models/date_utils.dart';
 import 'package:i18nizely/shared/theme/app_colors.dart';
 import 'package:i18nizely/shared/widgets/app_cards.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_state.dart';
+import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
+import 'package:i18nizely/src/app/views/home/project/bloc/project_event.dart';
+import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/project_model.dart';
 
 class AppListCard extends StatelessWidget {
@@ -41,13 +45,11 @@ class AppListCard extends StatelessWidget {
                     emptyText,
                     style: TextStyle(color: Colors.black45),
                   ),
-                ) : SingleChildScrollView(
-                  child: ListView.builder(
-                    itemCount: (state as ProjectListLoaded).projects.length,
-                    itemBuilder: (context, index) {
-                      return buildListItem((state as ProjectListLoaded).projects[index]);
-                    },
-                  ),
+                ) : ListView.builder(
+                  itemCount: (state as ProjectListLoaded).projects.length,
+                  itemBuilder: (context, index) {
+                    return buildListItem((state as ProjectListLoaded).projects[index], context);
+                  },
                 )
               : Container(),
           ),
@@ -99,7 +101,20 @@ class AppListCard extends StatelessWidget {
     );
   }
 
-  Widget buildListItem(Project project) {
-    return ListTile();
+  Widget buildListItem(Project project, BuildContext context) {
+    return Column(
+      children: [
+        ListTile(
+          title: Text(project.name ?? ''),
+          subtitle: Text(
+            'by ${project.createdBy?.firstName} ${project.createdBy?.lastName}',
+            style: TextStyle(color: Colors.black45),
+          ),
+          trailing: IconButton(onPressed: () {}, icon: Icon(Icons.delete_rounded, color: Colors.red.shade400,)),
+          onTap: () => locator<ProjectBloc>().add(GetProject(project.id ?? 0)),
+        ),
+        Divider(color: Colors.black45, indent: 10, endIndent: 10,)
+      ],
+    );
   }
 }

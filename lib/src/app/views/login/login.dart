@@ -64,7 +64,7 @@ class _LoginFormState extends State<_LoginForm> {
             style: TextStyle(fontSize: 36, fontWeight: FontWeight.bold,),
           ),
           SizedBox(height: 75,),
-          AppOutlinedTextField(label: 'Email', hint: 'Type your email', validator: (value) {
+          AppOutlinedTextField(label: 'Email', hint: 'Type your email', actionNext: true, validator: (value) {
             if (value == null || value.isEmpty) return 'Please enter the email';
             email = value;
             return null;
