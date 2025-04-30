@@ -97,7 +97,7 @@ class TranslationsScreen extends StatelessWidget {
                                                     Container(
                                                       height: 200,
                                                       width: 300,
-                                                      padding: EdgeInsets.all(5),
+                                                      padding: EdgeInsets.all(10),
                                                       child: AppElevatedCard(
                                                         child: Padding(
                                                           padding: EdgeInsets.all(10),
@@ -108,10 +108,11 @@ class TranslationsScreen extends StatelessWidget {
                                                                 child: Text(key.name.toString(),),
                                                               ),
                                                               Column(
+                                                                mainAxisAlignment: MainAxisAlignment.end,
                                                                 children: [
                                                                   IconButton(onPressed: () {}, icon: Icon(Icons.edit_rounded)),
-                                                                  IconButton(onPressed: () {}, icon: Icon(Icons.edit_rounded)),
-                                                                  IconButton(onPressed: () {}, icon: Icon(Icons.edit_rounded))
+                                                                  IconButton(onPressed: () {}, icon: Icon(Icons.check_rounded)),
+                                                                  IconButton(onPressed: () {}, icon: Icon(Icons.delete_rounded)),
                                                                 ],
                                                               ),
                                                             ],
@@ -192,7 +193,7 @@ class TranslationsScreen extends StatelessWidget {
     return Container(
       height: 200,
       width: 300,
-      padding: EdgeInsets.all(5),
+      padding: EdgeInsets.all(10),
       child: AppElevatedCard(
         child: Padding(
           padding: EdgeInsets.all(10),
@@ -203,10 +204,12 @@ class TranslationsScreen extends StatelessWidget {
                 child: Text(text,),
               ),
               Column(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   IconButton(onPressed: () {}, icon: Icon(Icons.edit_rounded)),
-                  IconButton(onPressed: () {}, icon: Icon(Icons.edit_rounded)),
-                  IconButton(onPressed: () {}, icon: Icon(Icons.edit_rounded))
+                  IconButton(onPressed: () {}, icon: Icon(Icons.check_rounded)),
+                  IconButton(onPressed: () {}, icon: Icon(Icons.comment_rounded)),
+                  IconButton(onPressed: () {}, icon: Icon(Icons.restore_rounded)),
                 ],
               ),
             ],

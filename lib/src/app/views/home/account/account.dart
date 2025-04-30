@@ -52,7 +52,7 @@ class _AccountFormState extends State<_AccountForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController passwordCtl = TextEditingController();
 
-  Map<String, dynamic> languages = {};
+  late Map<String, dynamic> languages;
   bool showPassword = false;
   late String firstName;
   late String lastName;
@@ -63,7 +63,7 @@ class _AccountFormState extends State<_AccountForm> {
 
   @override
   void initState() {
-    getLanguages();
+    languages = AppConfig.languages;
 
     firstName = widget.profile.firstName ?? '';
     lastName = widget.profile.lastName ?? '';
@@ -72,6 +72,12 @@ class _AccountFormState extends State<_AccountForm> {
     format24h = widget.profile.format24h ?? true;
     dateFormat = widget.profile.dateFormat ?? UserDateFormat.dmy;
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    passwordCtl.dispose();
+    super.dispose();
   }
 
   @override
@@ -275,10 +281,6 @@ class _AccountFormState extends State<_AccountForm> {
         fontSize: 12,
       ),
     );
-  }
-
-  void getLanguages() {
-    setState(() => languages = AppConfig.languages);
   }
 
   User getUpdatedUser() {

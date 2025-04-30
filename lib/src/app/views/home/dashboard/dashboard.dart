@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,7 +9,6 @@ import 'package:i18nizely/shared/widgets/app_buttons.dart';
 import 'package:i18nizely/shared/widgets/app_cards.dart';
 import 'package:i18nizely/shared/widgets/app_icons.dart';
 import 'package:i18nizely/shared/widgets/app_textfields.dart';
-import 'package:i18nizely/src/app/common/app_languages_chip.dart';
 import 'package:i18nizely/src/app/common/app_list_card.dart';
 import 'package:i18nizely/src/app/common/app_title_bar.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
@@ -27,6 +25,8 @@ import 'package:i18nizely/src/app/views/home/translations/bloc/translations_even
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/project_model.dart';
 import 'package:i18nizely/src/domain/models/user_model.dart';
+
+import '../../../common/app_languages_chip.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -127,15 +127,16 @@ class _DashboardDialog extends StatefulWidget {
 
 class _DashboardDialogState extends State<_DashboardDialog> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  Map<String, dynamic> languages = {};
+  late Map<String, dynamic> languages;
   late String mainLanguage;
   late String name;
-  final List<String> selectedLang = [];
+  late String? description;
+  List<String> selectedLang = [];
 
   @override
   void initState() {
     mainLanguage = widget.profileLang;
-    getLanguages();
+    languages = AppConfig.languages;
     super.initState();
   }
 
@@ -155,7 +156,6 @@ class _DashboardDialogState extends State<_DashboardDialog> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    flex: 3,
                     child: Form(
                       key: _formKey,
                       child: Column(
@@ -174,6 +174,14 @@ class _DashboardDialogState extends State<_DashboardDialog> {
                             label: 'Project Description',
                             hint: 'Type the project description here. (optional)',
                             maxLines: 5,
+                            validator: (value) {
+                              if (value != null && value.isNotEmpty) {
+                                description = value;
+                              } else {
+                                description = null;
+                              }
+                              return null;
+                            },
                           ),
                         ],
                       ),
@@ -181,7 +189,6 @@ class _DashboardDialogState extends State<_DashboardDialog> {
                   ),
                   SizedBox(width: 50,),
                   Expanded(
-                    flex: 2,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -196,7 +203,11 @@ class _DashboardDialogState extends State<_DashboardDialog> {
                           onChanged: (value) => setState(() => mainLanguage = value!),
                         ),
                         SizedBox(height: 30,),
-                        AppLanguagesChip(availableLanguages: ['test', 'prueba'], onChanged: (value) => print('$value'))
+                        AppLanguagesChip(
+                          mainLanguage: mainLanguage,
+                          languages: languages,
+                          onChange: (value) => selectedLang = value,
+                        ),
                       ],
                     ),
                   ),
@@ -225,10 +236,6 @@ class _DashboardDialogState extends State<_DashboardDialog> {
     );
   }
 
-  void getLanguages() {
-    setState(() => languages = AppConfig.languages);
-  }
-
   Future<void> createProject() async {
     late StreamSubscription subscription;
     final completer = Completer<void>();
@@ -247,9 +254,9 @@ class _DashboardDialogState extends State<_DashboardDialog> {
 
     Project project = Project(
         name: name,
-        description: null,
+        description: description,
         mainLanguage: mainLanguage,
-        languages: ['es', 'it']
+        languages: selectedLang
     );
 
     locator<ProjectBloc>().add(CreateProject(project));

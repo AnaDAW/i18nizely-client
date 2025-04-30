@@ -10,12 +10,13 @@ class AppOutlinedTextField extends StatelessWidget {
   final Widget? icon;
   final TextEditingController? controller;
   final void Function(String)? onSubmit;
+  final void Function(String)? onChange;
   final int maxLines;
-  final bool actionNext;
+  final TextInputAction? textInputAction;
 
   const AppOutlinedTextField({
     super.key, required this.label, this.initialValue, required this.hint, this.validator, this.obscureText = false,
-    this.icon, this.controller, this.onSubmit, this.maxLines = 1, this.actionNext = false
+    this.icon, this.controller, this.onSubmit, this.maxLines = 1, this.textInputAction, this.onChange
   });
 
   @override
@@ -45,56 +46,9 @@ class AppOutlinedTextField extends StatelessWidget {
           ),
           obscureText: obscureText,
           onFieldSubmitted: onSubmit,
-          maxLines: maxLines,
-          textInputAction: actionNext ? TextInputAction.next : null,
-        ),
-      ],
-    );
-  }
-}
-
-class AppChipTextField extends StatelessWidget {
-  final String label;
-  final String? Function(String?)? validator;
-  final TextEditingController controller;
-  final void Function(String) onSubmit;
-  final void Function(String) onChange;
-  final int maxLines;
-  final TextStyle? style;
-  final StrutStyle? strutStyle;
-
-  const AppChipTextField({
-    super.key, required this.label,this.validator, required this.controller, required this.onSubmit, required this.onChange,
-    required this.maxLines, required this.style, required this.strutStyle
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Align(
-          alignment: Alignment.bottomLeft,
-          child: Text(
-            label,
-            style: TextStyle(fontWeight: FontWeight.bold,),
-          ),
-        ),
-        SizedBox(height: 10,),
-        TextFormField(
-          controller: controller,
-          validator: validator,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(width: 1),
-            ),
-          ),
-          onFieldSubmitted: onSubmit,
           onChanged: onChange,
           maxLines: maxLines,
-          textInputAction: TextInputAction.continueAction,
-          style: style,
-          strutStyle: strutStyle,
+          textInputAction: textInputAction,
         ),
       ],
     );
