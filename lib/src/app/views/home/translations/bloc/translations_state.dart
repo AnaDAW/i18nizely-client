@@ -36,3 +36,12 @@ class TranslationsError extends TranslationsState {
   @override
   List<Object?> get props => [message, page, totalPages];
 }
+
+class KeyCreateError extends TranslationsLoaded {
+  final String message;
+
+  const KeyCreateError(super.keys, {required this.message, required super.page, required super.totalPages});
+
+  @override
+  List<Object?> get props => [keys, message, page, totalPages];
+}

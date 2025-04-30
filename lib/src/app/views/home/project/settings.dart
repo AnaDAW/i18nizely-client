@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:i18nizely/shared/widgets/app_textfields.dart';
+import 'package:i18nizely/src/app/common/app_title_bar.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -9,18 +10,7 @@ class SettingsScreen extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Settings'),
-            SizedBox(
-              width: 600,
-              child: AppSearchTextField(hint: 'Search something', onSubmit: (_) {},),
-              ),
-            Text('User'),
-          ],
-        ),
+        AppTitleBar(title: ' Project Settings')
       ],
     );
   }

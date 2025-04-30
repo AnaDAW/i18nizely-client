@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:i18nizely/shared/config/app_config.dart';
 import 'package:i18nizely/src/app/router/app_router.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:window_size/window_size.dart';
@@ -24,6 +25,8 @@ class I18nizely extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppConfig.initLanguages(context);
+    
     return MaterialApp.router(
       title: 'i18nizely',
       debugShowCheckedModeBanner: false,

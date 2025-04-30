@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:i18nizely/shared/config/app_config.dart';
 import 'package:i18nizely/shared/theme/app_colors.dart';
 import 'package:i18nizely/shared/widgets/app_buttons.dart';
 import 'package:i18nizely/shared/widgets/app_cards.dart';
@@ -11,6 +12,7 @@ import 'package:i18nizely/shared/widgets/app_icons.dart';
 import 'package:i18nizely/shared/widgets/app_textfields.dart';
 import 'package:i18nizely/src/app/common/app_languages_chip.dart';
 import 'package:i18nizely/src/app/common/app_list_card.dart';
+import 'package:i18nizely/src/app/common/app_title_bar.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_state.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/collab_project_list_bloc.dart';
@@ -36,37 +38,14 @@ class DashboardScreen extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: [
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(color: Colors.black12, blurRadius: 10,),
-            ],
-          ),
-          child: Stack(
-            alignment: Alignment.centerLeft,
-            children: [
-              Text(
-                'Dashboard',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,),
-              ),
-              Center(
-                child: SizedBox(
-                  width: 500,
-                  child: AppSearchTextField(
-                    hint: 'Search a project...',
-                    onSubmit: (value) {
-                      final name = value.isNotEmpty ? value : null;
-                      locator<ProjectListBloc>().add(GetProjects(page: 1, name: name));
-                      locator<CollabProjectListBloc>().add(GetProjects(page: 1, name: name));
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
+        AppTitleBar(
+          title: 'Dashboard',
+          hasSearch: true,
+          hint: 'Search a project...',
+          onSumitSearch: (value) {
+            locator<ProjectListBloc>().add(GetProjects(page: 1, name: value));
+            locator<CollabProjectListBloc>().add(GetProjects(page: 1, name: value));
+          },
         ),
         Expanded(
           child: Padding(
@@ -95,7 +74,7 @@ class DashboardScreen extends StatelessWidget {
                         }
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 70, right: 20),
+                        padding: const EdgeInsets.only(bottom: 25, right: 20),
                         child: AppIconButton(
                           icon: Icons.add,
                           onPressed: () {
@@ -246,9 +225,8 @@ class _DashboardDialogState extends State<_DashboardDialog> {
     );
   }
 
-  Future<void> getLanguages() async {
-    String json = await DefaultAssetBundle.of(context).loadString('assets/languages.json');
-    setState(() => languages = jsonDecode(json));
+  void getLanguages() {
+    setState(() => languages = AppConfig.languages);
   }
 
   Future<void> createProject() async {
@@ -258,7 +236,7 @@ class _DashboardDialogState extends State<_DashboardDialog> {
     subscription = locator<ProjectBloc>().stream.listen((state) {
       if (state is ProjectLoaded) {
         subscription.cancel();
-        locator<ProjectListBloc>().add(CreatedProjectFromList());
+        locator<ProjectListBloc>().add(CreateProjectFromList());
         locator<TranslationsBloc>().add(GetTranslations(projectId: state.project.id ?? 0, page: 1));
         completer.complete();
       } else if (state is ProjectError) {

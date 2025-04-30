@@ -1,6 +1,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:i18nizely/shared/config/app_config.dart';
 import 'package:i18nizely/shared/domain/services/network_service.dart';
 import 'package:i18nizely/shared/exceptions/http_exception.dart';
 import 'package:i18nizely/shared/domain/models/either_model.dart';
@@ -18,7 +19,7 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
   }
 
   BaseOptions get dioBaseOptions => BaseOptions(
-    baseUrl: 'http://localhost:8000/',
+    baseUrl: AppConfig.baseUrl,
     headers: {},
   );
 

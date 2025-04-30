@@ -9,6 +9,7 @@ class TranslationsBloc extends Bloc<TranslationsEvent, TranslationsState> {
 
   TranslationsBloc(this.keyApi) : super(const TranslationsInitial()) {
     on<GetTranslations>(_onGetTranslations);
+    on<CreateKey>(_onCreateKey);
   }
 
   Future<void> _onGetTranslations(GetTranslations event, Emitter<TranslationsState> emit) async {
@@ -25,6 +26,23 @@ class TranslationsBloc extends Bloc<TranslationsEvent, TranslationsState> {
         print(e.toString());
       }
       emit(TranslationsError(e.toString(), page: event.page, totalPages: state.totalPages));
+    }
+  }
+
+  Future<void> _onCreateKey(CreateKey event, Emitter<TranslationsState> emit) async {
+    if (state is! TranslationsLoaded) return;
+    try {
+      final res = await keyApi.createKey(projectId: event.projectId, newKey: event.newKey);
+      await res.fold((left) {
+        emit(KeyCreateError((state as TranslationsLoaded).keys, message: left.message.toString(), page: state.page, totalPages: state.totalPages));
+      }, (right) async {
+        await _onGetTranslations(GetTranslations(projectId: event.projectId, page: state.totalPages), emit);
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+      emit(KeyCreateError((state as TranslationsLoaded).keys, message: e.toString(), page: state.page, totalPages: state.totalPages));
     }
   }
 }

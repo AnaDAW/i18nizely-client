@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:i18nizely/shared/theme/app_colors.dart';
 import 'package:i18nizely/shared/widgets/app_cards.dart';
+import 'package:i18nizely/src/app/common/app_pages_bar.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_state.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_event.dart';
@@ -55,38 +56,10 @@ class AppListCard extends StatelessWidget {
                 )
               : Container(),
           ),
-          Divider(color: AppColors.detail, indent: 10, endIndent: 10,),
-          Padding(
-            padding: EdgeInsets.only(bottom: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                buildIconButton(
-                  icon: Icons.skip_previous_rounded,
-                  onPressed: () => changePage(1),
-                  enable: state.page != 1
-                ),
-                buildIconButton(
-                  icon: Icons.navigate_before_rounded,
-                  onPressed: () => changePage(state.page - 1),
-                  enable: state.page != 1
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Text('${state.page} of ${state.totalPages}', style: TextStyle(color: Colors.black45),),
-                ),
-                buildIconButton(
-                  icon: Icons.navigate_next_rounded,
-                  onPressed: () => changePage(state.page + 1),
-                  enable: state.page != state.totalPages
-                ),
-                buildIconButton(
-                  icon: Icons.skip_next_rounded,
-                  onPressed: () => changePage(state.totalPages),
-                  enable: state.page != state.totalPages
-                ),
-              ],
-            ),
+          AppPagesBar(
+            page: state.page,
+            totalPages: state.totalPages,
+            changePage: changePage,
           ),
         ],
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:i18nizely/shared/widgets/app_textfields.dart';
+import 'package:i18nizely/src/app/common/app_title_bar.dart';
 
 class OverviewScreen extends StatelessWidget {
   const OverviewScreen({super.key});
@@ -9,18 +10,7 @@ class OverviewScreen extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: [
-        Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('Overview'),
-            SizedBox(
-              width: 600,
-              child: AppSearchTextField(hint: 'Search something', onSubmit: (_) {},),
-              ),
-            Text('User'),
-          ],
-        ),
+        AppTitleBar(title: 'Project Overview')
       ],
     );
   }

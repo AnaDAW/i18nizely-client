@@ -17,8 +17,8 @@ class GetProjects extends ProjectListEvent {
   List<Object?> get props => [page, name];
 }
 
-class CreatedProjectFromList extends ProjectListEvent {
-  const CreatedProjectFromList();
+class CreateProjectFromList extends ProjectListEvent {
+  const CreateProjectFromList();
 }
 
 class UpdateProjectFromList extends ProjectListEvent {

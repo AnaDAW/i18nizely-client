@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:i18nizely/shared/config/app_config.dart';
 import 'package:i18nizely/shared/domain/models/date_utils.dart';
+import 'package:i18nizely/src/app/common/app_title_bar.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_event.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_state.dart';
@@ -25,20 +27,7 @@ class AccountScreen extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(color: Colors.black12, blurRadius: 10,),
-            ],
-          ),
-          child: Text(
-            'Account Settings',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,),
-          ),
-        ),
+        AppTitleBar(title: 'Account Settings',),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(70),
@@ -288,9 +277,8 @@ class _AccountFormState extends State<_AccountForm> {
     );
   }
 
-  Future<void> getLanguages() async {
-    String json = await DefaultAssetBundle.of(context).loadString('assets/languages.json');
-    setState(() => languages = jsonDecode(json));
+  void getLanguages() {
+    setState(() => languages = AppConfig.languages);
   }
 
   User getUpdatedUser() {

@@ -10,7 +10,7 @@ class ProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
 
   ProjectListBloc(this.projectApi) : super(const ProjectListInitial(page: 1, totalPages: 1)) {
     on<GetProjects>(_onGetProjects);
-    on<CreatedProjectFromList>(_onCreateProjectFromList);
+    on<CreateProjectFromList>(_onCreateProjectFromList);
     on<UpdateProjectFromList>(_onUpdateProjectFromList);
     on<DeleteProjectFromList>(_onDeleteProjectFromList);
   }
@@ -32,7 +32,7 @@ class ProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
     }
   }
 
-  Future<void> _onCreateProjectFromList(CreatedProjectFromList event, Emitter<ProjectListState> emit) async {
+  Future<void> _onCreateProjectFromList(CreateProjectFromList event, Emitter<ProjectListState> emit) async {
     if (state is! ProjectListLoaded) return;
     if (state.page == state.totalPages) {
       await _onGetProjects(GetProjects(page: state.page), emit);
