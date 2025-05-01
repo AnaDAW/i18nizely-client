@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_event.dart';
@@ -8,27 +10,10 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
   final ProjectApi projectApi;
 
   ProjectBloc(this.projectApi) : super(const ProjectInitial()) {
-    on<CreateProject>(_onCreateProject);
     on<GetProject>(_onGetProject);
     on<UpdateProject>(_onUpdateProject);
     on<DeleteProject>(_onDeleteProject);
-  }
-
-  Future<void> _onCreateProject(CreateProject event, Emitter<ProjectState> emit) async {
-    emit(const ProjectLoading());
-    try {
-      final res = await projectApi.createProject(newProject: event.project);
-      res.fold((left) {
-        emit(ProjectError(left.message.toString()));
-      }, (right) {
-        emit(ProjectLoaded(right));
-      });
-    } catch (e) {
-      if (kDebugMode) {
-        print(e.toString());
-      }
-      emit(ProjectError(e.toString()));
-    }
+    on<ResetProject>(_onResetProject);
   }
 
   Future<void> _onGetProject(GetProject event, Emitter<ProjectState> emit) async {
@@ -69,13 +54,13 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
     if (state is! ProjectLoaded || (state as ProjectLoaded).project.id != event.id) return;
     try {
       if (event.refresh) {
-        emit(ProjectInitial());
+        emit(const ProjectInitial());
       } else {
         final res = await projectApi.deleteProject(id: event.id);
         res.fold((left) {
           emit(ProjectDeleteError((state as ProjectLoaded).project, message: left.message.toString()));
         }, (right) {
-          emit(ProjectInitial());
+          emit(const ProjectDeleted());
         });
       }
     } catch (e) {
@@ -84,5 +69,9 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       }
       emit(ProjectDeleteError((state as ProjectLoaded).project, message: e.toString()));
     }
+  }
+
+  Future<void> _onResetProject(ResetProject event, Emitter<ProjectState> emit) async {
+    emit(const ProjectInitial());
   }
 }

@@ -8,15 +8,6 @@ abstract class ProjectEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class CreateProject extends ProjectEvent {
-  final Project project;
-
-  const CreateProject(this.project);
-
-  @override
-  List<Object?> get props => [project];
-}
-
 class GetProject extends ProjectEvent {
   final int id;
 
@@ -43,4 +34,8 @@ class DeleteProject extends ProjectEvent {
 
   @override
   List<Object?> get props => [id, refresh];
+}
+
+class ResetProject extends ProjectEvent {
+  const ResetProject();
 }

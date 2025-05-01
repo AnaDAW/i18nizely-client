@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:i18nizely/src/domain/models/project_model.dart';
 
 abstract class ProjectListEvent extends Equatable {
   const ProjectListEvent();
@@ -17,14 +18,19 @@ class GetProjects extends ProjectListEvent {
   List<Object?> get props => [page, name];
 }
 
-class CreateProjectFromList extends ProjectListEvent {
-  const CreateProjectFromList();
+class CreateProject extends ProjectListEvent {
+  final Project project;
+
+  const CreateProject(this.project);
+
+  @override
+  List<Object?> get props => [project];
 }
 
-class UpdateProjectFromList extends ProjectListEvent {
+class UpdateProjectList extends ProjectListEvent {
   final int id;
 
-  const UpdateProjectFromList(this.id);
+  const UpdateProjectList(this.id);
 
   @override
   List<Object?> get props => [id];
@@ -38,4 +44,8 @@ class DeleteProjectFromList extends ProjectListEvent {
 
   @override
   List<Object?> get props => [id, refresh];
+}
+
+class ResetProjectList extends ProjectListEvent {
+  const ResetProjectList();
 }

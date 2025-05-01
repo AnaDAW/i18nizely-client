@@ -3,6 +3,16 @@ import 'package:go_router/go_router.dart';
 import 'package:i18nizely/shared/widgets/app_buttons.dart';
 import 'package:i18nizely/shared/widgets/app_textfields.dart';
 import 'package:i18nizely/shared/theme/app_colors.dart';
+import 'package:i18nizely/src/app/router/app_router.dart';
+import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
+import 'package:i18nizely/src/app/views/home/account/bloc/profile_event.dart';
+import 'package:i18nizely/src/app/views/home/dashboard/bloc/collab_project_list_bloc.dart';
+import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_bloc.dart';
+import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_event.dart';
+import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
+import 'package:i18nizely/src/app/views/home/project/bloc/project_event.dart';
+import 'package:i18nizely/src/app/views/home/translations/bloc/translations_bloc.dart';
+import 'package:i18nizely/src/app/views/home/translations/bloc/translations_event.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/services/auth_api.dart';
 
@@ -49,6 +59,12 @@ class _LoginFormState extends State<_LoginForm> {
   String invalidMsg = '';
   bool isLogging = false;
   bool showPassword = false;
+
+  @override
+  void initState() {
+    resetBlocs();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,9 +131,17 @@ class _LoginFormState extends State<_LoginForm> {
     final res = await locator<AuthApi>().login(email: email, password: password);
     res.fold(
       (left) => setState(() => invalidMsg = 'No active account found with the given credentials.'),
-      (rigth) => context.go('/')
+      (rigth) => context.goNamed(DrawerRoute.dashboard.name)
     );
 
     isLogging = false;
+  }
+
+  void resetBlocs() {
+    locator<ProfileBloc>().add(ResetProfile());
+    locator<ProjectBloc>().add(ResetProject());
+    locator<ProjectListBloc>().add(ResetProjectList());
+    locator<CollabProjectListBloc>().add(ResetProjectList());
+    locator<TranslationsBloc>().add(ResetTranslations());
   }
 }

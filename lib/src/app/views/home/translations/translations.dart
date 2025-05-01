@@ -24,7 +24,12 @@ class TranslationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Project project = context.select((ProjectBloc bloc) => (bloc.state as ProjectLoaded).project);
+    final Project project = context.select((ProjectBloc bloc) {
+      if (bloc.state is ProjectLoaded) {
+        return (bloc.state as ProjectLoaded).project;
+      }
+      return Project();
+    });
     final Map<String, dynamic> languages = AppConfig.languages;
 
     return Column(

@@ -12,6 +12,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<UpdateProfile>(_onUpdateProfile);
     on<ChangeProfileImage>(_onChangeProfileImage);
     on<DeleteProfile>(_onDeleteProfile);
+    on<ResetProfile>(_onResetProfile);
   }
 
   Future<void> _onGetProfile(GetProfile event, Emitter<ProfileState> emit) async {
@@ -72,7 +73,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       res.fold((left) {
         emit(ProfileDeleteError((state as ProfileLoaded).profile, left.message.toString()));
       }, (right) {
-        emit(ProfileDeleted());
+        emit(const ProfileDeleted());
       });
     } catch (e) {
       if (kDebugMode) {
@@ -80,5 +81,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
       emit(ProfileDeleteError((state as ProfileLoaded).profile, e.toString()));
     }
+  }
+
+  Future<void> _onResetProfile(ResetProfile event, Emitter<ProfileState> emit) async {
+    emit(const ProfileInitial());
   }
 }

@@ -35,3 +35,7 @@ class ChangeProfileImage extends ProfileEvent {
 class DeleteProfile extends ProfileEvent {
   const DeleteProfile();
 }
+
+class ResetProfile extends ProfileEvent {
+  const ResetProfile();
+}

@@ -21,7 +21,12 @@ class AccountScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final User profile = context.select((ProfileBloc bloc) => (bloc.state as ProfileLoaded).profile);
+    final User profile = context.select((ProfileBloc bloc) {
+      if (bloc.state is ProfileLoaded) {
+        return (bloc.state as ProfileLoaded).profile;
+      }
+      return User();
+    });
 
     return Column(
       mainAxisSize: MainAxisSize.max,

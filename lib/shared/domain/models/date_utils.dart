@@ -7,7 +7,12 @@ import 'package:intl/intl.dart';
 
 extension AppDateExtension on DateTime {
   String toFormatStringDate(BuildContext context) {
-    final User profile = context.select((ProfileBloc bloc) => (bloc.state as ProfileLoaded).profile);
+    final User profile = context.select((ProfileBloc bloc) {
+      if (bloc.state is ProfileLoaded) {
+        return (bloc.state as ProfileLoaded).profile;
+      }
+      return User();
+    });
     final DateFormat dateFormatter = DateFormat(profile.dateFormat == UserDateFormat.mdy ? 'MM/dd/yyyy' : 'dd/MM/yyyy');
 
     if (profile.format24h == false) {

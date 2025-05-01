@@ -27,3 +27,7 @@ class CreateKey extends TranslationsEvent {
   @override
   List<Object?> get props => [projectId, newKey];
 }
+
+class ResetTranslations extends TranslationsEvent {
+  const ResetTranslations();
+}

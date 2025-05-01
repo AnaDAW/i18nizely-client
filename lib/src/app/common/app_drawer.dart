@@ -1,14 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:i18nizely/shared/theme/app_colors.dart';
 import 'package:i18nizely/shared/widgets/app_icons.dart';
 import 'package:i18nizely/src/app/router/app_router.dart';
-import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
-import 'package:i18nizely/src/app/views/home/dashboard/bloc/collab_project_list_bloc.dart';
-import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_state.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
@@ -71,7 +66,20 @@ class _AppDrawerState extends State<AppDrawer> {
                       label: 'Dashboard',
                       drawerRoute: DrawerRoute.dashboard
                     ),
-                    BlocBuilder<ProjectBloc, ProjectState>(
+                    BlocConsumer<ProjectBloc, ProjectState>(
+                      listenWhen: (previous, current) => (previous is ProjectInitial && current is! ProjectInitial) || current is ProjectDeleted,
+                      listener: (context, state) {
+                        late final DrawerRoute drawerRoute;
+                        if (state is ProjectDeleted) {
+                          drawerRoute = DrawerRoute.dashboard;
+                        } else {
+                          drawerRoute = DrawerRoute.overview;
+                        }
+                        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                          context.goNamed(drawerRoute.name);
+                          setState(() => selectedIndex = drawerRoute.index);
+                        });
+                      },
                       buildWhen: (previous, current) {
                         return (previous is ProjectInitial && current is! ProjectInitial) || (previous is! ProjectInitial && current is ProjectInitial);
                       },
@@ -119,7 +127,6 @@ class _AppDrawerState extends State<AppDrawer> {
                       label: 'Logout',
                       onPressed: () async {
                         await locator<AuthApi>().logout();
-                        await closeBlocs();
                         context.go('/login');
                       },
                     ),
@@ -195,13 +202,6 @@ class _AppDrawerState extends State<AppDrawer> {
         ],
       ),
     );
-  }
-
-  Future<void> closeBlocs() async {
-    await locator<ProfileBloc>().close();
-    await locator<ProjectBloc>().close();
-    await locator<ProjectListBloc>().close();
-    await locator<CollabProjectListBloc>().close();
   }
 }
 

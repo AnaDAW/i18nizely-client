@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:i18nizely/src/app/views/home/translations/bloc/translations_event.dart';
@@ -10,6 +12,7 @@ class TranslationsBloc extends Bloc<TranslationsEvent, TranslationsState> {
   TranslationsBloc(this.keyApi) : super(const TranslationsInitial()) {
     on<GetTranslations>(_onGetTranslations);
     on<CreateKey>(_onCreateKey);
+    on<ResetTranslations>(_onResetTranslations);
   }
 
   Future<void> _onGetTranslations(GetTranslations event, Emitter<TranslationsState> emit) async {
@@ -44,5 +47,9 @@ class TranslationsBloc extends Bloc<TranslationsEvent, TranslationsState> {
       }
       emit(KeyCreateError((state as TranslationsLoaded).keys, message: e.toString(), page: state.page, totalPages: state.totalPages));
     }
+  }
+
+  Future<void> _onResetTranslations(ResetTranslations event, Emitter<TranslationsState> emit) async {
+    emit(const TranslationsInitial());
   }
 }

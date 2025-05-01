@@ -8,6 +8,7 @@ import 'package:i18nizely/shared/theme/app_colors.dart';
 import 'package:i18nizely/shared/widgets/app_buttons.dart';
 import 'package:i18nizely/shared/widgets/app_cards.dart';
 import 'package:i18nizely/shared/widgets/app_icons.dart';
+import 'package:i18nizely/shared/widgets/app_snackbar.dart';
 import 'package:i18nizely/shared/widgets/app_textfields.dart';
 import 'package:i18nizely/src/app/common/app_list_card.dart';
 import 'package:i18nizely/src/app/common/app_title_bar.dart';
@@ -19,7 +20,6 @@ import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_event.d
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_state.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_event.dart';
-import 'package:i18nizely/src/app/views/home/project/bloc/project_state.dart';
 import 'package:i18nizely/src/app/views/home/translations/bloc/translations_bloc.dart';
 import 'package:i18nizely/src/app/views/home/translations/bloc/translations_event.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
@@ -33,7 +33,13 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final User profile = context.select((ProfileBloc bloc) => (bloc.state as ProfileLoaded).profile);
+    final User profile = context.select((ProfileBloc bloc) {
+      if (bloc.state is ProfileLoaded) {
+        return (bloc.state as ProfileLoaded).profile;
+      }
+      return User();
+    });
+    String? name;
 
     return Column(
       mainAxisSize: MainAxisSize.max,
@@ -43,8 +49,13 @@ class DashboardScreen extends StatelessWidget {
           hasSearch: true,
           hint: 'Search a project...',
           onSumitSearch: (value) {
-            locator<ProjectListBloc>().add(GetProjects(page: 1, name: value));
-            locator<CollabProjectListBloc>().add(GetProjects(page: 1, name: value));
+            if (value != null && value.isNotEmpty) {
+              name = value;
+            } else {
+              name = null;
+            }
+            locator<ProjectListBloc>().add(GetProjects(page: 1, name: name));
+            locator<CollabProjectListBloc>().add(GetProjects(page: 1, name: name));
           },
         ),
         Expanded(
@@ -56,7 +67,18 @@ class DashboardScreen extends StatelessWidget {
                   child: Stack(
                     alignment: Alignment.bottomRight,
                     children: [
-                      BlocBuilder<ProjectListBloc, ProjectListState>(
+                      BlocConsumer<ProjectListBloc, ProjectListState>(
+                        listener: (context, state) {
+                          if (state is ProjectCreated) {
+                            AppSnackBar.showSnackBar(context, text: 'Project created');
+                          } else if (state is ProjectCreateError) {
+                            AppSnackBar.showSnackBar(context, text: 'Error creating the profile', isError: true);
+                          } else if (state is ProjectFromListDeleted) {
+                            AppSnackBar.showSnackBar(context, text: 'Project deleted');
+                          } else if (state is ProjectFromListDeleteError) {
+                            AppSnackBar.showSnackBar(context, text: 'Error deleting the project', isError: true);
+                          }
+                        },
                         builder: (context, state) {
                           if (state is ProjectListInitial) {
                             locator<ProjectListBloc>().add(GetProjects(page: state.page));
@@ -65,10 +87,9 @@ class DashboardScreen extends StatelessWidget {
                             title: 'My Projects',
                             emptyText: 'No projects created yet.',
                             state: state,
-                            changePage: (page) => locator<ProjectListBloc>().add(GetProjects(page: page)),
-                            deleteProject: (id) {
-                              locator<ProjectListBloc>().add(DeleteProjectFromList(id));
-                              locator<ProjectBloc>().add(DeleteProject(id, refresh: true));
+                            changePage: (page) => locator<ProjectListBloc>().add(GetProjects(page: page, name: name)),
+                            deleteProject: (id) async {
+                              await deleteProject(id);
                             },
                           );
                         }
@@ -90,7 +111,14 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 SizedBox(width: 50,),
                 Expanded(
-                  child: BlocBuilder<CollabProjectListBloc, ProjectListState>(
+                  child: BlocConsumer<CollabProjectListBloc, ProjectListState>(
+                    listener: (context, state) {
+                      if (state is ProjectFromListDeleted) {
+                        AppSnackBar.showSnackBar(context, text: 'Project deleted');
+                      } else if (state is ProjectFromListDeleteError) {
+                        AppSnackBar.showSnackBar(context, text: 'Error deleting the project', isError: true);
+                      }
+                    },
                     builder: (context, state) {
                       if (state is ProjectListInitial) {
                         locator<CollabProjectListBloc>().add(GetProjects(page: state.page));
@@ -99,10 +127,8 @@ class DashboardScreen extends StatelessWidget {
                         title: 'Shared with me',
                         emptyText: 'No projects shared with me.',
                         state: state,
-                        changePage: (page) => locator<CollabProjectListBloc>().add(GetProjects(page: page)),
-                        deleteProject: (id) {
-                          locator<CollabProjectListBloc>().add(DeleteProjectFromList(id));
-                        },
+                        changePage: (page) => locator<CollabProjectListBloc>().add(GetProjects(page: page, name: name)),
+                        deleteProject: (id) => locator<CollabProjectListBloc>().add(DeleteProjectFromList(id)),
                       );
                     }
                   ),
@@ -113,6 +139,26 @@ class DashboardScreen extends StatelessWidget {
         )
       ],
     );
+  }
+
+  Future<void> deleteProject(int id) async {
+    late StreamSubscription subscription;
+    final completer = Completer<void>();
+
+    subscription = locator<ProjectListBloc>().stream.listen((state) {
+      if (state is ProjectFromListDeleted) {
+        subscription.cancel();
+        locator<ProjectBloc>().add(DeleteProject(id, refresh: true));
+        locator<TranslationsBloc>().add(ResetTranslations());
+        completer.complete();
+      } else if (state is ProjectFromListDeleteError) {
+        subscription.cancel();
+        completer.completeError(state.message);
+      }
+    });
+
+    locator<ProjectListBloc>().add(DeleteProjectFromList(id));
+    return completer.future;
   }
 }
 
@@ -240,13 +286,13 @@ class _DashboardDialogState extends State<_DashboardDialog> {
     late StreamSubscription subscription;
     final completer = Completer<void>();
 
-    subscription = locator<ProjectBloc>().stream.listen((state) {
-      if (state is ProjectLoaded) {
+    subscription = locator<ProjectListBloc>().stream.listen((state) {
+      if (state is ProjectCreated) {
         subscription.cancel();
-        locator<ProjectListBloc>().add(CreateProjectFromList());
-        locator<TranslationsBloc>().add(GetTranslations(projectId: state.project.id ?? 0, page: 1));
+        locator<ProjectBloc>().add(GetProject(state.projectId));
+        locator<TranslationsBloc>().add(GetTranslations(projectId: state.projectId, page: 1));
         completer.complete();
-      } else if (state is ProjectError) {
+      } else if (state is ProjectCreateError) {
         subscription.cancel();
         completer.completeError(state.message);
       }
@@ -259,7 +305,7 @@ class _DashboardDialogState extends State<_DashboardDialog> {
         languages: selectedLang
     );
 
-    locator<ProjectBloc>().add(CreateProject(project));
+    locator<ProjectListBloc>().add(CreateProject(project));
     return completer.future;
   }
 }

@@ -10,32 +10,33 @@ class CollabProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
 
   CollabProjectListBloc(this.projectApi) : super(const ProjectListInitial()) {
     on<GetProjects>(_onGetProjects);
-    on<UpdateProjectFromList>(_onUpdateProject);
+    on<UpdateProjectList>(_onUpdateProject);
     on<DeleteProjectFromList>(_onDeleteProject);
+    on<ResetProjectList>(_onResetProjectList);
   }
 
   Future<void> _onGetProjects(GetProjects event, Emitter<ProjectListState> emit) async {
-    emit(ProjectListLoading(page: state.page, totalPages: state.totalPages));
+    emit(ProjectListLoading(name: event.name, page: state.page, totalPages: state.totalPages));
     try {
       final res = await projectApi.getCollabProjects(name: event.name, page: event.page);
       res.fold((left) {
-        emit(ProjectListError(left.message.toString(), page: state.page, totalPages: state.totalPages));
+        emit(ProjectListError(left.message.toString(), name: event.name, page: state.page, totalPages: state.totalPages));
       }, (right) {
-        emit(ProjectListLoaded(right, page: state.page, totalPages: state.totalPages));
+        emit(ProjectListLoaded(right, name: event.name, page: state.page, totalPages: state.totalPages));
       });
     } catch (e) {
       if (kDebugMode) {
         print(e.toString());
       }
-      emit(ProjectListError(e.toString(), page: state.page, totalPages: state.totalPages));
+      emit(ProjectListError(e.toString(), name: event.name, page: state.page, totalPages: state.totalPages));
     }
   }
 
-  Future<void> _onUpdateProject(UpdateProjectFromList event, Emitter<ProjectListState> emit) async {
+  Future<void> _onUpdateProject(UpdateProjectList event, Emitter<ProjectListState> emit) async {
     if (state is! ProjectListLoaded) return;
     for (Project project in (state as ProjectListLoaded).projects) {
       if (project.id == event.id) {
-        await _onGetProjects(GetProjects(page: state.page), emit);
+        await _onGetProjects(GetProjects(name: state.name, page: state.page), emit);
         return;
       }
     }
@@ -45,9 +46,13 @@ class CollabProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
     if (state is! ProjectListLoaded) return;
     for (Project project in (state as ProjectListLoaded).projects) {
       if (project.id != null && project.id! >= event.id) {
-        await _onGetProjects(GetProjects(page: state.page), emit);
+        await _onGetProjects(GetProjects(name: state.name, page: state.page), emit);
         return;
       }
     }
+  }
+
+  Future<void> _onResetProjectList(ResetProjectList event, Emitter<ProjectListState> emit) async {
+    emit(const ProjectListInitial());
   }
 }
