@@ -23,7 +23,7 @@ class ProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
     try {
       final res = await projectApi.getProjects(name: event.name, page: event.page);
       res.fold((left) {
-        emit(ProjectListError(left.message.toString(), name: event.name, page: event.page, totalPages: state.totalPages));
+        emit(ProjectListError(left.data, name: event.name, page: event.page, totalPages: state.totalPages));
       }, (right) {
         emit(ProjectListLoaded(right, name: event.name, page: event.page, totalPages: state.totalPages));
       });
@@ -40,7 +40,7 @@ class ProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
     try {
       final res = await projectApi.createProject(newProject: event.project);
       await res.fold((left) {
-        emit(ProjectCreateError((state as ProjectListLoaded).projects, name: state.name, message: left.message.toString(), page: state.page, totalPages: state.totalPages));
+        emit(ProjectCreateError((state as ProjectListLoaded).projects, name: state.name, data: left.data, page: state.page, totalPages: state.totalPages));
       }, (right) async {
         emit(ProjectCreated((state as ProjectListLoaded).projects, projectId: right.id ?? 0, name: state.name, page: state.page, totalPages: state.totalPages));
         if (state.page == state.totalPages) {
@@ -52,7 +52,7 @@ class ProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
       if (kDebugMode) {
         print(e.toString());
       }
-      emit(ProjectCreateError((state as ProjectListLoaded).projects, name: state.name, message: e.toString(), page: state.page, totalPages: state.totalPages));
+      emit(ProjectCreateError((state as ProjectListLoaded).projects, name: state.name, data: e.toString(), page: state.page, totalPages: state.totalPages));
     }
   }
 
@@ -79,7 +79,7 @@ class ProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
       try {
         final res = await projectApi.deleteProject(id: event.id);
         await res.fold((left) {
-          emit(ProjectFromListDeleteError((state as ProjectListLoaded).projects, name: state.name, message: left.message.toString(), page: state.page, totalPages: state.totalPages));
+          emit(ProjectFromListDeleteError((state as ProjectListLoaded).projects, name: state.name, data: left.data, page: state.page, totalPages: state.totalPages));
         }, (right) async {
           emit(ProjectFromListDeleted((state as ProjectListLoaded). projects, name: state.name, page: state.page, totalPages: state.totalPages));
           await _onGetProjects(GetProjects(name: state.name, page: state.page), emit);
@@ -88,7 +88,7 @@ class ProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
         if (kDebugMode) {
           print(e.toString());
         }
-        emit(ProjectFromListDeleteError((state as ProjectListLoaded).projects, name: state.name, message: e.toString(), page: state.page, totalPages: state.totalPages));
+        emit(ProjectFromListDeleteError((state as ProjectListLoaded).projects, name: state.name, data: e.toString(), page: state.page, totalPages: state.totalPages));
       }
     }
   }

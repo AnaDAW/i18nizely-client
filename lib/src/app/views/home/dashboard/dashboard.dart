@@ -153,7 +153,7 @@ class DashboardScreen extends StatelessWidget {
         completer.complete();
       } else if (state is ProjectFromListDeleteError) {
         subscription.cancel();
-        completer.completeError(state.message);
+        completer.completeError(state.data);
       }
     });
 
@@ -178,6 +178,7 @@ class _DashboardDialogState extends State<_DashboardDialog> {
   late String name;
   late String? description;
   List<String> selectedLang = [];
+  String? languagesError;
 
   @override
   void initState() {
@@ -253,6 +254,7 @@ class _DashboardDialogState extends State<_DashboardDialog> {
                           mainLanguage: mainLanguage,
                           languages: languages,
                           onChange: (value) => selectedLang = value,
+                          error: languagesError,
                         ),
                       ],
                     ),
@@ -269,9 +271,22 @@ class _DashboardDialogState extends State<_DashboardDialog> {
                   Expanded(child: AppOutlinedButton(onPressed: () => context.pop(), text: 'Cancel')),
                   SizedBox(width: 50,),
                   Expanded(child: AppStyledButton(text: 'Create', onPressed: () async {
-                    if (!_formKey.currentState!.validate()) return;
-                    await createProject();
-                    context.pop();
+                    bool isValida = true;
+                    if (selectedLang.isEmpty) {
+                      setState(() => languagesError = 'This list may not be empty.');
+                      isValida = false;
+                    }
+                    if (!_formKey.currentState!.validate()) {
+                      isValida = false;
+                    }
+                    if (!isValida) return;
+
+                    try {
+                      await createProject();
+                      context.pop();
+                    } catch (e) {
+                      setState(() => languagesError = (e as dynamic)['languages']?[0] ?? e.toString());
+                    }
                   })),
                 ],
               ),
@@ -294,7 +309,7 @@ class _DashboardDialogState extends State<_DashboardDialog> {
         completer.complete();
       } else if (state is ProjectCreateError) {
         subscription.cancel();
-        completer.completeError(state.message);
+        completer.completeError(state.data);
       }
     });
 

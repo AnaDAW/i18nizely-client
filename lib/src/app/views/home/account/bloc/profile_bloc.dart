@@ -20,7 +20,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     try {
       final res = await userApi.getProfile();
       res.fold((left) {
-        emit(ProfileError(left.message.toString()));
+        emit(ProfileError(left.data));
       }, (right) {
         emit(ProfileLoaded(right));
       });
@@ -37,7 +37,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     try {
       final res = await userApi.updateProfile(newProfile: event.newProfile, password: event.password);
       res.fold((left) {
-        emit(ProfileUpdateError((state as ProfileLoaded).profile, left.message.toString()));
+        emit(ProfileUpdateError((state as ProfileLoaded).profile, left.data));
       }, (right) {
         emit(ProfileUpdated(right));
       });
@@ -54,7 +54,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     try {
       final res = await userApi.changeProfileImage(pathImage: event.pathImage);
       res.fold((left) {
-        emit(ProfileUpdateError((state as ProfileLoaded).profile, left.message.toString()));
+        emit(ProfileUpdateError((state as ProfileLoaded).profile, left.data));
       }, (right) {
         emit(ProfileUpdated(right));
       });
@@ -71,7 +71,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     try {
       final res = await userApi.deleteProfile();
       res.fold((left) {
-        emit(ProfileDeleteError((state as ProfileLoaded).profile, left.message.toString()));
+        emit(ProfileDeleteError((state as ProfileLoaded).profile, left.data));
       }, (right) {
         emit(const ProfileDeleted());
       });

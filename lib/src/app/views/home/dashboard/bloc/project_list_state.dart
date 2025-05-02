@@ -30,12 +30,12 @@ class ProjectListLoaded extends ProjectListState {
 }
 
 class ProjectListError extends ProjectListState {
-  final String message;
+  final dynamic data;
 
-  const ProjectListError(this.message, {super.name, required super.page, required super.totalPages});
+  const ProjectListError(this.data, {super.name, required super.page, required super.totalPages});
 
   @override
-  List<Object?> get props => [message, name, page, totalPages];
+  List<Object?> get props => [data, name, page, totalPages];
 }
 
 class ProjectCreated extends ProjectListLoaded {
@@ -45,12 +45,12 @@ class ProjectCreated extends ProjectListLoaded {
 }
 
 class ProjectCreateError extends ProjectListLoaded {
-  final String message;
+  final dynamic data;
 
-  const ProjectCreateError(super.projects, {super.name, required this.message, required super.page, required super.totalPages});
+  const ProjectCreateError(super.projects, {super.name, required this.data, required super.page, required super.totalPages});
 
   @override
-  List<Object?> get props => [projects, message, name, page, totalPages];
+  List<Object?> get props => [projects, data, name, page, totalPages];
 }
 
 class ProjectFromListDeleted extends ProjectListLoaded {
@@ -58,10 +58,10 @@ class ProjectFromListDeleted extends ProjectListLoaded {
 }
 
 class ProjectFromListDeleteError extends ProjectListLoaded {
-  final String message;
+  final dynamic data;
 
-  const ProjectFromListDeleteError(super.projects, {super.name, required this.message, required super.page, required super.totalPages});
+  const ProjectFromListDeleteError(super.projects, {super.name, required this.data, required super.page, required super.totalPages});
 
   @override
-  List<Object?> get props => [projects, message, name, page, totalPages];
+  List<Object?> get props => [projects, data, name, page, totalPages];
 }

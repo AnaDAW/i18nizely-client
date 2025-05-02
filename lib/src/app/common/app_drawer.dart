@@ -94,7 +94,7 @@ class _AppDrawerState extends State<AppDrawer> {
                         return Column(
                           children: [
                             buildDrawerButton(
-                              icon: Icons.edit_document,
+                              icon: Icons.data_usage_rounded,
                               label: 'Overview',
                               drawerRoute: DrawerRoute.overview,
                               enabled: isProjectSelected

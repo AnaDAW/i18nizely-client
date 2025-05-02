@@ -52,7 +52,7 @@ void initInjection() {
 
   locator.registerLazySingleton<CollabProjectListBloc>(() => CollabProjectListBloc(locator<ProjectApi>()));
 
-  locator.registerLazySingleton<TranslationsBloc>(() => TranslationsBloc(locator<KeyApi>()));
+  locator.registerLazySingleton<TranslationsBloc>(() => TranslationsBloc(locator<KeyApi>(), locator<TranslationApi>()));
 }
 
 Future<void> initToken() async {

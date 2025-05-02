@@ -29,7 +29,7 @@ class AuthApiDataSource implements AuthApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'AuthApiDataSource.login',
         ),
@@ -44,7 +44,7 @@ class AuthApiDataSource implements AuthApi {
 
       if (tokenRefresh == null || tokenRefresh.isEmpty) {
         return Left(AppException(
-          message: 'Failed to get refresh token.',
+          data: 'Failed to get refresh token.',
           statusCode: 500,
           identifier: 'AuthApiDataSource.refresh',
         ));
@@ -63,7 +63,7 @@ class AuthApiDataSource implements AuthApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'AuthApiDataSource.refresh',
         ),

@@ -130,7 +130,7 @@ class _LoginFormState extends State<_LoginForm> {
 
     final res = await locator<AuthApi>().login(email: email, password: password);
     res.fold(
-      (left) => setState(() => invalidMsg = 'No active account found with the given credentials.'),
+      (left) => setState(() => invalidMsg = left.data['detail'] ?? left.data),
       (rigth) => context.goNamed(DrawerRoute.dashboard.name)
     );
 

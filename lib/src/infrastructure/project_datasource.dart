@@ -29,7 +29,7 @@ class ProjectApiDataSource implements ProjectApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'ProjectApiDataSource.getProjects',
         ),
@@ -56,7 +56,7 @@ class ProjectApiDataSource implements ProjectApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'ProjectApiDataSource.getProjects',
         ),
@@ -77,7 +77,7 @@ class ProjectApiDataSource implements ProjectApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'ProjectApiDataSource.createProject',
         ),
@@ -98,7 +98,7 @@ class ProjectApiDataSource implements ProjectApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'ProjectApiDataSource.getProject',
         ),
@@ -119,7 +119,7 @@ class ProjectApiDataSource implements ProjectApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'ProjectApiDataSource.updateProject',
         ),
@@ -139,7 +139,7 @@ class ProjectApiDataSource implements ProjectApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'ProjectApiDataSource.deleteProject',
         ),
@@ -160,7 +160,7 @@ class ProjectApiDataSource implements ProjectApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'ProjectApiDataSource.addCollaborator',
         ),
@@ -181,7 +181,7 @@ class ProjectApiDataSource implements ProjectApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'ProjectApiDataSource.updateCollaborator',
         ),
@@ -201,7 +201,7 @@ class ProjectApiDataSource implements ProjectApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'ProjectApiDataSource.removeCollaborator',
         ),
@@ -225,7 +225,7 @@ class ProjectApiDataSource implements ProjectApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'ProjectApiDataSource.getRecord',
         ),

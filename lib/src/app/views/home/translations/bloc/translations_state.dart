@@ -29,19 +29,19 @@ class TranslationsLoaded extends TranslationsState {
 }
 
 class TranslationsError extends TranslationsState {
-  final String message;
+  final dynamic data;
 
-  const TranslationsError(this.message, {required super.page, required super.totalPages});
+  const TranslationsError(this.data, {required super.page, required super.totalPages});
 
   @override
-  List<Object?> get props => [message, page, totalPages];
+  List<Object?> get props => [data, page, totalPages];
 }
 
 class KeyCreateError extends TranslationsLoaded {
-  final String message;
+  final dynamic data;
 
-  const KeyCreateError(super.keys, {required this.message, required super.page, required super.totalPages});
+  const KeyCreateError(super.keys, {required this.data, required super.page, required super.totalPages});
 
   @override
-  List<Object?> get props => [keys, message, page, totalPages];
+  List<Object?> get props => [keys, data, page, totalPages];
 }

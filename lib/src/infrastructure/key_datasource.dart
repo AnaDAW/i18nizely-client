@@ -27,7 +27,7 @@ class KeyApiDataSource implements KeyApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'KeyApiDataSource.getKeys',
         ),
@@ -36,9 +36,9 @@ class KeyApiDataSource implements KeyApi {
   }
 
   @override
-  Future<Either<AppException, TransKey>> createKey({required int projectId, required TransKey newKey}) async {
+  Future<Either<AppException, TransKey>> createKey({required int projectId, required TransKey newKey, required String translation}) async {
     try {
-      final eitherType = await networkService.post('projects/$projectId/keys/', data: newKey.toQueryMap());
+      final eitherType = await networkService.post('projects/$projectId/keys/', data: {...newKey.toQueryMap(), 'translation': translation});
       return eitherType.fold((exception) {
         return Left(exception);
       }, (response) async {
@@ -48,7 +48,7 @@ class KeyApiDataSource implements KeyApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'KeyApiDataSource.createKey',
         ),
@@ -69,7 +69,7 @@ class KeyApiDataSource implements KeyApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'KeyApiDataSource.updateKey',
         ),
@@ -95,7 +95,7 @@ class KeyApiDataSource implements KeyApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'KeyApiDataSource.deleteKey',
         ),

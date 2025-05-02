@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:i18nizely/shared/config/app_config.dart';
 import 'package:i18nizely/src/app/router/app_router.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
-import 'package:i18nizely/src/app/views/home/account/bloc/profile_event.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/collab_project_list_bloc.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';

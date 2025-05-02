@@ -24,27 +24,27 @@ mixin ExceptionHandlerMixin on NetworkService {
         ),
       );
     } catch (e) {
-      String message = '';
+      dynamic data = '';
       String identifier = '';
       int statusCode = 0;
       log(e.runtimeType.toString());
 
       if (e is SocketException) {
-        message = 'Unable to connect to the server.';
+        data = 'Unable to connect to the server.';
         statusCode = 0;
         identifier = 'Socket Exception ${e.message}\n at  $endpoint';
       } else if (e is DioException) {
-        message = e.response?.data?['message'] ?? 'Internal Error occurred';
+        data = e.response?.data ?? 'Internal Error occurred';
         statusCode = e.response?.statusCode ?? 1;
         identifier = 'DioException ${e.message} \nat  $endpoint';
       } else {
-        message = 'Unknown error occurred';
+        data = 'Unknown error occurred';
         statusCode = 2;
         identifier = 'Unknown error ${e.toString()}\n at $endpoint';
       }
       return Left(
         AppException(
-          message: message,
+          data: data,
           statusCode: statusCode,
           identifier: identifier,
         ),

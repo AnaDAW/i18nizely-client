@@ -6,8 +6,9 @@ class AppLanguagesChip extends StatefulWidget {
   final String mainLanguage;
   final Map<String, dynamic> languages;
   final void Function(List<String>) onChange;
+  final String? error;
 
-  const AppLanguagesChip({super.key, required this.mainLanguage, required this.languages, required this.onChange});
+  const AppLanguagesChip({super.key, required this.mainLanguage, required this.languages, required this.onChange, this.error});
 
   @override
   State<AppLanguagesChip> createState() => _AppLanguagesChipState();
@@ -32,7 +33,7 @@ class _AppLanguagesChipState extends State<AppLanguagesChip> {
           children: [
             AppOutlinedTextField(
               label: 'Languages',
-              hint: 'Add languages...',
+              hint: 'Search languages...',
               controller: controller,
               onChange: (value) => onSearchChange(value.toLowerCase().trim()),
               onSubmit: (_) => onSubmit(),
@@ -42,26 +43,30 @@ class _AppLanguagesChipState extends State<AppLanguagesChip> {
             SizedBox(
               height: 90,
               width: 400,
-              child: SingleChildScrollView(
-                child: Wrap(
-                  spacing: 5,
-                  runSpacing: 5,
-                  children: [
-                    for (String key in selected)
-                      InputChip(
-                        key: ObjectKey(key),
-                        label: Text(widget.languages[key]),
-                        onDeleted: () => onChipDelete(key),
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        padding: const EdgeInsets.all(2),
-                        backgroundColor: Colors.white,
-                        shape: StadiumBorder(side: BorderSide(color: AppColors.detail),),
-                        deleteIconColor: AppColors.detail,
+              child: selected.isNotEmpty ? SingleChildScrollView(
+                  child: Wrap(
+                    spacing: 5,
+                    runSpacing: 5,
+                    children: [
+                      for (String key in selected)
+                        InputChip(
+                          key: ObjectKey(key),
+                          label: Text(widget.languages[key]),
+                          onDeleted: () => onChipDelete(key),
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          padding: const EdgeInsets.all(2),
+                          backgroundColor: Colors.white,
+                          shape: StadiumBorder(side: BorderSide(color: AppColors.detail),),
+                          deleteIconColor: AppColors.detail,
 
-                      ),
-                  ],
+                        ),
+                    ],
+                  ),
+                ) : widget.error == null ? Center(
+                  child: Text('Add languages to the project', style: TextStyle(color: Colors.black45),),
+                ) : Center(
+                  child: Text(widget.error!, style: TextStyle(color: Colors.red.shade400),),
                 ),
-              ),
             ),
           ],
         ),

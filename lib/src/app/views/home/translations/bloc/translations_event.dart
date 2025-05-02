@@ -21,11 +21,12 @@ class GetTranslations extends TranslationsEvent {
 class CreateKey extends TranslationsEvent {
   final int projectId;
   final TransKey newKey;
+  final String translation;
 
-  const CreateKey({required this.projectId, required this.newKey});
+  const CreateKey({required this.projectId, required this.newKey, required this.translation});
 
   @override
-  List<Object?> get props => [projectId, newKey];
+  List<Object?> get props => [projectId, newKey, translation];
 }
 
 class ResetTranslations extends TranslationsEvent {

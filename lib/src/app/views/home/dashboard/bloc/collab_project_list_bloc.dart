@@ -20,7 +20,7 @@ class CollabProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
     try {
       final res = await projectApi.getCollabProjects(name: event.name, page: event.page);
       res.fold((left) {
-        emit(ProjectListError(left.message.toString(), name: event.name, page: state.page, totalPages: state.totalPages));
+        emit(ProjectListError(left.data, name: event.name, page: state.page, totalPages: state.totalPages));
       }, (right) {
         emit(ProjectListLoaded(right, name: event.name, page: state.page, totalPages: state.totalPages));
       });

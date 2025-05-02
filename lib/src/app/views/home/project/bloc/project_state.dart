@@ -26,12 +26,12 @@ class ProjectLoaded extends ProjectState {
 }
 
 class ProjectError extends ProjectState {
-  final String message;
+  final dynamic data;
 
-  const ProjectError(this.message);
+  const ProjectError(this.data);
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [data];
 }
 
 class ProjectUpdated extends ProjectLoaded {
@@ -39,12 +39,12 @@ class ProjectUpdated extends ProjectLoaded {
 }
 
 class ProjectUpdateError extends ProjectLoaded {
-  final String message;
+  final dynamic data;
 
-  const ProjectUpdateError(super.project, {required this.message});
+  const ProjectUpdateError(super.project, {required this.data});
 
   @override
-  List<Object?> get props => [message, project];
+  List<Object?> get props => [data, project];
 }
 
 class ProjectDeleted extends ProjectInitial {
@@ -52,10 +52,10 @@ class ProjectDeleted extends ProjectInitial {
 }
 
 class ProjectDeleteError extends ProjectLoaded {
-  final String message;
+  final dynamic data;
 
-  const ProjectDeleteError(super.project, {required this.message});
+  const ProjectDeleteError(super.project, {required this.data});
 
   @override
-  List<Object?> get props => [message, project];
+  List<Object?> get props => [data, project];
 }

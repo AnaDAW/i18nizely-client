@@ -26,12 +26,12 @@ class ProfileLoaded extends ProfileState {
 }
 
 class ProfileError extends ProfileState {
-  final String message;
+  final dynamic error;
 
-  const ProfileError(this.message);
+  const ProfileError(this.error);
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [error];
 }
 
 class ProfileUpdated extends ProfileLoaded {
@@ -39,12 +39,12 @@ class ProfileUpdated extends ProfileLoaded {
 }
 
 class ProfileUpdateError extends ProfileLoaded {
-  final String message;
+  final dynamic data;
 
-  const ProfileUpdateError(super.profile, this.message);
+  const ProfileUpdateError(super.profile, this.data);
 
   @override
-  List<Object?> get props => [message, profile];
+  List<Object?> get props => [data, profile];
 }
 
 class ProfileDeleted extends ProfileState {
@@ -52,10 +52,10 @@ class ProfileDeleted extends ProfileState {
 }
 
 class ProfileDeleteError extends ProfileLoaded {
-  final String message;
+  final dynamic data;
 
-  const ProfileDeleteError(super.profile, this.message);
+  const ProfileDeleteError(super.profile, this.data);
 
   @override
-  List<Object?> get props => [message, profile];
+  List<Object?> get props => [data, profile];
 }

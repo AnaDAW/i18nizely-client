@@ -21,7 +21,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
     try {
       final res = await projectApi.getProject(id: event.id);
       res.fold((left) {
-        emit(ProjectError(left.message.toString()));
+        emit(ProjectError(left.data));
       }, (right) {
         emit(ProjectLoaded(right));
       });
@@ -38,7 +38,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
     try {
       final res = await projectApi.updateProject(newProject: event.newProject);
       res.fold((left) {
-        emit(ProjectUpdateError((state as ProjectLoaded).project, message: left.message.toString()));
+        emit(ProjectUpdateError((state as ProjectLoaded).project, data: left.data));
       }, (right) {
         emit(ProjectUpdated(right));
       });
@@ -46,7 +46,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       if (kDebugMode) {
         print(e.toString());
       }
-      emit(ProjectUpdateError((state as ProjectLoaded).project, message: e.toString()));
+      emit(ProjectUpdateError((state as ProjectLoaded).project, data: e.toString()));
     }
   }
 
@@ -58,7 +58,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       } else {
         final res = await projectApi.deleteProject(id: event.id);
         res.fold((left) {
-          emit(ProjectDeleteError((state as ProjectLoaded).project, message: left.message.toString()));
+          emit(ProjectDeleteError((state as ProjectLoaded).project, data: left.data));
         }, (right) {
           emit(const ProjectDeleted());
         });
@@ -67,7 +67,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       if (kDebugMode) {
         print(e.toString());
       }
-      emit(ProjectDeleteError((state as ProjectLoaded).project, message: e.toString()));
+      emit(ProjectDeleteError((state as ProjectLoaded).project, data: e.toString()));
     }
   }
 

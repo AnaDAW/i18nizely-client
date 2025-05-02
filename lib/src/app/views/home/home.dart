@@ -6,17 +6,10 @@ import 'package:i18nizely/shared/widgets/app_snackbar.dart';
 import 'package:i18nizely/src/app/common/app_drawer.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_state.dart';
-import 'package:i18nizely/src/app/views/home/dashboard/bloc/collab_project_list_bloc.dart';
-import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_bloc.dart';
-import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
-import 'package:i18nizely/src/app/views/home/project/bloc/project_event.dart';
-import 'package:i18nizely/src/app/views/home/translations/bloc/translations_bloc.dart';
-import 'package:i18nizely/src/app/views/home/translations/bloc/translations_event.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/services/auth_api.dart';
 
 import 'account/bloc/profile_event.dart';
-import 'dashboard/bloc/project_list_event.dart';
 
 class HomeScreen extends StatelessWidget {
   final Widget child;

@@ -26,7 +26,7 @@ class UserApiDataSource implements UserApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'UserApiDataSource.getUsers',
         ),
@@ -47,7 +47,7 @@ class UserApiDataSource implements UserApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'UserApiDataSource.createUser',
         ),
@@ -68,7 +68,7 @@ class UserApiDataSource implements UserApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'UserApiDataSource.getUser',
         ),
@@ -92,7 +92,7 @@ class UserApiDataSource implements UserApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'UserApiDataSource.updateUser',
         ),
@@ -118,7 +118,7 @@ class UserApiDataSource implements UserApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'UserApiDataSource.deleteUser',
         ),
@@ -139,7 +139,7 @@ class UserApiDataSource implements UserApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'UserApiDataSource.getProfile',
         ),
@@ -163,7 +163,7 @@ class UserApiDataSource implements UserApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'UserApiDataSource.updateProfile',
         ),
@@ -189,7 +189,7 @@ class UserApiDataSource implements UserApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'UserApiDataSource.deleteProfile',
         ),
@@ -213,7 +213,7 @@ class UserApiDataSource implements UserApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'UserApiDataSource.getNotifications',
         ),
@@ -233,7 +233,7 @@ class UserApiDataSource implements UserApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'UserApiDataSource.deleteNotification',
         ),

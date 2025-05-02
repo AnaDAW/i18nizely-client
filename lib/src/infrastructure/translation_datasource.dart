@@ -24,7 +24,7 @@ class TranslationApiDataSource implements TranslationApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'TranslationApiDataSource.createTranslation',
         ),
@@ -45,7 +45,7 @@ class TranslationApiDataSource implements TranslationApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'TranslationApiDataSource.updateTranslation',
         ),
@@ -66,7 +66,7 @@ class TranslationApiDataSource implements TranslationApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'TranslationApiDataSource.reviewTranslation',
         ),
@@ -90,7 +90,7 @@ class TranslationApiDataSource implements TranslationApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'TranslationApiDataSource.getVersions',
         ),
@@ -114,7 +114,7 @@ class TranslationApiDataSource implements TranslationApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'TranslationApiDataSource.getComments',
         ),
@@ -135,7 +135,7 @@ class TranslationApiDataSource implements TranslationApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'TranslationApiDataSource.createComment',
         ),
@@ -156,7 +156,7 @@ class TranslationApiDataSource implements TranslationApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'TranslationApiDataSource.updateComment',
         ),
@@ -176,7 +176,7 @@ class TranslationApiDataSource implements TranslationApi {
     } catch (e) {
       return Left(
         AppException(
-          message: 'Unknown error occurred. Exception: ${e.toString()}',
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
           identifier: 'TranslationApiDataSource.deleteComment',
         ),
