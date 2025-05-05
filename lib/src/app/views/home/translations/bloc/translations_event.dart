@@ -11,11 +11,12 @@ abstract class TranslationsEvent extends Equatable {
 class GetTranslations extends TranslationsEvent {
   final int projectId;
   final int page;
+  final String? name;
 
-  const GetTranslations({required this.projectId, required this.page});
+  const GetTranslations({required this.projectId, required this.page, this.name});
 
   @override
-  List<Object?> get props => [projectId, page];
+  List<Object?> get props => [projectId, page, name];
 }
 
 class CreateKey extends TranslationsEvent {

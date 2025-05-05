@@ -12,9 +12,12 @@ class KeyApiDataSource implements KeyApi {
   const KeyApiDataSource(this.networkService);
 
   @override
-  Future<Either<AppException, List<TransKey>>> getKeys({required int projectId, int page = 1}) async {
+  Future<Either<AppException, List<TransKey>>> getKeys({required int projectId, int page = 1, String? name}) async {
     try {
-      final eitherType = await networkService.get('projects/$projectId/keys/', queryParameters: {'page': page});
+      final Map<String, dynamic> queryParameters = {'page': page};
+      if (name != null) queryParameters['name'] = name;
+
+      final eitherType = await networkService.get('projects/$projectId/keys/', queryParameters: queryParameters);
       return eitherType.fold((exception) {
         return Left(exception);
       }, (response) async {

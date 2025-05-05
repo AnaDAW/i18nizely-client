@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:i18nizely/shared/theme/app_colors.dart';
 
 class AppElevatedCard extends StatelessWidget {
@@ -23,8 +24,9 @@ class AppElevatedCard extends StatelessWidget {
 
 class AppCardTitle extends StatelessWidget {
   final String title;
+  final bool hasClose;
 
-  const AppCardTitle({super.key, required this.title});
+  const AppCardTitle({super.key, required this.title, this.hasClose = false});
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +37,16 @@ class AppCardTitle extends StatelessWidget {
         gradient: AppColors.gradient,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20),),
       ),
-      child: Text(
-        title,
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          if (hasClose)
+            IconButton(onPressed: () => context.pop(), icon: Icon(Icons.close_rounded, color: Colors.white,))
+        ],
       ),
     );
   }

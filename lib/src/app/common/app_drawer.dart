@@ -67,7 +67,7 @@ class _AppDrawerState extends State<AppDrawer> {
                       drawerRoute: DrawerRoute.dashboard
                     ),
                     BlocConsumer<ProjectBloc, ProjectState>(
-                      listenWhen: (previous, current) => (previous is ProjectInitial && current is! ProjectInitial) || current is ProjectDeleted,
+                      listenWhen: (previous, current) => current is ProjectLoading || current is ProjectDeleted,
                       listener: (context, state) {
                         late final DrawerRoute drawerRoute;
                         if (state is ProjectDeleted) {
@@ -167,7 +167,7 @@ class _AppDrawerState extends State<AppDrawer> {
               SizedBox(
                 height: 40,
                 width: 40,
-                child: AppUserIcon(image: widget.profile.image, userName: '${widget.profile.firstName?[0]}${widget.profile.lastName?[0]}',)
+                child: AppUserIcon(image: widget.profile.image, userName: widget.profile.initials,)
               ),
               if (isExpanded)
                 Row(
@@ -179,7 +179,7 @@ class _AppDrawerState extends State<AppDrawer> {
                       children: [
                         Text('Account', style: TextStyle(color: isSelected ? Colors.black : Colors.white, fontWeight: FontWeight.bold),),
                         Text(
-                          '${widget.profile.firstName} ${widget.profile.lastName}',
+                          widget.profile.name,
                           style: TextStyle(
                             color: isSelected ? Colors.black : Colors.white,
                             fontSize: 12,

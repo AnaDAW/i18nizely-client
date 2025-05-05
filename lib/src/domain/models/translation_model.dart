@@ -29,12 +29,12 @@ class Translation extends Equatable {
       id: json['id'],
       text: json['text'],
       language: json['language'],
-      isReviewed: json['isReviewed'],
-      reviewedBy: json['reviewedBy'] != null ? User.fromJson(json['reviewedBy']) : null,
-      reviewedAt: json['reviewedAt'] != null ? DateTime.parse(json['reviewedAt']) : null,
-      createdBy: json['createdBy'] != null ? User.fromJson(json['createdBy']) : null,
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt'])
+      isReviewed: json['is_reviewed'],
+      reviewedBy: json['reviewed_by'] != null ? User.fromJson(json['reviewed_by']) : null,
+      reviewedAt: json['reviewed_at'] != null ? DateTime.parse(json['reviewed_at']) : null,
+      createdBy: json['created_by'] != null ? User.fromJson(json['created_by']) : null,
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['updated_at'])
     );
   }
 

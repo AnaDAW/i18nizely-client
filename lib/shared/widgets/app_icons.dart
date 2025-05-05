@@ -52,6 +52,29 @@ class AppIconButton extends StatelessWidget {
   }
 }
 
+class AppSecondaryIconButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  const AppSecondaryIconButton({super.key, required this.icon, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 45,
+      width: 45,
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 225, 225, 225),
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: IconButton(
+        onPressed: onPressed,
+        icon: Icon(icon, color: Colors.black45,)
+      ),
+    );
+  }
+}
+
 class AppDrawerIcon extends StatelessWidget {
   final bool isExpanded;
   final IconData icon;

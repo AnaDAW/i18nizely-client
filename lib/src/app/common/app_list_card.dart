@@ -82,7 +82,7 @@ class AppListCard extends StatelessWidget {
         ListTile(
           title: Text(project.name ?? '', overflow: TextOverflow.ellipsis,),
           subtitle: Text(
-            'by ${project.createdBy?.firstName} ${project.createdBy?.lastName}',
+            'by ${project.createdBy?.name}',
             style: TextStyle(color: Colors.black45),
           ),
           trailing: IconButton(onPressed: () => deleteProject(project.id ?? 0), icon: Icon(Icons.delete_rounded, color: Colors.red.shade400,)),

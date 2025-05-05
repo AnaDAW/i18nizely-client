@@ -55,7 +55,7 @@ class _AccountFormState extends State<_AccountForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController passwordCtl = TextEditingController();
 
-  late Map<String, dynamic> languages;
+  final Map<String, dynamic> languages= AppConfig.languages;
   bool showPassword = false;
   late String firstName;
   late String lastName;
@@ -66,8 +66,6 @@ class _AccountFormState extends State<_AccountForm> {
 
   @override
   void initState() {
-    languages = AppConfig.languages;
-
     firstName = widget.profile.firstName ?? '';
     lastName = widget.profile.lastName ?? '';
     email = widget.profile.email ?? '';
@@ -101,7 +99,7 @@ class _AccountFormState extends State<_AccountForm> {
                         width: 200,
                         child: AppUserIcon(
                           image: widget.profile.image,
-                          userName: '${widget.profile.firstName?[0]}${widget.profile.lastName?[0]}',
+                          userName: widget.profile.initials,
                         )
                     ),
                     AppIconButton(icon: Icons.edit_rounded, onPressed: () {

@@ -42,6 +42,10 @@ class User extends Equatable {
     );
   }
 
+  String get name => '$firstName $lastName';
+
+  String get initials => '${firstName?[0]}${lastName?[0]}';
+
   @override
   List<Object?> get props => [
     id,

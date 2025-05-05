@@ -1,0 +1,140 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:i18nizely/shared/theme/app_colors.dart';
+import 'package:i18nizely/shared/widgets/app_buttons.dart';
+import 'package:i18nizely/shared/widgets/app_cards.dart';
+import 'package:i18nizely/shared/widgets/app_icons.dart';
+import 'package:i18nizely/shared/widgets/app_textfields.dart';
+import 'package:i18nizely/src/domain/models/key_model.dart';
+
+class TranslationsEditDialog extends StatefulWidget {
+  final TransKey transKey;
+  
+  const TranslationsEditDialog({super.key, required this.transKey});
+  
+  @override
+  State<TranslationsEditDialog> createState() => _TranslationsEditDialogState();
+}
+
+class _TranslationsEditDialogState extends State<TranslationsEditDialog> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late String name;
+  late String? description;
+  late String? image;
+
+  @override
+  void initState() {
+    name = widget.transKey.name ?? '';
+    description = widget.transKey.description;
+    image = widget.transKey.image;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.white,
+      child: SizedBox(
+        width: 800,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppCardTitle(title: 'New Key'),
+            Padding(
+              padding: const EdgeInsets.only(left: 40, bottom: 20, right: 40, top: 20),
+              child: Form(
+                key: _formKey,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          AppOutlinedTextField(
+                            label: 'Key Name',
+                            initialValue: name,
+                            hint: 'Type the key name here (no spaces).',
+                            validator: (value) {
+                              if (value == null || value.isEmpty) return 'The key name can\'t be empty.';
+                              name = value;
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 20,),
+                          AppOutlinedTextField(
+                            label: 'Key Description',
+                            initialValue: description,
+                            hint: 'Type the key description here. (optional)',
+                            maxLines: 5,
+                            validator: (value) {
+                              if (value != null && value.isNotEmpty) {
+                                description = value;
+                              } else {
+                                description = null;
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 50,),
+                    Expanded(
+                      child: Container(
+                        height: 272,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppColors.detail)
+                        ),
+                        child: Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            Center(
+                              child: image != null && image!.isNotEmpty ? Image.network(
+                                image!
+                              ) : Text(
+                                'No context image.',
+                                style: TextStyle(color: Colors.black45),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10, right: 10),
+                              child: AppIconButton(
+                                icon: Icons.edit_rounded,
+                                onPressed: () {}
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Divider(color: AppColors.detail,),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(child: AppOutlinedButton(onPressed: () => context.pop(), text: 'Cancel')),
+                  SizedBox(width: 50,),
+                  Expanded(child: AppStyledButton(text: 'Save', onPressed: () async {
+                    if (!_formKey.currentState!.validate()) return;
+
+                    TransKey key = TransKey(
+                      name: name,
+                      description: description,
+                    );
+                    context.pop();
+                  })),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}

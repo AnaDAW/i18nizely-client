@@ -37,6 +37,10 @@ class TranslationsError extends TranslationsState {
   List<Object?> get props => [data, page, totalPages];
 }
 
+class KeyCreated extends TranslationsLoaded {
+  const KeyCreated(super.keys, {required super.page, required super.totalPages});
+}
+
 class KeyCreateError extends TranslationsLoaded {
   final dynamic data;
 

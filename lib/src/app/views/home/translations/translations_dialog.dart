@@ -1,113 +1,81 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:i18nizely/shared/domain/models/date_utils.dart';
 import 'package:i18nizely/shared/theme/app_colors.dart';
-import 'package:i18nizely/shared/widgets/app_buttons.dart';
 import 'package:i18nizely/shared/widgets/app_cards.dart';
-import 'package:i18nizely/shared/widgets/app_textfields.dart';
-import 'package:i18nizely/src/app/views/home/translations/bloc/translations_bloc.dart';
-import 'package:i18nizely/src/app/views/home/translations/bloc/translations_event.dart';
-import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/key_model.dart';
 
-class TranslationsDialog extends StatefulWidget {
-  final int projectId;
+class TranslationsDialog extends StatelessWidget {
+  final TransKey transKey;
   
-  const TranslationsDialog({super.key, required this.projectId});
-  
-  @override
-  State<TranslationsDialog> createState() => _TranslationsDialogState();
-}
-
-class _TranslationsDialogState extends State<TranslationsDialog> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late String name;
-  late String? description;
-  late String translation;
+  const TranslationsDialog({super.key, required this.transKey});
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.white,
       child: SizedBox(
-        width: 800,
+        width: 700,
+        height: 450,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            AppCardTitle(title: 'New Key'),
-            Padding(
-              padding: const EdgeInsets.only(left: 40, bottom: 20, right: 40, top: 20),
-              child: Form(
-                key: _formKey,
+            AppCardTitle(title: 'Key Overview', hasClose: true,),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(40),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          AppOutlinedTextField(
-                            label: 'Key Name',
-                            hint: 'Type the key name here (no spaces).',
-                            validator: (value) {
-                              if (value == null || value.isEmpty) return 'The key name can\'t be empty.';
-                              name = value;
-                              return null;
-                            },
+                          Text(
+                            transKey.name ?? '',
+                            style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          SizedBox(height: 20,),
-                          AppOutlinedTextField(
-                            label: 'Key Description',
-                            hint: 'Type the key description here. (optional)',
-                            maxLines: 3,
-                            validator: (value) {
-                              if (value != null && value.isNotEmpty) {
-                                description = value;
-                              } else {
-                                description = null;
-                              }
-                              return null;
-                            },
+                          SizedBox(height: 10,),
+                          Expanded(
+                            child: transKey.description != null && transKey.description!.isNotEmpty ? SingleChildScrollView(
+                              child: Text(transKey.description!),
+                            ) : Center(
+                              child: Text(
+                                'No description.',
+                                style: TextStyle(color: Colors.black45,),
+                              ),
+                            ),
+                          ),
+                          Text(
+                            transKey.createdBy?.name ?? '',
+                            style: TextStyle(color: Colors.black45, fontSize: 12),
+                          ),
+                          Text(
+                            transKey.updatedAt?.toFormatStringDate(context) ?? 'Unknown',
+                            style: TextStyle(color: Colors.black45, fontSize: 12),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(width: 50,),
-                    Expanded(
-                      child: AppOutlinedTextField(
-                        label: 'Main Translation',
-                        hint: 'Type the main translation here.',
-                        maxLines: 7,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) return 'The main translation can\'t be empty.';
-                          translation = value;
-                          return null;
-                        },
+                    SizedBox(width: 20,),
+                    Container(
+                      width: 300,
+                      height: 300,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: AppColors.detail)
                       ),
-                    ),
+                      child: Center(
+                        child: transKey.image != null && transKey.image!.isNotEmpty ? Image.network(
+                          transKey.image!
+                        ) : Text(
+                          'No context image.',
+                          style: TextStyle(color: Colors.black45),
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),
             ),
-            Divider(color: AppColors.detail,),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(child: AppOutlinedButton(onPressed: () => context.pop(), text: 'Cancel')),
-                  SizedBox(width: 50,),
-                  Expanded(child: AppStyledButton(text: 'Create', onPressed: () async {
-                    if (!_formKey.currentState!.validate()) return;
-        
-                    TransKey key = TransKey(
-                      name: name,
-                      description: description,
-                    );
-                    locator<TranslationsBloc>().add(CreateKey(projectId: widget.projectId, newKey: key, translation: translation));
-                    context.pop();
-                  })),
-                ],
-              ),
-            )
           ],
         ),
       ),
