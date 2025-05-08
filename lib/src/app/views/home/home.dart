@@ -39,7 +39,19 @@ class HomeScreen extends StatelessWidget {
           } else if (state is ProfileLoading) {
             return Center(child: CircularProgressIndicator(color: AppColors.detail,),);
           } else if (state is ProfileError) {
-            return Center(child: Text('Error getting profile.'),);
+            return Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_rounded, color: Colors.red.shade400,),
+                  SizedBox(width: 5,),
+                  Text(
+                    'Error getting the profile.',
+                    style: TextStyle(color: Colors.red.shade400),
+                  ),
+                ],
+              ),
+            );
           } else if (state is ProfileLoaded) {
             return Container(
               color: Colors.white,
@@ -51,7 +63,19 @@ class HomeScreen extends StatelessWidget {
               ),
             );
           }
-          return Center(child: Text('Profile not found.'),);
+          return Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error_rounded, color: Colors.red.shade400,),
+                SizedBox(width: 5,),
+                Text(
+                  'Profile not found.',
+                  style: TextStyle(color: Colors.red.shade400),
+                ),
+              ],
+            ),
+          );
         },
       ),
     );

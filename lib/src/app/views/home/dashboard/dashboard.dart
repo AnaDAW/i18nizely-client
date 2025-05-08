@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:i18nizely/shared/widgets/app_icons.dart';
 import 'package:i18nizely/shared/widgets/app_snackbar.dart';
+import 'package:i18nizely/src/app/common/app_confirmation_dialog.dart';
 import 'package:i18nizely/src/app/common/app_list_card.dart';
 import 'package:i18nizely/src/app/common/app_title_bar.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
@@ -15,8 +17,6 @@ import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_state.d
 import 'package:i18nizely/src/app/views/home/dashboard/dashboard_dialog.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_event.dart';
-import 'package:i18nizely/src/app/views/home/translations/bloc/translations_bloc.dart';
-import 'package:i18nizely/src/app/views/home/translations/bloc/translations_event.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/user_model.dart';
 
@@ -80,8 +80,19 @@ class DashboardScreen extends StatelessWidget {
                             emptyText: 'No projects created yet.',
                             state: state,
                             changePage: (page) => locator<ProjectListBloc>().add(GetProjects(page: page, name: name)),
-                            deleteProject: (id) async {
-                              await deleteProject(id);
+                            deleteProject: (id) {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AppConfirmationDialog(
+                                  title: 'Delete Project',
+                                  description: 'Are you sure you want to delete the project?',
+                                  button: 'Delete',
+                                  onPressed: () async {
+                                    await deleteProject(id);
+                                    context.pop();
+                                  },
+                                ),
+                              );
                             },
                           );
                         }
@@ -120,7 +131,17 @@ class DashboardScreen extends StatelessWidget {
                         emptyText: 'No projects shared with me.',
                         state: state,
                         changePage: (page) => locator<CollabProjectListBloc>().add(GetProjects(page: page, name: name)),
-                        deleteProject: (id) => locator<CollabProjectListBloc>().add(DeleteProjectFromList(id)),
+                        deleteProject: (id) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AppConfirmationDialog(
+                              title: 'Delete Project',
+                              description: 'Are you sure you want to delete the project?',
+                              button: 'Delete',
+                              onPressed: () => locator<CollabProjectListBloc>().add(DeleteProjectFromList(id)),
+                            ),
+                          );
+                        },
                       );
                     }
                   ),
@@ -140,8 +161,7 @@ class DashboardScreen extends StatelessWidget {
     subscription = locator<ProjectListBloc>().stream.listen((state) {
       if (state is ProjectFromListDeleted) {
         subscription.cancel();
-        locator<ProjectBloc>().add(DeleteProject(id, refresh: true));
-        locator<TranslationsBloc>().add(ResetTranslations());
+        locator<ProjectBloc>().add(DeleteProject(id: id));
         completer.complete();
       } else if (state is ProjectFromListDeleteError) {
         subscription.cancel();

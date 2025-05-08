@@ -85,181 +85,180 @@ class _AccountFormState extends State<_AccountForm> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                alignment: Alignment.bottomRight,
+                children: [
+                  SizedBox(
+                      height: 200,
+                      width: 200,
+                      child: AppUserIcon(
+                        image: widget.profile.image,
+                        userName: widget.profile.initials,
+                      )
+                  ),
+                  AppIconButton(icon: Icons.edit_rounded, onPressed: () {
+                    //locator<UserApi>().changeProfileImage(pathImage: '');
+                  }),
+                ],
+              ),
+              SizedBox(width: 50,),
+              Expanded(
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: AppOutlinedTextField(
+                              label: 'First Name',
+                              hint: 'Type your first name',
+                              initialValue: firstName,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) return 'The first name can\'t be empty.';
+                                firstName = value;
+                                return null;
+                              },
+                            ),
+                          ),
+                          SizedBox(width: 20,),
+                          Expanded(
+                            child: AppOutlinedTextField(
+                              label: 'Last Name',
+                              hint: 'Type your last name',
+                              initialValue: lastName,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) return 'The last name can\'t be empty.';
+                                lastName = value;
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20,),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: AppOutlinedTextField(
+                              label: 'Email',
+                              hint: 'Type your email',
+                              initialValue: email,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) return 'The email can\'t be empty.';
+                                final RegExp regExp = RegExp(r"^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$");
+                                if (!regExp.hasMatch(value)) return 'Enter a valid email.';
+                                email = value;
+                                return null;
+                              },
+                            ),
+                          ),
+                          SizedBox(width: 20,),
+                          Expanded(
+                            child: AppOutlinedTextField(
+                              label: 'Password',
+                              hint: 'Type your password',
+                              obscureText: !showPassword,
+                              icon: IconButton(
+                                onPressed: () => setState(() => showPassword = !showPassword),
+                                icon: Icon(showPassword ? Icons.remove_red_eye_rounded : Icons.remove_red_eye_outlined),
+                              ),
+                              controller: passwordCtl,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20,),
+                      Divider(color: AppColors.detail,),
+                      SizedBox(height: 20,),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Time Format', style: TextStyle(fontWeight: FontWeight.bold),),
+                              Row(
+                                children: [
+                                  Checkbox(
+                                    value: format24h,
+                                    onChanged: (value) => setState(() => format24h = value!),
+                                  ),
+                                  Text('24h',),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Date Format', style: TextStyle(fontWeight: FontWeight.bold),),
+                              DropdownButton(
+                                value: dateFormat,
+                                items: [
+                                  DropdownMenuItem(value: UserDateFormat.dmy, child: Text('DD/MM/YYYY')),
+                                  DropdownMenuItem(value: UserDateFormat.mdy, child: Text('MM/DD/YYYY')),
+                                ],
+                                onChanged: (value) => setState(() => dateFormat = value!),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Language', style: TextStyle(fontWeight: FontWeight.bold),),
+                              DropdownButton(
+                                value: language,
+                                items: [
+                                  for (MapEntry<String, dynamic> entry in languages.entries)
+                                    DropdownMenuItem(value: entry.key, child: Text(entry.value as String))
+                                ],
+                                onChanged: (value) => setState(() => language = value!),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              ),
+            ],
+          ),
+        ),
+        Divider(color: AppColors.detail,),
+        SizedBox(height: 10,),
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Stack(
-                  alignment: Alignment.bottomRight,
-                  children: [
-                    SizedBox(
-                        height: 200,
-                        width: 200,
-                        child: AppUserIcon(
-                          image: widget.profile.image,
-                          userName: widget.profile.initials,
-                        )
-                    ),
-                    AppIconButton(icon: Icons.edit_rounded, onPressed: () {
-                      //locator<UserApi>().changeProfileImage(pathImage: '');
-                    }),
-                  ],
-                ),
-                SizedBox(height: 40,),
-                buildDate(
-                  'Created at: ${widget.profile.createdAt?.toFormatStringDate(context) ?? 'Unknown'}'
-                ),
-                buildDate(
-                  'Last update: ${widget.profile.updatedAt?.toFormatStringDate(context) ?? 'Unknown'}'
-                ),
+                buildDate('Created at: ${widget.profile.createdAt?.toFormatStringDate(context) ?? 'Unknown Date'}'),
+                buildDate('Last update: ${widget.profile.updatedAt?.toFormatStringDate(context) ?? 'Unknown Date'}'),
               ],
             ),
-            SizedBox(width: 50,),
-            Expanded(
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: AppOutlinedTextField(
-                            label: 'First Name',
-                            hint: 'Type your first name',
-                            initialValue: firstName,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) return 'The first name can\'t be empty.';
-                              firstName = value;
-                              return null;
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 20,),
-                        Expanded(
-                          child: AppOutlinedTextField(
-                            label: 'Last Name',
-                            hint: 'Type your last name',
-                            initialValue: lastName,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) return 'The last name can\'t be empty.';
-                              lastName = value;
-                              return null;
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20,),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: AppOutlinedTextField(
-                            label: 'Email',
-                            hint: 'Type your email',
-                            initialValue: email,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) return 'The email can\'t be empty.';
-                              final RegExp regExp = RegExp(r"^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$");
-                              if (!regExp.hasMatch(value)) return 'Enter a valid email.';
-                              email = value;
-                              return null;
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 20,),
-                        Expanded(
-                          child: AppOutlinedTextField(
-                            label: 'Password',
-                            hint: 'Type your password',
-                            obscureText: !showPassword,
-                            icon: IconButton(
-                              onPressed: () => setState(() => showPassword = !showPassword),
-                              icon: Icon(showPassword ? Icons.remove_red_eye_rounded : Icons.remove_red_eye_outlined),
-                            ),
-                            controller: passwordCtl,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20,),
-                    Divider(
-                      color: AppColors.detail,
-                      thickness: 1,
-                    ),
-                    SizedBox(height: 20,),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Time Format', style: TextStyle(fontWeight: FontWeight.bold),),
-                            Row(
-                              children: [
-                                Checkbox(
-                                  value: format24h,
-                                  onChanged: (value) => setState(() => format24h = value!),
-                                ),
-                                Text('24h',),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Date Format', style: TextStyle(fontWeight: FontWeight.bold),),
-                            DropdownButton(
-                              value: dateFormat,
-                              items: [
-                                DropdownMenuItem(value: UserDateFormat.dmy, child: Text('DD/MM/YYYY')),
-                                DropdownMenuItem(value: UserDateFormat.mdy, child: Text('MM/DD/YYYY')),
-                              ],
-                              onChanged: (value) => setState(() => dateFormat = value!),
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Language', style: TextStyle(fontWeight: FontWeight.bold),),
-                            DropdownButton(
-                              value: language,
-                              items: [
-                                for (MapEntry<String, dynamic> entry in languages.entries)
-                                  DropdownMenuItem(value: entry.key, child: Text(entry.value as String))
-                              ],
-                              onChanged: (value) => setState(() => language = value!),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              )
-            ),
-          ],
-        ),
-        Expanded(
-          child: Align(
-            alignment: Alignment.bottomRight,
-            child: SizedBox(
+            SizedBox(
               width: 200,
               child: AppStyledButton(
                 onPressed: () {
                   if (!_formKey.currentState!.validate()) return;
-
+        
                   final User updatedUser = getUpdatedUser();
                   if (updatedUser == User()) return;
-
+        
                   locator<ProfileBloc>().add(UpdateProfile(
                     newProfile: updatedUser,
                     password: passwordCtl.text.isNotEmpty ? passwordCtl.text : null
@@ -268,7 +267,7 @@ class _AccountFormState extends State<_AccountForm> {
                 text: 'Save',
               ),
             ),
-          ),
+          ]
         ),
       ],
     );

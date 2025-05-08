@@ -8,6 +8,8 @@ import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/collab_project_list_bloc.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
+import 'package:i18nizely/src/app/views/home/translations/comments/bloc/comments_bloc.dart';
+import 'package:i18nizely/src/app/views/home/translations/version/bloc/versions_bloc.dart';
 import 'package:i18nizely/src/domain/services/auth_api.dart';
 import 'package:i18nizely/src/domain/services/key_api.dart';
 import 'package:i18nizely/src/domain/services/project_api.dart';
@@ -53,6 +55,10 @@ void initInjection() {
   locator.registerLazySingleton<CollabProjectListBloc>(() => CollabProjectListBloc(locator<ProjectApi>()));
 
   locator.registerLazySingleton<TranslationsBloc>(() => TranslationsBloc(locator<KeyApi>(), locator<TranslationApi>()));
+
+  locator.registerLazySingleton<CommentsBloc>(() => CommentsBloc(locator<TranslationApi>()));
+
+  locator.registerLazySingleton<VersionBloc>(() => VersionBloc(locator<TranslationApi>()));
 }
 
 Future<void> initToken() async {

@@ -50,6 +50,7 @@ class TransKey extends Equatable {
     description,
     image,
     createdBy,
+    translations,
     createdAt,
     updatedAt
   ];

@@ -7,7 +7,7 @@ import 'package:i18nizely/src/domain/models/version_model.dart';
 abstract class TranslationApi {
   Future<Either<AppException, Translation>> createTranslation({required int projectId, required int keyId, required Translation newTranslation});
   
-  Future<Either<AppException, Translation>> updateTranslation({required int projectId, required int keyId, required Translation newTranslation});
+  Future<Either<AppException, Translation>> updateTranslation({required int projectId, required int keyId, required int id, required String newText});
   
   Future<Either<AppException, Translation>> reviewTranslation({required int projectId, required int keyId, required int id, required bool isReviewed});
   

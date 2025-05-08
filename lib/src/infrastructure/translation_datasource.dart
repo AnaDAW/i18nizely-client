@@ -33,9 +33,9 @@ class TranslationApiDataSource implements TranslationApi {
   }
 
   @override
-  Future<Either<AppException, Translation>> updateTranslation({required int projectId, required int keyId, required Translation newTranslation}) async {
+  Future<Either<AppException, Translation>> updateTranslation({required int projectId, required int keyId, required int id, required String newText}) async {
     try {
-      final eitherType = await networkService.patch('projects/$projectId/keys/$keyId/translations/${newTranslation.id}/', data: newTranslation.toQueryMap());
+      final eitherType = await networkService.patch('projects/$projectId/keys/$keyId/translations/$id/', data: {'text': newText});
       return eitherType.fold((exception) {
         return Left(exception);
       }, (response) async {
@@ -56,7 +56,7 @@ class TranslationApiDataSource implements TranslationApi {
   @override
   Future<Either<AppException, Translation>> reviewTranslation({required int projectId, required int keyId, required int id, required bool isReviewed}) async {
     try {
-      final eitherType = await networkService.patch('projects/$projectId/keys/$keyId/translations/$id/', data: { 'is_reviewed': isReviewed });
+      final eitherType = await networkService.patch('projects/$projectId/keys/$keyId/translations/$id/review/', data: { 'is_reviewed': isReviewed });
       return eitherType.fold((exception) {
         return Left(exception);
       }, (response) async {
@@ -146,7 +146,7 @@ class TranslationApiDataSource implements TranslationApi {
   @override
   Future<Either<AppException, Comment>> updateComment({required int projectId, required int keyId, required int translationId, required Comment newComment}) async {
     try {
-      final eitherType = await networkService.patch('projects/$projectId/keys/$keyId/translations/$translationId/comments/${newComment.id}', data: newComment.toQueryMap());
+      final eitherType = await networkService.patch('projects/$projectId/keys/$keyId/translations/$translationId/comments/${newComment.id}/', data: newComment.toQueryMap());
       return eitherType.fold((exception) {
         return Left(exception);
       }, (response) async {

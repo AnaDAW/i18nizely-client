@@ -22,13 +22,11 @@ class AppOutlinedTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Align(
-          alignment: Alignment.bottomLeft,
-          child: Text(
-            label,
-            style: TextStyle(fontWeight: FontWeight.bold,),
-          ),
+        Text(
+          label,
+          style: TextStyle(fontWeight: FontWeight.bold,),
         ),
         SizedBox(height: 10,),
         TextFormField(

@@ -9,6 +9,8 @@ import 'package:i18nizely/src/app/views/home/dashboard/bloc/collab_project_list_
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
 import 'package:i18nizely/src/app/views/home/translations/bloc/translations_bloc.dart';
+import 'package:i18nizely/src/app/views/home/translations/comments/bloc/comments_bloc.dart';
+import 'package:i18nizely/src/app/views/home/translations/version/bloc/versions_bloc.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:window_size/window_size.dart';
 
@@ -19,7 +21,7 @@ void main() {
 
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
     setWindowTitle('i18nizely');
-    setWindowMinSize(const Size(1000, 650));
+    setWindowMinSize(const Size(1050, 700));
     setWindowMaxSize(Size.infinite);
   }
 
@@ -40,6 +42,8 @@ class I18nizely extends StatelessWidget {
         BlocProvider<CollabProjectListBloc>(create: (_) => locator<CollabProjectListBloc>()),
         BlocProvider<ProjectBloc>(create: (_) => locator<ProjectBloc>()),
         BlocProvider<TranslationsBloc>(create: (_) => locator<TranslationsBloc>()),
+        BlocProvider<CommentsBloc>(create: (_) => locator<CommentsBloc>()),
+        BlocProvider<VersionBloc>(create: (_) => locator<VersionBloc>()),
       ],
       child: MaterialApp.router(
         title: 'i18nizely',

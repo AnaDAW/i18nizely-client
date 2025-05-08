@@ -33,8 +33,8 @@ class Translation extends Equatable {
       reviewedBy: json['reviewed_by'] != null ? User.fromJson(json['reviewed_by']) : null,
       reviewedAt: json['reviewed_at'] != null ? DateTime.parse(json['reviewed_at']) : null,
       createdBy: json['created_by'] != null ? User.fromJson(json['created_by']) : null,
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at'])
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null
     );
   }
 
@@ -52,9 +52,6 @@ class Translation extends Equatable {
   ];
 
   Map<String, dynamic> toQueryMap() {
-    Map<String, dynamic> map = {};
-    if (text != null) map['text'] = text;
-    if (language != null) map['language'] = language;
-    return map;
+    return {'text': text, 'language': language};
   }
 }

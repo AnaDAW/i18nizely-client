@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:i18nizely/shared/domain/models/date_utils.dart';
 import 'package:i18nizely/shared/theme/app_colors.dart';
 import 'package:i18nizely/shared/widgets/app_cards.dart';
+import 'package:i18nizely/src/app/common/app_user_info.dart';
 import 'package:i18nizely/src/domain/models/key_model.dart';
 
 class TranslationsDialog extends StatelessWidget {
@@ -44,13 +45,11 @@ class TranslationsDialog extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Text(
-                            transKey.createdBy?.name ?? '',
-                            style: TextStyle(color: Colors.black45, fontSize: 12),
-                          ),
-                          Text(
-                            transKey.updatedAt?.toFormatStringDate(context) ?? 'Unknown',
-                            style: TextStyle(color: Colors.black45, fontSize: 12),
+                          AppUserInfo(
+                            image: transKey.createdBy?.image,
+                            initials: transKey.createdBy?.initials ?? '',
+                            name: transKey.createdBy?.name ?? 'Unknown User',
+                            date: transKey.updatedAt?.toFormatStringDate(context) ?? 'Unknown Date',
                           ),
                         ],
                       ),

@@ -5,12 +5,16 @@ import 'package:i18nizely/shared/widgets/app_buttons.dart';
 import 'package:i18nizely/shared/widgets/app_cards.dart';
 import 'package:i18nizely/shared/widgets/app_icons.dart';
 import 'package:i18nizely/shared/widgets/app_textfields.dart';
+import 'package:i18nizely/src/app/views/home/translations/bloc/translations_bloc.dart';
+import 'package:i18nizely/src/app/views/home/translations/bloc/translations_event.dart';
+import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/key_model.dart';
 
 class TranslationsEditDialog extends StatefulWidget {
+  final int projectId;
   final TransKey transKey;
   
-  const TranslationsEditDialog({super.key, required this.transKey});
+  const TranslationsEditDialog({super.key, required this.projectId, required this.transKey});
   
   @override
   State<TranslationsEditDialog> createState() => _TranslationsEditDialogState();
@@ -123,10 +127,10 @@ class _TranslationsEditDialogState extends State<TranslationsEditDialog> {
                   Expanded(child: AppStyledButton(text: 'Save', onPressed: () async {
                     if (!_formKey.currentState!.validate()) return;
 
-                    TransKey key = TransKey(
-                      name: name,
-                      description: description,
-                    );
+                    TransKey updatedKey = getUpdatedKey();
+                    if (updatedKey == TransKey(id: widget.transKey.id)) return;
+                    
+                    locator<TranslationsBloc>().add(UpdateKey(projectId: widget.projectId, newKey: updatedKey));
                     context.pop();
                   })),
                 ],
@@ -135,6 +139,14 @@ class _TranslationsEditDialogState extends State<TranslationsEditDialog> {
           ],
         ),
       ),
+    );
+  }
+
+  TransKey getUpdatedKey() {
+    return TransKey(
+      id: widget.transKey.id,
+      name: widget.transKey.name != name ? name : null,
+      description: widget.transKey.description != description ? description : null,
     );
   }
 }

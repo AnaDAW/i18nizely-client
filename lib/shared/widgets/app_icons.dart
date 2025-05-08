@@ -19,8 +19,8 @@ class AppUserIcon extends StatelessWidget {
         child: image != null && image!.isNotEmpty ? Image.network(image!) :
         FittedBox(
           child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Text(userName, style: TextStyle(fontSize: 100),),
+            padding: const EdgeInsets.all(35),
+            child: Text(userName, style: TextStyle(fontSize: 90),),
           ),
         ),
       ),
@@ -54,9 +54,10 @@ class AppIconButton extends StatelessWidget {
 
 class AppSecondaryIconButton extends StatelessWidget {
   final IconData icon;
+  final bool isEnabled;
   final VoidCallback onPressed;
 
-  const AppSecondaryIconButton({super.key, required this.icon, required this.onPressed});
+  const AppSecondaryIconButton({super.key, required this.icon, this.isEnabled = true, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -64,12 +65,12 @@ class AppSecondaryIconButton extends StatelessWidget {
       height: 45,
       width: 45,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 225, 225, 225),
+        color: isEnabled ? const Color.fromARGB(255, 225, 225, 225) : const Color.fromARGB(255, 170, 170, 170),
         borderRadius: BorderRadius.circular(30),
       ),
       child: IconButton(
         onPressed: onPressed,
-        icon: Icon(icon, color: Colors.black45,)
+        icon: Icon(icon, color: isEnabled ? Colors.black45 : Colors.white,)
       ),
     );
   }

@@ -30,7 +30,7 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
   Map<String, dynamic> get headers => dio.options.headers;
 
   @override
-  void updateBaseUrl(String newBaseUrl) async {
+  void updateBaseUrl(String newBaseUrl) {
     dio.options.baseUrl = newBaseUrl;
   }
 

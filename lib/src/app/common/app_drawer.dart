@@ -6,6 +6,8 @@ import 'package:i18nizely/shared/widgets/app_icons.dart';
 import 'package:i18nizely/src/app/router/app_router.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_state.dart';
+import 'package:i18nizely/src/app/views/home/translations/bloc/translations_bloc.dart';
+import 'package:i18nizely/src/app/views/home/translations/bloc/translations_event.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/user_model.dart';
 import 'package:i18nizely/src/domain/services/auth_api.dart';
@@ -87,6 +89,7 @@ class _AppDrawerState extends State<AppDrawer> {
                         late final bool isProjectSelected;
                         if (state is ProjectInitial) {
                           isProjectSelected = false;
+                          locator<TranslationsBloc>().add(ResetTranslations());
                         } else {
                           isProjectSelected = true;
                         }

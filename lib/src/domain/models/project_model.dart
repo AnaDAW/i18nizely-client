@@ -60,6 +60,7 @@ class Project extends Equatable {
     createdBy,
     mainLanguage,
     languages,
+    collaborators,
     createdAt,
     updatedAt
   ];
@@ -71,6 +72,30 @@ class Project extends Equatable {
     if (mainLanguage != null) map['main_language'] = mainLanguage;
     if (languages != null) map['languages'] = languages;
     return map;
+  }
+
+  Project copyWith({
+    int? id,
+    String? name,
+    String? description,
+    User? createdBy,
+    String? mainLanguage,
+    List<String>? languages,
+    List<Collaborator>? collaborators,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return Project(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      createdBy: createdBy ?? this.createdBy,
+      mainLanguage: mainLanguage ?? this.mainLanguage,
+      languages: languages ?? this.languages,
+      collaborators: collaborators ?? this.collaborators,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt
+    );
   }
 }
 
@@ -107,7 +132,7 @@ class Collaborator extends Equatable {
     roles
   ];
 
-  Map<String, dynamic>  toQueryMap() {
-    return {'user': user, 'roles': roles.map((role) => role.index + 1).toList()};
+  Map<String, dynamic> toQueryMap() {
+    return {'user': user.id, 'roles': roles.map((role) => role.index + 1).toList()};
   }
 }

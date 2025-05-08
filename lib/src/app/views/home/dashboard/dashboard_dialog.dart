@@ -108,8 +108,8 @@ class _DashboardDialogState extends State<DashboardDialog> {
                         AppLanguagesChip(
                           mainLanguage: mainLanguage,
                           languages: languages,
-                          onChange: (value) => selectedLang = value,
                           error: languagesError,
+                          selected: selectedLang,
                         ),
                       ],
                     ),
@@ -140,7 +140,7 @@ class _DashboardDialogState extends State<DashboardDialog> {
                       await createProject();
                       context.pop();
                     } catch (e) {
-                      setState(() => languagesError = (e as dynamic)['languages']?[0] ?? e.toString());
+                      setState(() => languagesError = (e as dynamic)['languages']?[0]);
                     }
                   })),
                 ],
@@ -169,10 +169,10 @@ class _DashboardDialogState extends State<DashboardDialog> {
     });
 
     Project project = Project(
-        name: name,
-        description: description,
-        mainLanguage: mainLanguage,
-        languages: selectedLang
+      name: name,
+      description: description,
+      mainLanguage: mainLanguage,
+      languages: selectedLang
     );
 
     locator<ProjectListBloc>().add(CreateProject(project));

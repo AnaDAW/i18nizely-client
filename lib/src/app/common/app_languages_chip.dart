@@ -5,10 +5,10 @@ import 'package:i18nizely/shared/widgets/app_textfields.dart';
 class AppLanguagesChip extends StatefulWidget {
   final String mainLanguage;
   final Map<String, dynamic> languages;
-  final void Function(List<String>) onChange;
   final String? error;
+  final List<String> selected;
 
-  const AppLanguagesChip({super.key, required this.mainLanguage, required this.languages, required this.onChange, this.error});
+  const AppLanguagesChip({super.key, required this.mainLanguage, required this.languages, this.error, required this.selected});
 
   @override
   State<AppLanguagesChip> createState() => _AppLanguagesChipState();
@@ -16,7 +16,6 @@ class AppLanguagesChip extends StatefulWidget {
 
 class _AppLanguagesChipState extends State<AppLanguagesChip> {
   TextEditingController controller = TextEditingController();
-  List<String> selected = [];
   List<String> suggestions = [];
 
   @override
@@ -30,6 +29,7 @@ class _AppLanguagesChipState extends State<AppLanguagesChip> {
     return Stack(
       children: [
         Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AppOutlinedTextField(
               label: 'Languages',
@@ -42,13 +42,12 @@ class _AppLanguagesChipState extends State<AppLanguagesChip> {
             SizedBox(height: 5,),
             SizedBox(
               height: 90,
-              width: 400,
-              child: selected.isNotEmpty ? SingleChildScrollView(
+              child: widget.selected.isNotEmpty ? SingleChildScrollView(
                   child: Wrap(
                     spacing: 5,
                     runSpacing: 5,
                     children: [
-                      for (String key in selected)
+                      for (String key in widget.selected)
                         InputChip(
                           key: ObjectKey(key),
                           label: Text(widget.languages[key]),
@@ -85,7 +84,7 @@ class _AppLanguagesChipState extends State<AppLanguagesChip> {
                 itemCount: suggestions.length,
                 itemBuilder: (BuildContext context, int index) {
                   return ListTile(
-                    key: ObjectKey(suggestions[index]),
+                    key: Key(suggestions[index]),
                     title: Text(widget.languages[suggestions[index]], style: TextStyle(color: Colors.white),),
                     onTap: () => selectSuggestion(suggestions[index]),
                   );
@@ -100,7 +99,7 @@ class _AppLanguagesChipState extends State<AppLanguagesChip> {
   void onSearchChange(String value) {
     final List<String> matches = [];
     for (String key in widget.languages.keys) {
-      if (key != widget.mainLanguage && widget.languages[key].toLowerCase().contains(value) && !selected.contains(key)) {
+      if (key != widget.mainLanguage && widget.languages[key].toLowerCase().contains(value) && !widget.selected.contains(key)) {
         matches.add(key);
       }
     }
@@ -111,26 +110,23 @@ class _AppLanguagesChipState extends State<AppLanguagesChip> {
   void onSubmit() {
     if (suggestions.isEmpty) return;
     setState(() {
-      selected.add(suggestions[0]);
+      widget.selected.add(suggestions[0]);
       suggestions.clear();
     });
     controller.clear();
-    widget.onChange(selected);
   }
 
   void selectSuggestion(String language) {
     setState(() {
-      selected.add(language);
+      widget.selected.add(language);
       suggestions.clear();
     });
-    widget.onChange(selected);
   }
 
   void onChipDelete(String language) {
     setState(() {
-      selected.remove(language);
+      widget.selected.remove(language);
       suggestions.clear();
     });
-    widget.onChange(selected);
   }
 }

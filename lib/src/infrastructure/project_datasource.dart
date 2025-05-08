@@ -154,7 +154,13 @@ class ProjectApiDataSource implements ProjectApi {
       return eitherType.fold((exception) {
         return Left(exception);
       }, (response) async {
-        final Collaborator collaborator = Collaborator.fromJson(response.data);
+        final Map<String, dynamic> user = {
+          'id': response.data['user'],
+          'first_name': newCollaborator.user.firstName,
+          'last_name': newCollaborator.user.lastName,
+          'image': newCollaborator.user.image
+        };
+        final Collaborator collaborator = Collaborator.fromJson({...response.data, 'user': user});
         return Right(collaborator);
       });
     } catch (e) {
@@ -171,7 +177,7 @@ class ProjectApiDataSource implements ProjectApi {
   @override
   Future<Either<AppException, Collaborator>> updateCollaborator({required int projectId, required int id, required List<CollabRole> roles}) async {
     try {
-      final eitherType = await networkService.patch('projects/$projectId/collaborators/$id/', data: { 'roles': roles });
+      final eitherType = await networkService.patch('projects/$projectId/collaborators/$id/', data: { 'roles': roles.map((role) => role.index + 1).toList() });
       return eitherType.fold((exception) {
         return Left(exception);
       }, (response) async {

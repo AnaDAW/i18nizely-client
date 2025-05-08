@@ -27,13 +27,40 @@ class UpdateProject extends ProjectEvent {
 }
 
 class DeleteProject extends ProjectEvent {
-  final int id;
-  final bool refresh;
+  final int? id;
 
-  const DeleteProject(this.id, {this.refresh = false});
+  const DeleteProject({this.id});
 
   @override
-  List<Object?> get props => [id, refresh];
+  List<Object?> get props => [id];
+}
+
+class AddCollaborator extends ProjectEvent {
+  final Collaborator newCollaborator;
+
+  const AddCollaborator({required this.newCollaborator});
+
+  @override
+  List<Object?> get props => [newCollaborator];
+}
+
+class UpdateCollaborator extends ProjectEvent {
+  final int id;
+  final List<CollabRole> roles;
+
+  const UpdateCollaborator({required this.id, required this.roles});
+
+  @override
+  List<Object?> get props => [id, roles];
+}
+
+class RemoveCollaborator extends ProjectEvent {
+  final int id;
+
+  const RemoveCollaborator({required this.id});
+
+  @override
+  List<Object?> get props => [id];
 }
 
 class ResetProject extends ProjectEvent {

@@ -13,15 +13,25 @@ extension AppDateExtension on DateTime {
       }
       return User();
     });
-    final DateFormat dateFormatter = DateFormat(profile.dateFormat == UserDateFormat.mdy ? 'MM/dd/yyyy' : 'dd/MM/yyyy');
 
-    if (profile.format24h == false) {
-      dateFormatter.add_jm();
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
+    final DateTime yesterday = DateTime(now.year, now.month, now.day - 1);
+
+    final DateTime dateTime = add(now.timeZoneOffset);
+    final DateTime onlyDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
+    late final String date;
+    late final String time;
+
+    if (onlyDate == today) {
+      date = 'Today';
+    } else if (onlyDate == yesterday) {
+      date = 'Yesterday';
     } else {
-      dateFormatter.add_Hm();
+      date = DateFormat(profile.dateFormat == UserDateFormat.mdy ? 'MM/dd/yyyy' : 'dd/MM/yyyy').format(dateTime);
     }
-
-    final Duration timeZoneOffset = DateTime.now().timeZoneOffset;
-    return dateFormatter.format(add(timeZoneOffset));
+    time = DateFormat(profile.format24h == false ? 'jm' : 'Hm').format(dateTime);
+    
+    return '$date $time';
   }
 }

@@ -32,6 +32,6 @@ class Comment extends Equatable {
   ];
 
   Map<String, dynamic> toQueryMap() {
-    return { 'text': text };
+    return {'text': text};
   }
 }
