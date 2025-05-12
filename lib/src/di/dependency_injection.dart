@@ -7,6 +7,7 @@ import 'package:i18nizely/shared/exceptions/dio_network_exception.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/collab_project_list_bloc.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_bloc.dart';
+import 'package:i18nizely/src/app/views/home/notifications/bloc/notifications_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
 import 'package:i18nizely/src/app/views/home/translations/comments/bloc/comments_bloc.dart';
 import 'package:i18nizely/src/app/views/home/translations/version/bloc/versions_bloc.dart';
@@ -58,7 +59,9 @@ void initInjection() {
 
   locator.registerLazySingleton<CommentsBloc>(() => CommentsBloc(locator<TranslationApi>()));
 
-  locator.registerLazySingleton<VersionBloc>(() => VersionBloc(locator<TranslationApi>()));
+  locator.registerLazySingleton<VersionsBloc>(() => VersionsBloc(locator<TranslationApi>()));
+
+  locator.registerLazySingleton<NotificationsBloc>(() => NotificationsBloc(locator<UserApi>()));
 }
 
 Future<void> initToken() async {

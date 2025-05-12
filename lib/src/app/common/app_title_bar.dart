@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:i18nizely/shared/widgets/app_textfields.dart';
+import 'package:i18nizely/src/app/views/home/notifications/bloc/notifications_bloc.dart';
+import 'package:i18nizely/src/app/views/home/notifications/bloc/notifications_event.dart';
+import 'package:i18nizely/src/di/dependency_injection.dart';
 
 class AppTitleBar extends StatelessWidget {
   final String title;
@@ -51,7 +54,7 @@ class AppTitleBar extends StatelessWidget {
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,),
         ),
         IconButton(
-          onPressed: () {},
+          onPressed: () => locator<NotificationsBloc>().add(GetNotifications()),
           icon: Icon(Icons.notifications_none_rounded, color: Colors.black45,)
         ),
       ],

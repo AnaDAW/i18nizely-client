@@ -1,0 +1,54 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:i18nizely/src/app/views/home/notifications/bloc/notifications_event.dart';
+import 'package:i18nizely/src/app/views/home/notifications/bloc/notifications_state.dart';
+import 'package:i18nizely/src/domain/services/user_api.dart';
+
+class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
+  final UserApi userApi;
+
+  NotificationsBloc(this.userApi) : super(const NotificationsInitial()) {
+    on<GetNotifications>(_onGetNotifications);
+    on<DeleteNotification>(_onDeleteNotification);
+    on<ResetNotifications>(_onResetNotifications);
+  }
+
+  Future<void> _onGetNotifications(GetNotifications event, Emitter<NotificationsState> emit) async {
+    emit(const NotificationsLoading());
+    try {
+      final res = await userApi.getNotifications();
+      res.fold((left) {
+        emit(NotificationError(left.data));
+      }, (right) {
+        emit(NotificationLoaded(right));
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+      emit(NotificationError(e.toString()));
+    }
+  }
+
+  Future<void> _onDeleteNotification(DeleteNotification event, Emitter<NotificationsState> emit) async {
+    if (state is! NotificationLoaded) return;
+    try {
+      final res = await userApi.deleteNotification(id: event.id);
+      await res.fold((left) {
+        emit(NotificationDeleteError((state as NotificationLoaded).notifications, data: left.data));
+      }, (right) async {
+        emit(NotificationDeleted((state as NotificationLoaded).notifications));
+        await _onGetNotifications(GetNotifications(), emit);
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+      emit(NotificationDeleteError((state as NotificationLoaded).notifications, data: e.toString()));
+    }
+  }
+
+  Future<void> _onResetNotifications(ResetNotifications event, Emitter<NotificationsState> emit) async {
+    emit(const NotificationsInitial());
+  }
+}

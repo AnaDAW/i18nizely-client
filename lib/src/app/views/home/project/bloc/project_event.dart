@@ -19,11 +19,12 @@ class GetProject extends ProjectEvent {
 
 class UpdateProject extends ProjectEvent {
   final Project newProject;
+  final List<String>? languages;
 
-  const UpdateProject(this.newProject);
+  const UpdateProject(this.newProject, {this.languages});
 
   @override
-  List<Object?> get props => [newProject];
+  List<Object?> get props => [newProject, languages];
 }
 
 class DeleteProject extends ProjectEvent {

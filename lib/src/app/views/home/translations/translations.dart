@@ -13,13 +13,14 @@ import 'package:i18nizely/src/app/common/app_key_card.dart';
 import 'package:i18nizely/src/app/common/app_pages_bar.dart';
 import 'package:i18nizely/src/app/common/app_title_bar.dart';
 import 'package:i18nizely/src/app/common/app_translation_card.dart';
+import 'package:i18nizely/src/app/views/home/notifications/notifications.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_state.dart';
 import 'package:i18nizely/src/app/views/home/translations/bloc/translations_bloc.dart';
 import 'package:i18nizely/src/app/views/home/translations/bloc/translations_event.dart';
 import 'package:i18nizely/src/app/views/home/translations/bloc/translations_state.dart';
 import 'package:i18nizely/src/app/views/home/translations/comments/comments.dart';
-import 'package:i18nizely/src/app/views/home/translations/translations_create_dialog.dart';
+import 'package:i18nizely/src/app/views/home/translations/dialogs/translations_create_dialog.dart';
 import 'package:i18nizely/src/app/views/home/translations/version/versions.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/key_model.dart';
@@ -39,25 +40,31 @@ class TranslationsScreen extends StatelessWidget {
     });
     String? name;
 
-    return Column(
-      mainAxisSize: MainAxisSize.max,
+    return Stack(
+      alignment: Alignment.topRight,
       children: [
-        AppTitleBar(
-          title: 'Translations',
-          hasSearch: true,
-          hint: 'Search a key...',
-          onSumitSearch: (value) {
-            if (value != null && value.isNotEmpty) {
-              name = value;
-            } else {
-              name = null;
-            }
-            locator<TranslationsBloc>().add(GetTranslations(projectId: project.id ?? 0, page: 1, name: name));
-          },
+        Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            AppTitleBar(
+              title: 'Translations',
+              hasSearch: true,
+              hint: 'Search a key...',
+              onSumitSearch: (value) {
+                if (value != null && value.isNotEmpty) {
+                  name = value;
+                } else {
+                  name = null;
+                }
+                locator<TranslationsBloc>().add(GetTranslations(projectId: project.id ?? 0, page: 1, name: name));
+              },
+            ),
+            Expanded(
+              child: _TranslationsBody(project: project),
+            ),
+          ],
         ),
-        Expanded(
-          child: _TranslationsBody(project: project),
-        ),
+        NotificationsTab(),
       ],
     );
   }
@@ -85,7 +92,7 @@ class _TranslationsBodyState extends State<_TranslationsBody> {
   @override
   void initState() {
     projectLang = [widget.project.mainLanguage ?? ''];
-    projectLang.addAll(widget.project.languages ?? []);
+    projectLang.addAll(widget.project.languages?.where((lang) => lang.code != widget.project.mainLanguage).map((lang) => lang.code) ?? []);
     super.initState();
   }
 
@@ -332,7 +339,7 @@ class _TranslationsTable extends StatelessWidget {
                 SizedBox(
                   width: 75,
                   child: Checkbox(
-                    value: keys.length == selectedKeys.length,
+                    value: keys.isEmpty ? false : keys.length == selectedKeys.length,
                     onChanged: (value) {
                       if (value == null) return;
                       if (value) {
@@ -392,11 +399,13 @@ class _TranslationsTable extends StatelessWidget {
                               key: Key('$key$lang'),
                               projectId: projectId,
                               keyId: key.id ?? 0,
-                              lang: lang,
+                              language: lang,
+                              langName: languages[lang],
                               translation: key.translations?.where((trans) => trans.language == lang).firstOrNull,
                               openComments: openComments,
                               openVersion: openVersion,
                             ),
+                        SizedBox(width: 20,),
                       ],
                     ),
                 ],
@@ -430,34 +439,32 @@ class _TranslationsFilter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppElevatedCard(
-      child: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Show Languages:',
-              style: TextStyle(
-                fontWeight: FontWeight.bold
-              ),
+      padding: EdgeInsets.all(20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Show Languages:',
+            style: TextStyle(
+              fontWeight: FontWeight.bold
             ),
-            SizedBox(height: 5,),
-            for (String lang in projectLang)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Checkbox(
-                    value: !hiddenLang.contains(lang),
-                    onChanged: (value) {
-                      if (value != null) filterLanguage(value, lang);
-                    },
-                  ),
-                  Text(languages[lang]),
-                ],
-              ),
-          ],
-        ),
+          ),
+          SizedBox(height: 5,),
+          for (String lang in projectLang)
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Checkbox(
+                  value: !hiddenLang.contains(lang),
+                  onChanged: (value) {
+                    if (value != null) filterLanguage(value, lang);
+                  },
+                ),
+                Text(languages[lang]),
+              ],
+            ),
+        ],
       ),
     );
   }

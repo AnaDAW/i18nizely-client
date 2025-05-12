@@ -24,7 +24,7 @@ abstract class UserApi {
   
   Future<Either<AppException, void>> deleteProfile();
   
-  Future<Either<AppException, List<Notification>>> getNotifications();
+  Future<Either<AppException, List<AppNotification>>> getNotifications();
   
   Future<Either<AppException, void>> deleteNotification({required int id});
 }

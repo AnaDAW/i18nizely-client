@@ -49,7 +49,7 @@ class VersionsTab extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: BlocBuilder<VersionBloc, VersionsState>(
+            child: BlocBuilder<VersionsBloc, VersionsState>(
               builder: (context, state) {
                 if (state is VersionsLoading) {
                   return Center(child: CircularProgressIndicator(color: AppColors.detail,),);
@@ -123,7 +123,7 @@ class VersionsTab extends StatelessWidget {
       if (state is TranslationUpdated) {
         subscription.cancel();
         completer.complete();
-        locator<VersionBloc>().add(GetVersions(projectId: versionState.projectId, keyId: versionState.keyId, translationId: versionState.translationId));
+        locator<VersionsBloc>().add(GetVersions(projectId: versionState.projectId, keyId: versionState.keyId, translationId: versionState.translationId));
       } else if (state is TranslationUpdateError) {
         subscription.cancel();
         completer.completeError(state.data);

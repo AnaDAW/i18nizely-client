@@ -5,10 +5,10 @@ import 'package:i18nizely/shared/widgets/app_cards.dart';
 import 'package:i18nizely/src/app/common/app_user_info.dart';
 import 'package:i18nizely/src/domain/models/key_model.dart';
 
-class TranslationsDialog extends StatelessWidget {
+class KeyDialog extends StatelessWidget {
   final TransKey transKey;
   
-  const TranslationsDialog({super.key, required this.transKey});
+  const KeyDialog({super.key, required this.transKey});
 
   @override
   Widget build(BuildContext context) {

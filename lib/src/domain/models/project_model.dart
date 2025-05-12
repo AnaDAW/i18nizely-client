@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:i18nizely/src/domain/models/language_model.dart';
 import 'package:i18nizely/src/domain/models/user_model.dart';
 
 class Project extends Equatable {
@@ -7,7 +8,7 @@ class Project extends Equatable {
   final String? description;
   final User? createdBy;
   final String? mainLanguage;
-  final List<String>? languages;
+  final List<Language>? languages;
   final List<Collaborator>? collaborators;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -32,10 +33,10 @@ class Project extends Equatable {
       }
     }
 
-    List<String> languageList = [];
+    List<Language> languageList = [];
     if (json['languages'] != null) {
-      for (String language in json['languages']) {
-        languageList.add(language);
+      for (Map<String, dynamic> language in json['languages']) {
+        languageList.add(Language.fromJson(language));
       }
     }
 
@@ -80,7 +81,7 @@ class Project extends Equatable {
     String? description,
     User? createdBy,
     String? mainLanguage,
-    List<String>? languages,
+    List<Language>? languages,
     List<Collaborator>? collaborators,
     DateTime? createdAt,
     DateTime? updatedAt,

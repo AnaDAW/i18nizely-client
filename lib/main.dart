@@ -7,6 +7,7 @@ import 'package:i18nizely/src/app/router/app_router.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/collab_project_list_bloc.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_bloc.dart';
+import 'package:i18nizely/src/app/views/home/notifications/bloc/notifications_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
 import 'package:i18nizely/src/app/views/home/translations/bloc/translations_bloc.dart';
 import 'package:i18nizely/src/app/views/home/translations/comments/bloc/comments_bloc.dart';
@@ -43,7 +44,8 @@ class I18nizely extends StatelessWidget {
         BlocProvider<ProjectBloc>(create: (_) => locator<ProjectBloc>()),
         BlocProvider<TranslationsBloc>(create: (_) => locator<TranslationsBloc>()),
         BlocProvider<CommentsBloc>(create: (_) => locator<CommentsBloc>()),
-        BlocProvider<VersionBloc>(create: (_) => locator<VersionBloc>()),
+        BlocProvider<VersionsBloc>(create: (_) => locator<VersionsBloc>()),
+        BlocProvider<NotificationsBloc>(create: (_) => locator<NotificationsBloc>()),
       ],
       child: MaterialApp.router(
         title: 'i18nizely',

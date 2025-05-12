@@ -198,15 +198,15 @@ class UserApiDataSource implements UserApi {
   }
 
   @override
-  Future<Either<AppException, List<Notification>>> getNotifications() async {
+  Future<Either<AppException, List<AppNotification>>> getNotifications() async {
     try {
       final eitherType = await networkService.get('notifications/');
       return eitherType.fold((exception) {
         return Left(exception);
       }, (response) async {
-        final List<Notification> notifications = [];
+        final List<AppNotification> notifications = [];
         for (var notification in response.data) {
-          notifications.add(Notification.fromJson(notification));
+          notifications.add(AppNotification.fromJson(notification));
         }
         return Right(notifications);
       });

@@ -9,10 +9,16 @@ import 'package:i18nizely/src/app/views/home/account/bloc/profile_event.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/collab_project_list_bloc.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_bloc.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_event.dart';
+import 'package:i18nizely/src/app/views/home/notifications/bloc/notifications_bloc.dart';
+import 'package:i18nizely/src/app/views/home/notifications/bloc/notifications_event.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_event.dart';
 import 'package:i18nizely/src/app/views/home/translations/bloc/translations_bloc.dart';
 import 'package:i18nizely/src/app/views/home/translations/bloc/translations_event.dart';
+import 'package:i18nizely/src/app/views/home/translations/comments/bloc/comments_bloc.dart';
+import 'package:i18nizely/src/app/views/home/translations/comments/bloc/comments_event.dart';
+import 'package:i18nizely/src/app/views/home/translations/version/bloc/versions_bloc.dart';
+import 'package:i18nizely/src/app/views/home/translations/version/bloc/versions_event.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/services/auth_api.dart';
 
@@ -143,5 +149,8 @@ class _LoginFormState extends State<_LoginForm> {
     locator<ProjectListBloc>().add(ResetProjectList());
     locator<CollabProjectListBloc>().add(ResetProjectList());
     locator<TranslationsBloc>().add(ResetTranslations());
+    locator<CommentsBloc>().add(ResetComments());
+    locator<VersionsBloc>().add(ResetVersions());
+    locator<NotificationsBloc>().add(ResetNotifications());
   }
 }

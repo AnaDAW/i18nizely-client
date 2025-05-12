@@ -38,7 +38,7 @@ class ProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
   Future<void> _onCreateProject(CreateProject event, Emitter<ProjectListState> emit) async {
     if (state is! ProjectListLoaded) return;
     try {
-      final res = await projectApi.createProject(newProject: event.project);
+      final res = await projectApi.createProject(newProject: event.project, languages: event.languages);
       await res.fold((left) {
         emit(ProjectCreateError((state as ProjectListLoaded).projects, name: state.name, data: left.data, page: state.page, totalPages: state.totalPages));
       }, (right) async {

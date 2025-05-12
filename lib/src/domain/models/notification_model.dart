@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 enum NotificationType { comment, invitation }
 
-class Notification extends Equatable {
+class AppNotification extends Equatable {
   final int id;
   final NotificationType type;
   final bool isRead;
@@ -10,7 +10,7 @@ class Notification extends Equatable {
   final int projectId;
   final DateTime createdAt;
 
-  const Notification({
+  const AppNotification({
     required this.id,
     required this.type,
     required this.isRead,
@@ -19,8 +19,8 @@ class Notification extends Equatable {
     required this.createdAt
   });
 
-  factory Notification.fromJson(Map<String, dynamic> json) {
-    return Notification(
+  factory AppNotification.fromJson(Map<String, dynamic> json) {
+    return AppNotification(
       id: json['id'],
       type: NotificationType.values[json['type'] - 1],
       isRead: json['is_read'],

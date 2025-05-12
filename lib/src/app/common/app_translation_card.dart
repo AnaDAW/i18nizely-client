@@ -10,6 +10,7 @@ import 'package:i18nizely/src/app/views/home/translations/bloc/translations_even
 import 'package:i18nizely/src/app/views/home/translations/bloc/translations_state.dart';
 import 'package:i18nizely/src/app/views/home/translations/comments/bloc/comments_bloc.dart';
 import 'package:i18nizely/src/app/views/home/translations/comments/bloc/comments_event.dart';
+import 'package:i18nizely/src/app/views/home/translations/dialogs/translation_dialog.dart';
 import 'package:i18nizely/src/app/views/home/translations/version/bloc/versions_bloc.dart';
 import 'package:i18nizely/src/app/views/home/translations/version/bloc/versions_event.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
@@ -18,12 +19,13 @@ import 'package:i18nizely/src/domain/models/translation_model.dart';
 class AppTranslationCard extends StatefulWidget {
   final int projectId;
   final int keyId;
-  final String lang;
+  final String language;
+  final String langName;
   final Translation? translation;
   final VoidCallback openComments;
   final VoidCallback openVersion;
 
-  const AppTranslationCard({super.key, required this.projectId, required this.keyId, required this.lang, required this.translation, required this.openComments, required this.openVersion});
+  const AppTranslationCard({super.key, required this.projectId, required this.keyId, required this.language, required this.langName, required this.translation, required this.openComments, required this.openVersion});
 
   @override
   State<AppTranslationCard> createState() => _AppTranslationsCardState();
@@ -43,12 +45,18 @@ class _AppTranslationsCardState extends State<AppTranslationCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 200,
-      width: 300,
-      padding: EdgeInsets.all(10),
-      child: AppElevatedCard(
-        child: Padding(
+    return GestureDetector(
+      onTap: isEmpty ? null : () {
+        showDialog(
+          context: context,
+          builder: (context) => TranslationDialog(translation: widget.translation ?? Translation(), language: widget.langName,),
+        );
+      },
+      child: Container(
+        height: 200,
+        width: 300,
+        padding: EdgeInsets.all(10),
+        child: AppElevatedCard(
           padding: EdgeInsets.all(10),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,7 +168,7 @@ class _AppTranslationsCardState extends State<AppTranslationCard> {
                   ),
                   IconButton(
                     onPressed: isEmpty ? null : () {
-                      locator<VersionBloc>().add(GetVersions(projectId: widget.projectId, keyId: widget.keyId, translationId: widget.translation?.id ?? 0));
+                      locator<VersionsBloc>().add(GetVersions(projectId: widget.projectId, keyId: widget.keyId, translationId: widget.translation?.id ?? 0));
                       widget.openVersion();
                     },
                     icon: Icon(
@@ -203,7 +211,7 @@ class _AppTranslationsCardState extends State<AppTranslationCard> {
     });
 
     if (isEmpty) {
-      Translation newTranslation = Translation(language: widget.lang, text: text);
+      Translation newTranslation = Translation(language: widget.language, text: text);
       locator<TranslationsBloc>().add(CreateTranslation(projectId: widget.projectId, keyId: widget.keyId, newTranslation: newTranslation));
     } else {
       locator<TranslationsBloc>().add(UpdateTranslation(projectId: widget.projectId, keyId: widget.keyId, id: widget.translation?.id ?? 0, newText: text));

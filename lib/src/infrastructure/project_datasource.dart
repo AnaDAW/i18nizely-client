@@ -65,9 +65,9 @@ class ProjectApiDataSource implements ProjectApi {
   }
   
   @override
-  Future<Either<AppException, Project>> createProject({required Project newProject}) async {
+  Future<Either<AppException, Project>> createProject({required Project newProject, required List<String> languages}) async {
     try {
-      final eitherType = await networkService.post('projects/', data: newProject.toQueryMap());
+      final eitherType = await networkService.post('projects/', data: {...newProject.toQueryMap(), 'language_codes': languages});
       return eitherType.fold((exception) {
         return Left(exception);
       }, (response) async {
@@ -107,9 +107,11 @@ class ProjectApiDataSource implements ProjectApi {
   }
 
   @override
-  Future<Either<AppException, Project>> updateProject({required Project newProject}) async {
+  Future<Either<AppException, Project>> updateProject({required Project newProject, List<String>? languages}) async {
     try {
-      final eitherType = await networkService.patch('projects/${newProject.id}/', data: newProject.toQueryMap());
+      Map<String, dynamic> data = newProject.toQueryMap();
+      if (languages != null) data['language_codes'] = languages;
+      final eitherType = await networkService.patch('projects/${newProject.id}/', data: data);
       return eitherType.fold((exception) {
         return Left(exception);
       }, (response) async {

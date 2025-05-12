@@ -6,10 +6,10 @@ import 'package:i18nizely/src/app/views/home/translations/version/bloc/versions_
 import 'package:i18nizely/src/app/views/home/translations/version/bloc/versions_state.dart';
 import 'package:i18nizely/src/domain/services/translation_api.dart';
 
-class VersionBloc extends Bloc<VersionsEvent, VersionsState> {
+class VersionsBloc extends Bloc<VersionsEvent, VersionsState> {
   final TranslationApi translationApi;
 
-  VersionBloc(this.translationApi) : super(const VersionsInitial()) {
+  VersionsBloc(this.translationApi) : super(const VersionsInitial()) {
     on<GetVersions>(_onGetVersions);
     on<ResetVersions>(_onResetVersions);
   }

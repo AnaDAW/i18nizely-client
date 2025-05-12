@@ -8,11 +8,11 @@ abstract class ProjectApi {
 
   Future<Either<AppException, List<Project>>> getCollabProjects({String? name, int page = 1});
   
-  Future<Either<AppException, Project>> createProject({required Project newProject});
+  Future<Either<AppException, Project>> createProject({required Project newProject, required List<String> languages});
   
   Future<Either<AppException, Project>> getProject({required int id});
   
-  Future<Either<AppException, Project>> updateProject({required Project newProject});
+  Future<Either<AppException, Project>> updateProject({required Project newProject, List<String>? languages});
   
   Future<Either<AppException, void>> deleteProject({required int id});
   

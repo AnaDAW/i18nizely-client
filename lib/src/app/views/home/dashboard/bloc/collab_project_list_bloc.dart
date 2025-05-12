@@ -44,10 +44,27 @@ class CollabProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
 
   Future<void> _onDeleteProject(DeleteProjectFromList event, Emitter<ProjectListState> emit) async {
     if (state is! ProjectListLoaded) return;
-    for (Project project in (state as ProjectListLoaded).projects) {
-      if (project.id != null && project.id! >= event.id) {
-        await _onGetProjects(GetProjects(name: state.name, page: state.page), emit);
-        return;
+    if (event.refresh) {
+      for (Project project in (state as ProjectListLoaded).projects) {
+        if (project.id != null && project.id! >= event.id) {
+          await _onGetProjects(GetProjects(name: state.name, page: state.page), emit);
+          return;
+        }
+      }
+    } else {
+      try {
+        final res = await projectApi.deleteProject(id: event.id);
+        await res.fold((left) {
+          emit(ProjectFromListDeleteError((state as ProjectListLoaded).projects, name: state.name, data: left.data, page: state.page, totalPages: state.totalPages));
+        }, (right) async {
+          emit(ProjectFromListDeleted((state as ProjectListLoaded). projects, name: state.name, page: state.page, totalPages: state.totalPages));
+          await _onGetProjects(GetProjects(name: state.name, page: state.page), emit);
+        });
+      } catch (e) {
+        if (kDebugMode) {
+          print(e.toString());
+        }
+        emit(ProjectFromListDeleteError((state as ProjectListLoaded).projects, name: state.name, data: e.toString(), page: state.page, totalPages: state.totalPages));
       }
     }
   }

@@ -172,10 +172,9 @@ class _DashboardDialogState extends State<DashboardDialog> {
       name: name,
       description: description,
       mainLanguage: mainLanguage,
-      languages: selectedLang
     );
 
-    locator<ProjectListBloc>().add(CreateProject(project));
+    locator<ProjectListBloc>().add(CreateProject(project, languages: selectedLang));
     return completer.future;
   }
 }

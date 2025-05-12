@@ -4,8 +4,9 @@ import 'package:i18nizely/shared/theme/app_colors.dart';
 
 class AppElevatedCard extends StatelessWidget {
   final Widget child;
+  final EdgeInsetsGeometry? padding;
 
-  const AppElevatedCard({super.key, required this.child});
+  const AppElevatedCard({super.key, required this.child, this.padding});
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +18,7 @@ class AppElevatedCard extends StatelessWidget {
           BoxShadow(color: Colors.black12, blurRadius: 10),
         ]
       ),
+      padding: padding,
       child: child,
     );
   }

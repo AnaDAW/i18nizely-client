@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:i18nizely/shared/config/app_config.dart';
 import 'package:i18nizely/shared/domain/models/date_utils.dart';
+import 'package:i18nizely/shared/widgets/app_cards.dart';
 import 'package:i18nizely/src/app/common/app_title_bar.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_event.dart';
@@ -10,6 +11,7 @@ import 'package:i18nizely/shared/theme/app_colors.dart';
 import 'package:i18nizely/shared/widgets/app_buttons.dart';
 import 'package:i18nizely/shared/widgets/app_icons.dart';
 import 'package:i18nizely/shared/widgets/app_textfields.dart';
+import 'package:i18nizely/src/app/views/home/notifications/notifications.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/user_model.dart';
 
@@ -26,17 +28,18 @@ class AccountScreen extends StatelessWidget {
       return User();
     });
 
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
+      alignment: Alignment.topRight,
       children: [
-        AppTitleBar(title: 'Account Settings',),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(70),
-            child: _AccountForm(profile: profile,),
-          ),
+        Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppTitleBar(title: 'Account Settings',),
+            Expanded(child: _AccountForm(profile: profile,),),
+          ],
         ),
+        NotificationsTab(),
       ],
     );
   }
@@ -86,188 +89,202 @@ class _AccountFormState extends State<_AccountForm> {
     return Column(
       children: [
         Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Stack(
-                alignment: Alignment.bottomRight,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 50, bottom: 20, right: 50, top: 50,),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                      height: 200,
-                      width: 200,
-                      child: AppUserIcon(
-                        image: widget.profile.image,
-                        userName: widget.profile.initials,
-                      )
-                  ),
-                  AppIconButton(icon: Icons.edit_rounded, onPressed: () {
-                    //locator<UserApi>().changeProfileImage(pathImage: '');
-                  }),
-                ],
-              ),
-              SizedBox(width: 50,),
-              Expanded(
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
+                  Stack(
+                    alignment: Alignment.bottomRight,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: AppOutlinedTextField(
-                              label: 'First Name',
-                              hint: 'Type your first name',
-                              initialValue: firstName,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) return 'The first name can\'t be empty.';
-                                firstName = value;
-                                return null;
-                              },
-                            ),
-                          ),
-                          SizedBox(width: 20,),
-                          Expanded(
-                            child: AppOutlinedTextField(
-                              label: 'Last Name',
-                              hint: 'Type your last name',
-                              initialValue: lastName,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) return 'The last name can\'t be empty.';
-                                lastName = value;
-                                return null;
-                              },
-                            ),
-                          ),
-                        ],
+                      SizedBox(
+                          height: 200,
+                          width: 200,
+                          child: AppUserIcon(
+                            image: widget.profile.image,
+                            userName: widget.profile.initials,
+                          )
                       ),
-                      SizedBox(height: 20,),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: AppOutlinedTextField(
-                              label: 'Email',
-                              hint: 'Type your email',
-                              initialValue: email,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) return 'The email can\'t be empty.';
-                                final RegExp regExp = RegExp(r"^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$");
-                                if (!regExp.hasMatch(value)) return 'Enter a valid email.';
-                                email = value;
-                                return null;
-                              },
-                            ),
-                          ),
-                          SizedBox(width: 20,),
-                          Expanded(
-                            child: AppOutlinedTextField(
-                              label: 'Password',
-                              hint: 'Type your password',
-                              obscureText: !showPassword,
-                              icon: IconButton(
-                                onPressed: () => setState(() => showPassword = !showPassword),
-                                icon: Icon(showPassword ? Icons.remove_red_eye_rounded : Icons.remove_red_eye_outlined),
-                              ),
-                              controller: passwordCtl,
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20,),
-                      Divider(color: AppColors.detail,),
-                      SizedBox(height: 20,),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Time Format', style: TextStyle(fontWeight: FontWeight.bold),),
-                              Row(
-                                children: [
-                                  Checkbox(
-                                    value: format24h,
-                                    onChanged: (value) => setState(() => format24h = value!),
-                                  ),
-                                  Text('24h',),
-                                ],
-                              ),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Date Format', style: TextStyle(fontWeight: FontWeight.bold),),
-                              DropdownButton(
-                                value: dateFormat,
-                                items: [
-                                  DropdownMenuItem(value: UserDateFormat.dmy, child: Text('DD/MM/YYYY')),
-                                  DropdownMenuItem(value: UserDateFormat.mdy, child: Text('MM/DD/YYYY')),
-                                ],
-                                onChanged: (value) => setState(() => dateFormat = value!),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Language', style: TextStyle(fontWeight: FontWeight.bold),),
-                              DropdownButton(
-                                value: language,
-                                items: [
-                                  for (MapEntry<String, dynamic> entry in languages.entries)
-                                    DropdownMenuItem(value: entry.key, child: Text(entry.value as String))
-                                ],
-                                onChanged: (value) => setState(() => language = value!),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                      AppIconButton(icon: Icons.edit_rounded, onPressed: () {
+                        //locator<UserApi>().changeProfileImage(pathImage: '');
+                      }),
                     ],
                   ),
-                )
+                  SizedBox(width: 50,),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        AppElevatedCard(
+                          padding: EdgeInsets.all(40),
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              children: [
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: AppOutlinedTextField(
+                                        label: 'First Name',
+                                        hint: 'Type your first name',
+                                        initialValue: firstName,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) return 'The first name can\'t be empty.';
+                                          firstName = value;
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(width: 20,),
+                                    Expanded(
+                                      child: AppOutlinedTextField(
+                                        label: 'Last Name',
+                                        hint: 'Type your last name',
+                                        initialValue: lastName,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) return 'The last name can\'t be empty.';
+                                          lastName = value;
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 20,),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: AppOutlinedTextField(
+                                        label: 'Email',
+                                        hint: 'Type your email',
+                                        initialValue: email,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) return 'The email can\'t be empty.';
+                                          final RegExp regExp = RegExp(r"^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$");
+                                          if (!regExp.hasMatch(value)) return 'Enter a valid email.';
+                                          email = value;
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(width: 20,),
+                                    Expanded(
+                                      child: AppOutlinedTextField(
+                                        label: 'Password',
+                                        hint: 'Type your password',
+                                        obscureText: !showPassword,
+                                        icon: IconButton(
+                                          onPressed: () => setState(() => showPassword = !showPassword),
+                                          icon: Icon(showPassword ? Icons.remove_red_eye_rounded : Icons.remove_red_eye_outlined),
+                                        ),
+                                        controller: passwordCtl,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 40,),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Time Format', style: TextStyle(fontWeight: FontWeight.bold),),
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                        value: format24h,
+                                        onChanged: (value) => setState(() => format24h = value!),
+                                      ),
+                                      Text('24h',),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Date Format', style: TextStyle(fontWeight: FontWeight.bold),),
+                                  DropdownButton(
+                                    value: dateFormat,
+                                    items: [
+                                      DropdownMenuItem(value: UserDateFormat.dmy, child: Text('DD/MM/YYYY')),
+                                      DropdownMenuItem(value: UserDateFormat.mdy, child: Text('MM/DD/YYYY')),
+                                    ],
+                                    onChanged: (value) => setState(() => dateFormat = value!),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Language', style: TextStyle(fontWeight: FontWeight.bold),),
+                                  DropdownButton(
+                                    value: language,
+                                    items: [
+                                      for (MapEntry<String, dynamic> entry in languages.entries)
+                                        DropdownMenuItem(value: entry.key, child: Text(entry.value as String))
+                                    ],
+                                    onChanged: (value) => setState(() => language = value!),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
-        Divider(color: AppColors.detail,),
-        SizedBox(height: 10,),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                buildDate('Created at: ${widget.profile.createdAt?.toFormatStringDate(context) ?? 'Unknown Date'}'),
-                buildDate('Last update: ${widget.profile.updatedAt?.toFormatStringDate(context) ?? 'Unknown Date'}'),
-              ],
-            ),
-            SizedBox(
-              width: 200,
-              child: AppStyledButton(
-                onPressed: () {
-                  if (!_formKey.currentState!.validate()) return;
-        
-                  final User updatedUser = getUpdatedUser();
-                  if (updatedUser == User()) return;
-        
-                  locator<ProfileBloc>().add(UpdateProfile(
-                    newProfile: updatedUser,
-                    password: passwordCtl.text.isNotEmpty ? passwordCtl.text : null
-                  ));
-                },
-                text: 'Save',
+        Divider(color: AppColors.detail, indent: 25, endIndent: 25,),
+        Padding(
+          padding: const EdgeInsets.only(left: 50, bottom: 50, right: 50, top: 10,),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  buildDate('Created at: ${widget.profile.createdAt?.toFormatStringDate(context) ?? 'Unknown Date'}'),
+                  buildDate('Last update: ${widget.profile.updatedAt?.toFormatStringDate(context) ?? 'Unknown Date'}'),
+                ],
               ),
-            ),
-          ]
+              SizedBox(
+                width: 200,
+                child: AppStyledButton(
+                  onPressed: () {
+                    if (!_formKey.currentState!.validate()) return;
+          
+                    final User updatedUser = getUpdatedUser();
+                    if (updatedUser == User()) return;
+          
+                    locator<ProfileBloc>().add(UpdateProfile(
+                      newProfile: updatedUser,
+                      password: passwordCtl.text.isNotEmpty ? passwordCtl.text : null
+                    ));
+                  },
+                  text: 'Save',
+                ),
+              ),
+            ]
+          ),
         ),
       ],
     );

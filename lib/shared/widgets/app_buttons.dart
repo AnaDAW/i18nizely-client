@@ -33,8 +33,9 @@ class AppStyledButton extends StatelessWidget {
 class AppOutlinedButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String text;
+  final bool primary;
 
-  const AppOutlinedButton({super.key, required this.onPressed, required this.text});
+  const AppOutlinedButton({super.key, required this.onPressed, required this.text, this.primary = false});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +48,7 @@ class AppOutlinedButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(width: 1,)
+          border: Border.all(width: primary ? 2 : 1, color: primary ? AppColors.detail : Colors.black)
         ),
         alignment: Alignment.center,
         child: Text(

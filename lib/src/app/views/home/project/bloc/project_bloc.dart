@@ -40,7 +40,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
   Future<void> _onUpdateProject(UpdateProject event, Emitter<ProjectState> emit) async {
     if (state is! ProjectLoaded) return;
     try {
-      final res = await projectApi.updateProject(newProject: event.newProject);
+      final res = await projectApi.updateProject(newProject: event.newProject, languages: event.languages);
       res.fold((left) {
         emit(ProjectUpdateError((state as ProjectLoaded).project, data: left.data));
       }, (right) {
