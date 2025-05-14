@@ -62,9 +62,11 @@ class KeyDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(color: AppColors.detail)
                       ),
+                      clipBehavior: Clip.antiAlias,
                       child: Center(
                         child: transKey.image != null && transKey.image!.isNotEmpty ? Image.network(
-                          transKey.image!
+                          transKey.image!,
+                          fit: BoxFit.contain,
                         ) : Text(
                           'No context image.',
                           style: TextStyle(color: Colors.black45),

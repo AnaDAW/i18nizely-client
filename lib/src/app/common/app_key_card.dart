@@ -53,9 +53,15 @@ class AppKeyCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           maxLines: transKey.image != null ? 1 : 4,
                         ),
-                      if (transKey.image != null)
-                        Image.network(transKey.image!),
-                      Spacer(),
+                      if (transKey.image != null && transKey.image!.isNotEmpty)
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            child: Image.network(transKey.image!, fit: BoxFit.contain,),
+                          ),
+                        ),
+                      if (transKey.image == null || transKey.image!.isEmpty)
+                        Spacer(),
                       AppUserInfo(
                         image: transKey.createdBy?.image,
                         initials: transKey.createdBy?.initials ?? '',

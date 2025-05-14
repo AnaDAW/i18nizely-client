@@ -9,6 +9,7 @@ import 'package:i18nizely/src/app/views/home/translations/bloc/translations_bloc
 import 'package:i18nizely/src/app/views/home/translations/bloc/translations_event.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/key_model.dart';
+import 'package:image_picker/image_picker.dart';
 
 class TranslationsEditDialog extends StatefulWidget {
   final int projectId;
@@ -90,22 +91,49 @@ class _TranslationsEditDialogState extends State<TranslationsEditDialog> {
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(color: AppColors.detail)
                         ),
+                        clipBehavior: Clip.antiAlias,
                         child: Stack(
                           alignment: Alignment.bottomRight,
                           children: [
                             Center(
                               child: image != null && image!.isNotEmpty ? Image.network(
-                                image!
+                                image!,
+                                fit: BoxFit.contain,
                               ) : Text(
                                 'No context image.',
                                 style: TextStyle(color: Colors.black45),
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 10, right: 10),
-                              child: AppIconButton(
-                                icon: Icons.edit_rounded,
-                                onPressed: () {}
+                              padding: const EdgeInsets.only(bottom: 10, right: 10, left: 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  if (image != null && image!.isNotEmpty)
+                                    SizedBox(
+                                      width: 45,
+                                      height: 45,
+                                      child: AppIconButton(
+                                        icon: Icons.delete,
+                                        primary: false,
+                                        onPressed: () async {
+                                          locator<TranslationsBloc>().add(RemoveImage(projectId: widget.projectId, id: widget.transKey.id ?? 0));
+                                          setState(() => image = null);
+                                        }
+                                      ),
+                                    ),
+                                  Spacer(),
+                                  AppIconButton(
+                                    icon: Icons.edit_rounded,
+                                    onPressed: () async {
+                                      final XFile? file = await ImagePicker().pickImage(source: ImageSource.gallery);
+                                      if (file != null) {
+                                        locator<TranslationsBloc>().add(AddImage(projectId: widget.projectId, id: widget.transKey.id ?? 0, imagePath: file.path));
+                                      }
+                                    }
+                                  ),
+                                ],
                               ),
                             ),
                           ],

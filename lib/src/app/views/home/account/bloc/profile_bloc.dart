@@ -11,6 +11,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<GetProfile>(_onGetProfile);
     on<UpdateProfile>(_onUpdateProfile);
     on<ChangeProfileImage>(_onChangeProfileImage);
+    on<DeleteProfileImage>(_onDeleteProfileImage);
     on<DeleteProfile>(_onDeleteProfile);
     on<ResetProfile>(_onResetProfile);
   }
@@ -53,6 +54,23 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if (state is! ProfileLoaded) return;
     try {
       final res = await userApi.changeProfileImage(pathImage: event.pathImage);
+      res.fold((left) {
+        emit(ProfileUpdateError((state as ProfileLoaded).profile, left.data));
+      }, (right) {
+        emit(ProfileUpdated(right));
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+      emit(ProfileUpdateError((state as ProfileLoaded).profile, e.toString()));
+    }
+  }
+
+  Future<void> _onDeleteProfileImage(DeleteProfileImage event, Emitter<ProfileState> emit) async {
+    if (state is! ProfileLoaded) return;
+    try {
+      final res = await userApi.deleteProfileImage();
       res.fold((left) {
         emit(ProfileUpdateError((state as ProfileLoaded).profile, left.data));
       }, (right) {

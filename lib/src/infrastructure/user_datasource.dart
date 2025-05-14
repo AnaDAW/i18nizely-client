@@ -102,8 +102,44 @@ class UserApiDataSource implements UserApi {
 
   @override
   Future<Either<AppException, User>> changeUserImage({required int id, required String pathImage}) async {
-    // TODO: implement changeUserImage
-    throw UnimplementedError();
+    try {
+      final eitherType = await networkService.updateFiles('users/$id/', files: {'image': pathImage});
+      return eitherType.fold((exception) {
+        return Left(exception);
+      }, (response) async {
+        final User user = User.fromJson(response.data);
+        return Right(user);
+      });
+    } catch (e) {
+      return Left(
+        AppException(
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
+          statusCode: 500,
+          identifier: 'UserApiDataSource.updateUser',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<AppException, User>> deleteUserImage({required int id}) async {
+    try {
+      final eitherType = await networkService.patch('users/$id/', data: {'image': null});
+      return eitherType.fold((exception) {
+        return Left(exception);
+      }, (response) async {
+        final User user = User.fromJson(response.data);
+        return Right(user);
+      });
+    } catch (e) {
+      return Left(
+        AppException(
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
+          statusCode: 500,
+          identifier: 'UserApiDataSource.updateUser',
+        ),
+      );
+    }
   }
 
   @override
@@ -173,8 +209,44 @@ class UserApiDataSource implements UserApi {
 
   @override
   Future<Either<AppException, User>> changeProfileImage({required String pathImage}) async {
-    // TODO: implement changeProfileImage
-    throw UnimplementedError();
+    try {
+      final eitherType = await networkService.updateFiles('users/profile/', files: {'image': pathImage});
+      return eitherType.fold((exception) {
+        return Left(exception);
+      }, (response) async {
+        final User user = User.fromJson(response.data);
+        return Right(user);
+      });
+    } catch (e) {
+      return Left(
+        AppException(
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
+          statusCode: 500,
+          identifier: 'UserApiDataSource.updateProfile',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<AppException, User>> deleteProfileImage() async {
+    try {
+      final eitherType = await networkService.patch('users/profile/', data: {'image': null});
+      return eitherType.fold((exception) {
+        return Left(exception);
+      }, (response) async {
+        final User user = User.fromJson(response.data);
+        return Right(user);
+      });
+    } catch (e) {
+      return Left(
+        AppException(
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
+          statusCode: 500,
+          identifier: 'UserApiDataSource.updateProfile',
+        ),
+      );
+    }
   }
 
   @override

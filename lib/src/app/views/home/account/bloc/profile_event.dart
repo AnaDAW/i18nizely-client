@@ -32,6 +32,10 @@ class ChangeProfileImage extends ProfileEvent {
   List<Object?> get props => [pathImage];
 }
 
+class DeleteProfileImage extends ProfileEvent {
+  const DeleteProfileImage();
+}
+
 class DeleteProfile extends ProfileEvent {
   const DeleteProfile();
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:i18nizely/shared/config/app_config.dart';
 import 'package:i18nizely/shared/domain/models/date_utils.dart';
 import 'package:i18nizely/shared/widgets/app_cards.dart';
+import 'package:i18nizely/src/app/common/app_confirmation_dialog.dart';
 import 'package:i18nizely/src/app/common/app_title_bar.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_bloc.dart';
 import 'package:i18nizely/src/app/views/home/account/bloc/profile_event.dart';
@@ -14,6 +16,7 @@ import 'package:i18nizely/shared/widgets/app_textfields.dart';
 import 'package:i18nizely/src/app/views/home/notifications/notifications.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/user_model.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AccountScreen extends StatelessWidget {
 
@@ -106,9 +109,23 @@ class _AccountFormState extends State<_AccountForm> {
                             userName: widget.profile.initials,
                           )
                       ),
-                      AppIconButton(icon: Icons.edit_rounded, onPressed: () {
-                        //locator<UserApi>().changeProfileImage(pathImage: '');
+                      AppIconButton(icon: Icons.edit_rounded, onPressed: () async {
+                        final XFile? file = await ImagePicker().pickImage(source: ImageSource.gallery);
+                        if (file != null) {
+                          locator<ProfileBloc>().add(ChangeProfileImage(file.path));
+                        }
                       }),
+                      if (widget.profile.image != null && widget.profile.image!.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 145, bottom: 7),
+                          child: SizedBox(
+                            width: 45,
+                            height: 45,
+                            child: AppIconButton(icon: Icons.delete, primary: false, onPressed: () {
+                              locator<ProfileBloc>().add(DeleteProfileImage());
+                            }),
+                          ),
+                        ),
                     ],
                   ),
                   SizedBox(width: 50,),
@@ -266,6 +283,29 @@ class _AccountFormState extends State<_AccountForm> {
                   buildDate('Last update: ${widget.profile.updatedAt?.toFormatStringDate(context) ?? 'Unknown Date'}'),
                 ],
               ),
+              Spacer(),
+              SizedBox(
+                width: 200,
+                child: AppOutlinedButton(
+                  text: 'Delete',
+                  primary: true,
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AppConfirmationDialog(
+                          title: 'Delete Profile',
+                          description: 'Are you sure you want to delete your profile?',
+                          button: 'Delete',
+                          onPressed: () async {
+                            locator<ProfileBloc>().add(DeleteProfile());
+                            context.pop();
+                          },
+                        ),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(width: 20,),
               SizedBox(
                 width: 200,
                 child: AppStyledButton(

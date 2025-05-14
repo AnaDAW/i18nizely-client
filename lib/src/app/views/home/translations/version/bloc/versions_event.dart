@@ -21,3 +21,12 @@ class GetVersions extends VersionsEvent {
 class ResetVersions extends VersionsEvent {
   const ResetVersions();
 }
+
+class UpdateVersions extends VersionsEvent {
+  final int translationId;
+
+  const UpdateVersions(this.translationId);
+
+  @override
+  List<Object?> get props => [translationId];
+}

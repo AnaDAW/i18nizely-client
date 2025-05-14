@@ -11,6 +11,7 @@ class VersionsBloc extends Bloc<VersionsEvent, VersionsState> {
 
   VersionsBloc(this.translationApi) : super(const VersionsInitial()) {
     on<GetVersions>(_onGetVersions);
+    on<UpdateVersions>(_onUpdateVersions);
     on<ResetVersions>(_onResetVersions);
   }
 
@@ -28,6 +29,14 @@ class VersionsBloc extends Bloc<VersionsEvent, VersionsState> {
         print(e.toString());
       }
       emit(VersionsError(e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateVersions(UpdateVersions event, Emitter<VersionsState> emit) async {
+    if (state is! VersionsLoaded) return;
+    VersionsLoaded loadedState = state as VersionsLoaded;
+    if (event.translationId == loadedState.translationId) {
+      await _onGetVersions(GetVersions(projectId: loadedState.projectId, keyId: loadedState.keyId, translationId: loadedState.translationId), emit);
     }
   }
 

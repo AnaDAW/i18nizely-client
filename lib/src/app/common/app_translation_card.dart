@@ -203,6 +203,7 @@ class _AppTranslationsCardState extends State<AppTranslationCard> {
     subscription = locator<TranslationsBloc>().stream.listen((state) {
       if (state is TranslationUpdated) {
         subscription.cancel();
+        locator<VersionsBloc>().add(UpdateVersions(widget.translation?.id ?? 0));
         completer.complete();
       } else if (state is TranslationUpdateError) {
         subscription.cancel();

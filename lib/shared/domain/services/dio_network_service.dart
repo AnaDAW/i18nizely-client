@@ -102,7 +102,7 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
   }
 
   @override
-  Future<Either<AppException, AppResponse>> uploadFile(String endpoint, { Map<String, dynamic>? data, required Map<String, String> files }) async {
+  Future<Either<AppException, AppResponse>> uploadFiles(String endpoint, { Map<String, dynamic>? data, required Map<String, String> files }) async {
     final FormData formData = data != null ? FormData.fromMap(data.map((key, value) => MapEntry(key, value.toString()))) : FormData();
     
     for(MapEntry<String, String> entry in files.entries) {
@@ -112,6 +112,25 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
 
     final res = handleException(
           () => dio.post(
+        endpoint,
+        data: formData,
+      ),
+      endpoint: endpoint,
+    );
+    return res;
+  }
+
+  @override
+  Future<Either<AppException, AppResponse>> updateFiles(String endpoint, { Map<String, dynamic>? data, required Map<String, String> files }) async {
+    final FormData formData = data != null ? FormData.fromMap(data.map((key, value) => MapEntry(key, value.toString()))) : FormData();
+    
+    for(MapEntry<String, String> entry in files.entries) {
+      final MultipartFile file = await MultipartFile.fromFile(entry.value);
+      formData.files.add(MapEntry(entry.key, file));
+    }
+
+    final res = handleException(
+          () => dio.patch(
         endpoint,
         data: formData,
       ),

@@ -10,13 +10,19 @@ class AppUserIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(100),
         color: Colors.white,
         border: Border.all(width: 1, color: AppColors.detail,),
       ),
       child: Center(
-        child: image != null && image!.isNotEmpty ? Image.network(image!) :
+        child: image != null && image!.isNotEmpty ? Image.network(
+          image!,
+          fit: BoxFit.cover,
+          width: 250,
+          height: 250,
+        ) :
         FittedBox(
           child: Padding(
             padding: const EdgeInsets.all(35),

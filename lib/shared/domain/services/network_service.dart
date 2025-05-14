@@ -21,5 +21,7 @@ abstract class NetworkService {
 
   Future<Either<AppException, AppResponse>> delete(String endpoint, { Map<String, dynamic>? data });
 
-  Future<Either<AppException, AppResponse>> uploadFile(String endpoint, { Map<String, dynamic>? data, required Map<String, String> files});
+  Future<Either<AppException, AppResponse>> uploadFiles(String endpoint, { Map<String, dynamic>? data, required Map<String, String> files});
+
+  Future<Either<AppException, AppResponse>> updateFiles(String endpoint, { Map<String, dynamic>? data, required Map<String, String> files});
 }

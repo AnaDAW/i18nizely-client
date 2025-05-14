@@ -14,6 +14,8 @@ abstract class UserApi {
   
   Future<Either<AppException, User>> changeUserImage({required int id, required String pathImage});
   
+  Future<Either<AppException, User>> deleteUserImage({required int id});
+  
   Future<Either<AppException, void>> deleteUser({required int id });
   
   Future<Either<AppException, User>> getProfile();
@@ -21,6 +23,8 @@ abstract class UserApi {
   Future<Either<AppException, User>> updateProfile({required User newProfile, required String? password});
   
   Future<Either<AppException, User>> changeProfileImage({required String pathImage});
+  
+  Future<Either<AppException, User>> deleteProfileImage();
   
   Future<Either<AppException, void>> deleteProfile();
   

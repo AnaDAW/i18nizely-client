@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:i18nizely/shared/domain/services/network_service.dart';
 import 'package:i18nizely/shared/exceptions/http_exception.dart';
 import 'package:i18nizely/shared/domain/models/either_model.dart';
@@ -81,9 +79,45 @@ class KeyApiDataSource implements KeyApi {
   }
 
   @override
-  Future<Either<AppException, TransKey>> addImage({required int projectId, required int id, required File image}) async {
-    // TODO: implement addImage
-    throw UnimplementedError();
+  Future<Either<AppException, TransKey>> addImage({required int projectId, required int id, required String imagePath}) async {
+    try {
+      final eitherType = await networkService.updateFiles('projects/$projectId/keys/$id/', files: {'image': imagePath});
+      return eitherType.fold((exception) {
+        return Left(exception);
+      }, (response) async {
+        final TransKey key = TransKey.fromJson(response.data);
+        return Right(key);
+      });
+    } catch (e) {
+      return Left(
+        AppException(
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
+          statusCode: 500,
+          identifier: 'KeyApiDataSource.updateKey',
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<AppException, TransKey>> removeImage({required int projectId, required int id}) async {
+    try {
+      final eitherType = await networkService.patch('projects/$projectId/keys/$id/', data: {'image': null});
+      return eitherType.fold((exception) {
+        return Left(exception);
+      }, (response) async {
+        final TransKey key = TransKey.fromJson(response.data);
+        return Right(key);
+      });
+    } catch (e) {
+      return Left(
+        AppException(
+          data: 'Unknown error occurred. Exception: ${e.toString()}',
+          statusCode: 500,
+          identifier: 'KeyApiDataSource.updateKey',
+        ),
+      );
+    }
   }
 
   @override

@@ -41,6 +41,27 @@ class UpdateKey extends TranslationsEvent {
   List<Object?> get props => [projectId, newKey];
 }
 
+class AddImage extends TranslationsEvent {
+  final int projectId;
+  final int id;
+  final String imagePath;
+
+  const AddImage({required this.projectId, required this.id, required this.imagePath});
+
+  @override
+  List<Object?> get props => [projectId, id, imagePath];
+}
+
+class RemoveImage extends TranslationsEvent {
+  final int projectId;
+  final int id;
+
+  const RemoveImage({required this.projectId, required this.id});
+
+  @override
+  List<Object?> get props => [projectId, id];
+}
+
 class DeleteKey extends TranslationsEvent {
   final int projectId;
   final int id;
@@ -95,8 +116,6 @@ class ReviewTranslation extends TranslationsEvent {
   @override
   List<Object?> get props => [projectId, keyId, id, isReviewed];
 }
-
-
 
 class ReviewMultipleTranslations extends TranslationsEvent {
   final int projectId;

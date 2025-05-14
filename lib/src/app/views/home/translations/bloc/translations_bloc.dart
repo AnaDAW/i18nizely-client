@@ -17,6 +17,8 @@ class TranslationsBloc extends Bloc<TranslationsEvent, TranslationsState> {
     on<GetTranslations>(_onGetTranslations);
     on<CreateKey>(_onCreateKey);
     on<UpdateKey>(_onUpdateKey);
+    on<AddImage>(_onAddImageKey);
+    on<RemoveImage>(_onRemoveImageKey);
     on<DeleteKey>(_onDeleteKey);
     on<DeleteMultipleKeys>(_onDeleteMultipleKeys);
     on<CreateTranslation>(_onCreateTranslation);
@@ -67,6 +69,44 @@ class TranslationsBloc extends Bloc<TranslationsEvent, TranslationsState> {
     TranslationsLoaded loadedState = state as TranslationsLoaded;
     try {
       final res = await keyApi.updateKey(projectId: event.projectId, newKey: event.newKey);
+      await res.fold((left) {
+        emit(KeyUpdateError(loadedState.keys, data: left.data, page: state.page, totalPages: state.totalPages, name: state.name));
+      }, (right) async {
+        emit(KeyUpdated(loadedState.keys, page: state.page, totalPages: state.totalPages, name: state.name));
+        await _onGetTranslations(GetTranslations(projectId: event.projectId, page: state.page, name: state.name), emit);
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+      emit(KeyUpdateError(loadedState.keys, data: e.toString(), page: state.page, totalPages: state.totalPages, name: state.name));
+    }
+  }
+
+  Future<void> _onAddImageKey(AddImage event, Emitter<TranslationsState> emit) async {
+    if (state is! TranslationsLoaded) return;
+    TranslationsLoaded loadedState = state as TranslationsLoaded;
+    try {
+      final res = await keyApi.addImage(projectId: event.projectId, id: event.id, imagePath: event.imagePath);
+      await res.fold((left) {
+        emit(KeyUpdateError(loadedState.keys, data: left.data, page: state.page, totalPages: state.totalPages, name: state.name));
+      }, (right) async {
+        emit(KeyUpdated(loadedState.keys, page: state.page, totalPages: state.totalPages, name: state.name));
+        await _onGetTranslations(GetTranslations(projectId: event.projectId, page: state.page, name: state.name), emit);
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+      emit(KeyUpdateError(loadedState.keys, data: e.toString(), page: state.page, totalPages: state.totalPages, name: state.name));
+    }
+  }
+
+  Future<void> _onRemoveImageKey(RemoveImage event, Emitter<TranslationsState> emit) async {
+    if (state is! TranslationsLoaded) return;
+    TranslationsLoaded loadedState = state as TranslationsLoaded;
+    try {
+      final res = await keyApi.removeImage(projectId: event.projectId, id: event.id);
       await res.fold((left) {
         emit(KeyUpdateError(loadedState.keys, data: left.data, page: state.page, totalPages: state.totalPages, name: state.name));
       }, (right) async {
