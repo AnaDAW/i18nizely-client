@@ -1,8 +1,10 @@
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:i18nizely/shared/config/app_config.dart';
 import 'package:i18nizely/shared/domain/models/date_utils.dart';
+import 'package:i18nizely/shared/domain/models/file_utils.dart';
 import 'package:i18nizely/shared/widgets/app_cards.dart';
 import 'package:i18nizely/src/app/common/app_confirmation_dialog.dart';
 import 'package:i18nizely/src/app/common/app_title_bar.dart';
@@ -16,7 +18,6 @@ import 'package:i18nizely/shared/widgets/app_textfields.dart';
 import 'package:i18nizely/src/app/views/home/notifications/notifications.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/user_model.dart';
-import 'package:image_picker/image_picker.dart';
 
 class AccountScreen extends StatelessWidget {
 
@@ -110,7 +111,7 @@ class _AccountFormState extends State<_AccountForm> {
                           )
                       ),
                       AppIconButton(icon: Icons.edit_rounded, onPressed: () async {
-                        final XFile? file = await ImagePicker().pickImage(source: ImageSource.gallery);
+                        final XFile? file = await openImageFile();
                         if (file != null) {
                           locator<ProfileBloc>().add(ChangeProfileImage(file.path));
                         }

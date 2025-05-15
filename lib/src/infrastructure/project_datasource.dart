@@ -11,21 +11,9 @@ class ProjectApiDataSource implements ProjectApi {
   const ProjectApiDataSource(this.networkService);
 
   @override
-  Future<Either<AppException, List<Project>>> getProjects({String? name, int page = 1}) async {
+  Future<Either<AppException, Map<String, dynamic>>> getProjects({String? name, int page = 1}) async {
     try {
-      final Map<String, dynamic> queryParameters = {'page': page};
-      if (name != null) queryParameters['name'] = name;
-
-      final eitherType = await networkService.get('projects/', queryParameters: queryParameters);
-      return eitherType.fold((exception) {
-        return Left(exception);
-      }, (response) async {
-        final List<Project> projects = [];
-        for (var project in response.data) {
-          projects.add(Project.fromJson(project));
-        }
-        return Right(projects);
-      });
+      return getAllProjects(endpoint: 'projects/', name: name, page: page);
     } catch (e) {
       return Left(
         AppException(
@@ -38,32 +26,40 @@ class ProjectApiDataSource implements ProjectApi {
   }
 
   @override
-  Future<Either<AppException, List<Project>>> getCollabProjects({String? name, int page = 1}) async {
+  Future<Either<AppException, Map<String, dynamic>>> getCollabProjects({String? name, int page = 1}) async {
     try {
-      final Map<String, dynamic> queryParameters = {'page': page};
-      if (name != null) queryParameters['name'] = name;
-
-      final eitherType = await networkService.get('projects/collab/', queryParameters: queryParameters);
-      return eitherType.fold((exception) {
-        return Left(exception);
-      }, (response) async {
-        final List<Project> projects = [];
-        for (var project in response.data) {
-          projects.add(Project.fromJson(project));
-        }
-        return Right(projects);
-      });
+      return getAllProjects(endpoint: 'projects/collab/', name: name, page: page);
     } catch (e) {
       return Left(
         AppException(
           data: 'Unknown error occurred. Exception: ${e.toString()}',
           statusCode: 500,
-          identifier: 'ProjectApiDataSource.getProjects',
+          identifier: 'ProjectApiDataSource.getCollabProjects',
         ),
       );
     }
   }
-  
+
+  Future<Either<AppException, Map<String, dynamic>>> getAllProjects({required String endpoint, String? name, int page = 1}) async {
+    final Map<String, dynamic> queryParameters = {'page': page};
+    if (name != null) queryParameters['name'] = name;
+
+    final eitherType = await networkService.get(endpoint, queryParameters: queryParameters);
+    return eitherType.fold((exception) {
+      return Left(exception);
+    }, (response) async {
+      final List<Project> projects = [];
+      for (var project in response.data['results'] ?? []) {
+        projects.add(Project.fromJson(project));
+      }
+
+      int totalPages = ((response.data['count'] ?? 1) / 10).ceil();
+
+      Map<String, dynamic> res = {'totalPages': totalPages == 0 ? 1 : totalPages, 'projects': projects};
+      return Right(res);
+    });
+  }
+
   @override
   Future<Either<AppException, Project>> createProject({required Project newProject, required List<String> languages}) async {
     try {

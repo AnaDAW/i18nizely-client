@@ -22,7 +22,7 @@ class CollabProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
       res.fold((left) {
         emit(ProjectListError(left.data, name: event.name, page: state.page, totalPages: state.totalPages));
       }, (right) {
-        emit(ProjectListLoaded(right, name: event.name, page: state.page, totalPages: state.totalPages));
+        emit(ProjectListLoaded(right['projects'] ?? [], name: event.name, page: state.page, totalPages: right['totalPages'] ?? 1));
       });
     } catch (e) {
       if (kDebugMode) {

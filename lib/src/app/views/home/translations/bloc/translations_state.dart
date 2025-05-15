@@ -77,6 +77,40 @@ class KeyDeleteError extends TranslationsLoaded {
   List<Object?> get props => [keys, data, page, totalPages, name];
 }
 
+class KeyImporting extends TranslationsLoaded {
+  const KeyImporting(super.keys, {required super.page, required super.totalPages, super.name});
+}
+
+class KeyImported extends TranslationsLoaded {
+  const KeyImported(super.keys, {required super.page, required super.totalPages, super.name});
+}
+
+class KeyImportError extends TranslationsLoaded {
+  final dynamic data;
+
+  const KeyImportError(super.keys, {required this.data, required super.page, required super.totalPages, super.name});
+
+  @override
+  List<Object?> get props => [keys, data, page, totalPages, name];
+}
+
+class KeyExporting extends TranslationsLoaded {
+  const KeyExporting(super.keys, {required super.page, required super.totalPages, super.name});
+}
+
+class KeyExported extends TranslationsLoaded {
+  const KeyExported(super.keys, {required super.page, required super.totalPages, super.name});
+}
+
+class KeyExportError extends TranslationsLoaded {
+  final dynamic data;
+
+  const KeyExportError(super.keys, {required this.data, required super.page, required super.totalPages, super.name});
+
+  @override
+  List<Object?> get props => [keys, data, page, totalPages, name];
+}
+
 class TranslationUpdated extends TranslationsLoaded {
   const TranslationUpdated(super.keys, {required super.page, required super.totalPages, super.name});
 }

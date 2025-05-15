@@ -21,6 +21,8 @@ class TranslationsBloc extends Bloc<TranslationsEvent, TranslationsState> {
     on<RemoveImage>(_onRemoveImageKey);
     on<DeleteKey>(_onDeleteKey);
     on<DeleteMultipleKeys>(_onDeleteMultipleKeys);
+    on<ImportKeys>(_onImportKeys);
+    on<ExportKeys>(_onExportKeys);
     on<CreateTranslation>(_onCreateTranslation);
     on<UpdateTranslation>(_onUpdateTranslation);
     on<ReviewTranslation>(_onReviewTranslation);
@@ -35,7 +37,7 @@ class TranslationsBloc extends Bloc<TranslationsEvent, TranslationsState> {
       res.fold((left) {
         emit(TranslationsError(left.data, page: event.page, totalPages: state.totalPages, name: event.name));
       }, (right) {
-        emit(TranslationsLoaded(right, page: event.page, totalPages: state.totalPages, name: event.name));
+        emit(TranslationsLoaded(right['keys'] ?? [], page: event.page, totalPages: right['totalPages'] ?? 1, name: event.name));
       });
     } catch (e) {
       if (kDebugMode) {
@@ -164,6 +166,46 @@ class TranslationsBloc extends Bloc<TranslationsEvent, TranslationsState> {
     }
 
     if (success > 0) await _onGetTranslations(GetTranslations(projectId: event.projectId, page: state.totalPages, name: state.name), emit);
+  }
+
+  Future<void> _onImportKeys(ImportKeys event, Emitter<TranslationsState> emit) async {
+    if (state is! TranslationsLoaded) return;
+    TranslationsLoaded loadedState = state as TranslationsLoaded;
+    emit(KeyImporting(loadedState.keys, page: loadedState.page, totalPages: loadedState.totalPages, name: loadedState.name));
+    try {
+      final res = await keyApi.importKeys(projectId: event.projectId, files: event.files);
+      await res.fold((left) {
+        emit(KeyImportError(loadedState.keys, data: left.data, page: loadedState.page, totalPages: loadedState.totalPages, name: loadedState.name));
+      }, (right) async {
+        emit(KeyImported(loadedState.keys, page: loadedState.page, totalPages: loadedState.totalPages, name: loadedState.name));
+        await _onGetTranslations(GetTranslations(projectId: event.projectId, page: loadedState.page, name: loadedState.name), emit);
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+      emit(KeyImportError(loadedState.keys, data: e.toString(), page: loadedState.page, totalPages: loadedState.totalPages, name: loadedState.name));
+    }
+  }
+
+  Future<void> _onExportKeys(ExportKeys event, Emitter<TranslationsState> emit) async {
+    if (state is! TranslationsLoaded) return;
+    TranslationsLoaded loadedState = state as TranslationsLoaded;
+    emit(KeyExporting(loadedState.keys, page: loadedState.page, totalPages: loadedState.totalPages, name: loadedState.name));
+    try {
+      final res = await keyApi.exportKeys(projectId: event.projectId, filePath: event.filePath, fileTypes: event.fileTypes, languages: event.languages, onlyReviewed: event.onlyReviewed);
+      await res.fold((left) {
+        emit(KeyExportError(loadedState.keys, data: left.data, page: loadedState.page, totalPages: loadedState.totalPages, name: loadedState.name));
+      }, (right) async {
+        emit(KeyExported(loadedState.keys, page: loadedState.page, totalPages: loadedState.totalPages, name: loadedState.name));
+        await _onGetTranslations(GetTranslations(projectId: event.projectId, page: loadedState.page, name: loadedState.name), emit);
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+      emit(KeyExportError(loadedState.keys, data: e.toString(), page: loadedState.page, totalPages: loadedState.totalPages, name: loadedState.name));
+    }
   }
 
   Future<void> _onCreateTranslation(CreateTranslation event, Emitter<TranslationsState> emit) async {

@@ -82,6 +82,29 @@ class DeleteMultipleKeys extends TranslationsEvent {
   List<Object?> get props => [projectId, ids];
 }
 
+class ImportKeys extends TranslationsEvent {
+  final int projectId;
+  final Map<String, String> files;
+
+  const ImportKeys({required this.projectId, required this.files});
+
+  @override
+  List<Object?> get props => [projectId, files];
+}
+
+class ExportKeys extends TranslationsEvent {
+  final int projectId;
+  final String filePath;
+  final List<String>? fileTypes;
+  final List<String>? languages;
+  final bool onlyReviewed;
+
+  const ExportKeys({required this.projectId, required this.filePath, this.fileTypes, this.languages, this.onlyReviewed = false});
+
+  @override
+  List<Object?> get props => [projectId, filePath, fileTypes, languages, onlyReviewed];
+}
+
 class CreateTranslation extends TranslationsEvent {
   final int projectId;
   final int keyId;

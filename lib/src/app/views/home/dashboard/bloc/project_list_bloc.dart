@@ -25,7 +25,7 @@ class ProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
       res.fold((left) {
         emit(ProjectListError(left.data, name: event.name, page: event.page, totalPages: state.totalPages));
       }, (right) {
-        emit(ProjectListLoaded(right, name: event.name, page: event.page, totalPages: state.totalPages));
+        emit(ProjectListLoaded(right['projects'] ?? [], name: event.name, page: event.page, totalPages: right['totalPages'] ?? 1));
       });
     } catch (e) {
       if (kDebugMode) {

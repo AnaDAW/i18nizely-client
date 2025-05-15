@@ -4,9 +4,9 @@ import 'package:i18nizely/src/domain/models/project_model.dart';
 import 'package:i18nizely/src/domain/models/record_model.dart' as r;
 
 abstract class ProjectApi {
-  Future<Either<AppException, List<Project>>> getProjects({String? name, int page = 1});
+  Future<Either<AppException, Map<String,dynamic>>> getProjects({String? name, int page = 1});
 
-  Future<Either<AppException, List<Project>>> getCollabProjects({String? name, int page = 1});
+  Future<Either<AppException, Map<String,dynamic>>> getCollabProjects({String? name, int page = 1});
   
   Future<Either<AppException, Project>> createProject({required Project newProject, required List<String> languages});
   

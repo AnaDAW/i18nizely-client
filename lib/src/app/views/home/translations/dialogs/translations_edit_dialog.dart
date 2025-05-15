@@ -1,5 +1,7 @@
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:i18nizely/shared/domain/models/file_utils.dart';
 import 'package:i18nizely/shared/theme/app_colors.dart';
 import 'package:i18nizely/shared/widgets/app_buttons.dart';
 import 'package:i18nizely/shared/widgets/app_cards.dart';
@@ -9,7 +11,6 @@ import 'package:i18nizely/src/app/views/home/translations/bloc/translations_bloc
 import 'package:i18nizely/src/app/views/home/translations/bloc/translations_event.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/key_model.dart';
-import 'package:image_picker/image_picker.dart';
 
 class TranslationsEditDialog extends StatefulWidget {
   final int projectId;
@@ -127,7 +128,7 @@ class _TranslationsEditDialogState extends State<TranslationsEditDialog> {
                                   AppIconButton(
                                     icon: Icons.edit_rounded,
                                     onPressed: () async {
-                                      final XFile? file = await ImagePicker().pickImage(source: ImageSource.gallery);
+                                      final XFile? file = await openImageFile();
                                       if (file != null) {
                                         locator<TranslationsBloc>().add(AddImage(projectId: widget.projectId, id: widget.transKey.id ?? 0, imagePath: file.path));
                                       }

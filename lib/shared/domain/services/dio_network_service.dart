@@ -18,6 +18,7 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
       }
   }
 
+  @override
   BaseOptions get dioBaseOptions => BaseOptions(
     baseUrl: AppConfig.baseUrl,
     headers: {},
@@ -30,9 +31,7 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
   Map<String, dynamic> get headers => dio.options.headers;
 
   @override
-  void updateBaseUrl(String newBaseUrl) {
-    dio.options.baseUrl = newBaseUrl;
-  }
+  void updateBaseUrl(String newBaseUrl) => dio.options.baseUrl = newBaseUrl;
 
   @override
   Map<String, dynamic>? updateHeader(Map<String, dynamic> data) {
@@ -40,6 +39,9 @@ class DioNetworkService extends NetworkService with ExceptionHandlerMixin {
     dio.options.headers = header;
     return header;
   }
+
+  @override
+  void updateBaseOptions(BaseOptions newOptions) => dio.options = newOptions;
 
   @override
   Future<Either<AppException, AppResponse>> get(String endpoint, { Map<String, dynamic>? queryParameters }) {

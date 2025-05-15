@@ -14,7 +14,7 @@ import 'package:i18nizely/src/app/views/home/dashboard/bloc/collab_project_list_
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_bloc.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_event.dart';
 import 'package:i18nizely/src/app/views/home/dashboard/bloc/project_list_state.dart';
-import 'package:i18nizely/src/app/views/home/dashboard/dashboard_dialog.dart';
+import 'package:i18nizely/src/app/views/home/dashboard/dialogs/dashboard_dialog.dart';
 import 'package:i18nizely/src/app/views/home/notifications/notifications.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_event.dart';

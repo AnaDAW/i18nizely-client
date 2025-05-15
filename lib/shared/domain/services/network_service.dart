@@ -1,15 +1,20 @@
+import 'package:dio/dio.dart';
 import 'package:i18nizely/shared/exceptions/http_exception.dart';
 import 'package:i18nizely/shared/domain/models/either_model.dart';
 import 'package:i18nizely/shared/domain/models/response_model.dart';
 
 abstract class NetworkService {
+  BaseOptions get dioBaseOptions;
+
   String get baseUrl;
-  
+
   Map<String, dynamic> get headers;
 
   void updateHeader(Map<String, dynamic> data);
 
   void updateBaseUrl(String newBaseUrl);
+
+  void updateBaseOptions(BaseOptions newOptions);
 
   Future<Either<AppException, AppResponse>> get(String endpoint, { Map<String, dynamic>? queryParameters });
 

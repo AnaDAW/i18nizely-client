@@ -118,7 +118,7 @@ class OverviewScreen extends StatelessWidget {
                                                 style: TextStyle(color: Colors.black45, fontSize: 20),
                                               ),
                                               Text(
-                                                '${(translationProgress / totalKeys * 100).toStringAsFixed(0)} %',
+                                                '${(translationProgress * 100).floor()} %',
                                                 style: TextStyle(fontSize: 20),
                                               ),
                                               SizedBox(width: 150, child: Divider(color: AppColors.detail,)),
@@ -127,7 +127,7 @@ class OverviewScreen extends StatelessWidget {
                                                 style: TextStyle(color: Colors.black45, fontSize: 20),
                                               ),
                                               Text(
-                                                '${(reviewedProgress / totalKeys * 100).toStringAsFixed(0)} %',
+                                                '${(reviewedProgress * 100).floor()} %',
                                                 style: TextStyle(fontSize: 20),
                                               ),
                                             ],
@@ -192,10 +192,10 @@ class OverviewScreen extends StatelessWidget {
                                                   ) : Column(
                                                     children: [
                                                       Text('Translated:', style: TextStyle(color: Colors.black45),),
-                                                      Text('${(language.translationCount / totalKeys * 100).toStringAsFixed(0)} %'),
+                                                      Text('${(language.translationCount / totalKeys * 100).floor()} %'),
                                                       SizedBox(width: 100, child: Divider(color: AppColors.detail,)),
                                                       Text('Reviewed:', style: TextStyle(color: Colors.black45),),
-                                                      Text('${(language.reviewedCount / totalKeys * 100).toStringAsFixed(0)} %'),
+                                                      Text('${(language.reviewedCount / totalKeys * 100).floor()} %'),
                                                     ],
                                                   ),
                                                 ],

@@ -98,6 +98,8 @@ class Project extends Equatable {
       updatedAt: updatedAt ?? this.updatedAt
     );
   }
+
+  List<String> get languageCodes => languages != null ? languages!.map((lang) => lang.code).toList() : [];
 }
 
 enum CollabRole { admin, developer, reviewer, translator }

@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:i18nizely/shared/config/app_config.dart';
 import 'package:i18nizely/shared/domain/models/date_utils.dart';
+import 'package:i18nizely/shared/domain/models/file_utils.dart';
 import 'package:i18nizely/shared/theme/app_colors.dart';
 import 'package:i18nizely/shared/widgets/app_buttons.dart';
 import 'package:i18nizely/shared/widgets/app_cards.dart';
@@ -22,6 +24,9 @@ import 'package:i18nizely/src/app/views/home/notifications/notifications.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_bloc.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_event.dart';
 import 'package:i18nizely/src/app/views/home/project/bloc/project_state.dart';
+import 'package:i18nizely/src/app/views/home/project/dialogs/export_keys_dialog.dart';
+import 'package:i18nizely/src/app/views/home/translations/bloc/translations_bloc.dart';
+import 'package:i18nizely/src/app/views/home/translations/bloc/translations_event.dart';
 import 'package:i18nizely/src/di/dependency_injection.dart';
 import 'package:i18nizely/src/domain/models/project_model.dart';
 import 'package:i18nizely/src/domain/models/user_model.dart';
@@ -117,7 +122,7 @@ class _SettingsFormState extends State<_SettingsForm> {
     name = widget.project.name ?? '';
     description = widget.project.description;
 
-    selectedLang = List.of(widget.project.languages?.where((lang) => lang.code != mainLanguage).map((lang) => lang.code) ?? []);
+    selectedLang = widget.project.languageCodes.where((lang) => lang != mainLanguage).toList();
     super.initState();
   }
 
@@ -207,10 +212,47 @@ class _SettingsFormState extends State<_SettingsForm> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20,),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
                     child: AppCollaboratorsList(createdBy: widget.project.createdBy ?? User(), collaborators: widget.project.collaborators ?? [],),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      SizedBox(
+                        width: 200,
+                        child: AppOutlinedButton(
+                          text: 'Import',
+                          primary: true,
+                          onPressed: () async {
+                            final List<XFile> fileList = await openAppFiles();
+                            if (fileList.isNotEmpty) {
+                              final Map<String, String> files = {};
+                              for (XFile file in fileList) {
+                                final List<String> nameList = file.name.split('.');
+                                final String name = nameList[nameList.length - 2];
+                                final String language = name.substring(name.length - 2);
+                                files[language] = file.path;
+                              }
+                              locator<TranslationsBloc>().add(ImportKeys(projectId: widget.project.id ?? 0, files: files));
+                            }
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 20,),
+                      SizedBox(
+                        width: 200,
+                        child: AppStyledButton(
+                          text: 'Export',
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => ExportKeysDialog(project: widget.project, languages: languages),
+                            );
+                          }
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -330,7 +372,7 @@ class _SettingsFormState extends State<_SettingsForm> {
   Future<void> updateProject() async {
     final Project project = getUpdatedProject();
 
-    List<String> actualLang = widget.project.languages?.where((lang) => lang.code != mainLanguage).map((lang) => lang.code).toList() ?? [];
+    List<String> actualLang = widget.project.languageCodes.where((lang) => lang != mainLanguage).toList();
     List<String> languages = [];
     if (actualLang.length != selectedLang.length || selectedLang.any((lang) => !actualLang.contains(lang))) {
       languages.addAll(selectedLang);

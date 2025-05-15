@@ -92,7 +92,7 @@ class _TranslationsBodyState extends State<_TranslationsBody> {
   @override
   void initState() {
     projectLang = [widget.project.mainLanguage ?? ''];
-    projectLang.addAll(widget.project.languages?.where((lang) => lang.code != widget.project.mainLanguage).map((lang) => lang.code) ?? []);
+    projectLang.addAll(widget.project.languageCodes.where((lang) => lang != widget.project.mainLanguage));
     super.initState();
   }
 
