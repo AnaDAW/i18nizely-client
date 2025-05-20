@@ -52,6 +52,10 @@ class SettingsScreen extends StatelessWidget {
                     AppSnackBar.showSnackBar(context, text: 'Collaborator added');
                   } else if (state is CollaboratorRemoved) {
                     AppSnackBar.showSnackBar(context, text: 'Collaborator removed');
+                  } else if (state is CollaboratorUpdateError) {
+                    AppSnackBar.showSnackBar(context, text: 'Error updating collaborator', isError: true);
+                  } else if (state is CollaboratorRemoveError) {
+                    AppSnackBar.showSnackBar(context, text: 'Error removing collaborator', isError: true);
                   }
                 },
                 builder: (context, state) {
@@ -400,7 +404,7 @@ class _SettingsFormState extends State<_SettingsForm> {
     subscription = locator<ProjectBloc>().stream.listen((state) {
       if (state is ProjectUpdated) {
         subscription.cancel();
-        locator<ProjectListBloc>().add(UpdateProjectList(widget.project.id ?? 0));
+        if (project.name != null) locator<ProjectListBloc>().add(UpdateProjectList(state.project));
         completer.complete();
       } else if (state is ProjectUpdateError) {
         subscription.cancel();

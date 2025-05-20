@@ -37,58 +37,71 @@ class ProjectListBloc extends Bloc<ProjectListEvent, ProjectListState> {
   
   Future<void> _onCreateProject(CreateProject event, Emitter<ProjectListState> emit) async {
     if (state is! ProjectListLoaded) return;
+    ProjectListLoaded loadedState = state as ProjectListLoaded;
     try {
       final res = await projectApi.createProject(newProject: event.project, languages: event.languages);
       await res.fold((left) {
-        emit(ProjectCreateError((state as ProjectListLoaded).projects, name: state.name, data: left.data, page: state.page, totalPages: state.totalPages));
+        emit(ProjectCreateError(loadedState.projects, name: state.name, data: left.data, page: state.page, totalPages: state.totalPages));
       }, (right) async {
-        emit(ProjectCreated((state as ProjectListLoaded).projects, projectId: right.id ?? 0, name: state.name, page: state.page, totalPages: state.totalPages));
-        if (state.page == state.totalPages) {
-          await _onGetProjects(GetProjects(name: state.name, page: state.page), emit);
-          return;
+        int totalPages = state.totalPages;
+        final List<Project> projects = List.of(loadedState.projects);
+
+        if (state.page == state.totalPages && loadedState.projects.length == 10) {
+          totalPages++;
+        } else if (state.page == state.totalPages && loadedState.projects.length < 10) {
+          projects.add(right);
         }
+
+        emit(ProjectCreated(projects, projectId: right.id ?? 0, name: state.name, page: state.page, totalPages: totalPages));
       });
     } catch (e) {
       if (kDebugMode) {
         print(e.toString());
       }
-      emit(ProjectCreateError((state as ProjectListLoaded).projects, name: state.name, data: e.toString(), page: state.page, totalPages: state.totalPages));
+      emit(ProjectCreateError(loadedState.projects, name: state.name, data: e.toString(), page: state.page, totalPages: state.totalPages));
     }
   }
 
   Future<void> _onUpdateProjectList(UpdateProjectList event, Emitter<ProjectListState> emit) async {
     if (state is! ProjectListLoaded) return;
-    for (Project project in (state as ProjectListLoaded).projects) {
-      if (project.id == event.id) {
-        await _onGetProjects(GetProjects(name: state.name, page: state.page), emit);
-        return;
-      }
-    }
+    ProjectListLoaded loadedState = state as ProjectListLoaded;
+
+    final List<Project> projects = List.of(loadedState.projects);
+    final int index = projects.indexWhere((project) => project.id == event.project.id);
+    if (index != -1) projects[index] = event.project;
+    emit(ProjectListLoaded(projects, page: state.page, totalPages: state.totalPages));
   }
 
   Future<void> _onDeleteProjectFromList(DeleteProjectFromList event, Emitter<ProjectListState> emit) async {
     if (state is! ProjectListLoaded) return;
+    ProjectListLoaded loadedState = state as ProjectListLoaded;
     if (event.refresh) {
-      for (Project project in (state as ProjectListLoaded).projects) {
-        if (project.id != null && project.id! >= event.id) {
-          await _onGetProjects(GetProjects(name: state.name, page: state.page), emit);
-          return;
-        }
+      final List<Project> projects = List.of(loadedState.projects);
+      projects.removeWhere((project) => project.id == event.id);
+
+      emit(ProjectListLoaded(projects, page: state.page, totalPages: state.totalPages));
+      if (projects.isEmpty && state.page > 1) {
+        await _onGetProjects(GetProjects(name: state.name, page: state.totalPages - 1), emit);
       }
     } else {
       try {
         final res = await projectApi.deleteProject(id: event.id);
         await res.fold((left) {
-          emit(ProjectFromListDeleteError((state as ProjectListLoaded).projects, name: state.name, data: left.data, page: state.page, totalPages: state.totalPages));
+          emit(ProjectFromListDeleteError(loadedState.projects, name: state.name, data: left.data, page: state.page, totalPages: state.totalPages));
         }, (right) async {
-          emit(ProjectFromListDeleted((state as ProjectListLoaded). projects, name: state.name, page: state.page, totalPages: state.totalPages));
-          await _onGetProjects(GetProjects(name: state.name, page: state.page), emit);
+          final List<Project> projects = List.of(loadedState.projects);
+          projects.removeWhere((project) => project.id == event.id);
+
+          emit(ProjectFromListDeleted(projects, name: state.name, page: state.page, totalPages: state.totalPages));
+          if (projects.isEmpty && state.page > 1) {
+            await _onGetProjects(GetProjects(name: state.name, page: state.totalPages - 1), emit);
+          }
         });
       } catch (e) {
         if (kDebugMode) {
           print(e.toString());
         }
-        emit(ProjectFromListDeleteError((state as ProjectListLoaded).projects, name: state.name, data: e.toString(), page: state.page, totalPages: state.totalPages));
+        emit(ProjectFromListDeleteError(loadedState.projects, name: state.name, data: e.toString(), page: state.page, totalPages: state.totalPages));
       }
     }
   }

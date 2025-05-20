@@ -35,10 +35,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   Future<void> _onUpdateProfile(UpdateProfile event, Emitter<ProfileState> emit) async {
     if (state is! ProfileLoaded) return;
+    ProfileLoaded loadedState = state as ProfileLoaded;
     try {
       final res = await userApi.updateProfile(newProfile: event.newProfile, password: event.password);
       res.fold((left) {
-        emit(ProfileUpdateError((state as ProfileLoaded).profile, left.data));
+        emit(ProfileUpdateError(loadedState.profile, left.data));
       }, (right) {
         emit(ProfileUpdated(right));
       });
@@ -46,16 +47,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       if (kDebugMode) {
         print(e.toString());
       }
-      emit(ProfileUpdateError((state as ProfileLoaded).profile, e.toString()));
+      emit(ProfileUpdateError(loadedState.profile, e.toString()));
     }
   }
 
   Future<void> _onChangeProfileImage(ChangeProfileImage event, Emitter<ProfileState> emit) async {
     if (state is! ProfileLoaded) return;
+    ProfileLoaded loadedState = state as ProfileLoaded;
     try {
       final res = await userApi.changeProfileImage(pathImage: event.pathImage);
       res.fold((left) {
-        emit(ProfileUpdateError((state as ProfileLoaded).profile, left.data));
+        emit(ProfileUpdateError(loadedState.profile, left.data));
       }, (right) {
         emit(ProfileUpdated(right));
       });
@@ -63,16 +65,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       if (kDebugMode) {
         print(e.toString());
       }
-      emit(ProfileUpdateError((state as ProfileLoaded).profile, e.toString()));
+      emit(ProfileUpdateError(loadedState.profile, e.toString()));
     }
   }
 
   Future<void> _onDeleteProfileImage(DeleteProfileImage event, Emitter<ProfileState> emit) async {
     if (state is! ProfileLoaded) return;
+    ProfileLoaded loadedState = state as ProfileLoaded;
     try {
       final res = await userApi.deleteProfileImage();
       res.fold((left) {
-        emit(ProfileUpdateError((state as ProfileLoaded).profile, left.data));
+        emit(ProfileUpdateError(loadedState.profile, left.data));
       }, (right) {
         emit(ProfileUpdated(right));
       });
@@ -80,16 +83,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       if (kDebugMode) {
         print(e.toString());
       }
-      emit(ProfileUpdateError((state as ProfileLoaded).profile, e.toString()));
+      emit(ProfileUpdateError(loadedState.profile, e.toString()));
     }
   }
 
   Future<void> _onDeleteProfile(DeleteProfile event, Emitter<ProfileState> emit) async {
     if (state is! ProfileLoaded) return;
+    ProfileLoaded loadedState = state as ProfileLoaded;
     try {
       final res = await userApi.deleteProfile();
       res.fold((left) {
-        emit(ProfileDeleteError((state as ProfileLoaded).profile, left.data));
+        emit(ProfileDeleteError(loadedState.profile, left.data));
       }, (right) {
         emit(const ProfileDeleted());
       });
@@ -97,7 +101,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       if (kDebugMode) {
         print(e.toString());
       }
-      emit(ProfileDeleteError((state as ProfileLoaded).profile, e.toString()));
+      emit(ProfileDeleteError(loadedState.profile, e.toString()));
     }
   }
 

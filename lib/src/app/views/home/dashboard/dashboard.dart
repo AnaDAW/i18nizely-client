@@ -92,7 +92,7 @@ class DashboardScreen extends StatelessWidget {
                                       description: 'Are you sure you want to delete the project?',
                                       button: 'Delete',
                                       onPressed: () async {
-                                        await deleteProject(id);
+                                        await deleteProject(id, locator<ProjectListBloc>());
                                         context.pop();
                                       },
                                     ),
@@ -142,8 +142,8 @@ class DashboardScreen extends StatelessWidget {
                                   title: 'Delete Project',
                                   description: 'Are you sure you want to delete the project?',
                                   button: 'Delete',
-                                  onPressed: () {
-                                    locator<CollabProjectListBloc>().add(DeleteProjectFromList(id));
+                                  onPressed: () async {
+                                    await deleteProject(id, locator<CollabProjectListBloc>());
                                     context.pop();
                                   },
                                 ),
@@ -164,11 +164,11 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Future<void> deleteProject(int id) async {
+  Future<void> deleteProject(int id, var bloc) async {
     late StreamSubscription subscription;
     final completer = Completer<void>();
 
-    subscription = locator<ProjectListBloc>().stream.listen((state) {
+    subscription = bloc.stream.listen((state) {
       if (state is ProjectFromListDeleted) {
         subscription.cancel();
         locator<ProjectBloc>().add(DeleteProject(id: id));
@@ -179,7 +179,7 @@ class DashboardScreen extends StatelessWidget {
       }
     });
 
-    locator<ProjectListBloc>().add(DeleteProjectFromList(id));
+    bloc.add(DeleteProjectFromList(id));
     return completer.future;
   }
 }

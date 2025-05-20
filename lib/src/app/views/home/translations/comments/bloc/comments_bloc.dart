@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:i18nizely/src/app/views/home/translations/comments/bloc/comments_event.dart';
 import 'package:i18nizely/src/app/views/home/translations/comments/bloc/comments_state.dart';
+import 'package:i18nizely/src/domain/models/comment_model.dart';
 import 'package:i18nizely/src/domain/services/translation_api.dart';
 
 class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
@@ -42,8 +43,10 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
       await res.fold((left) {
         emit(CommentCreateError(loadedState.comments, data: left.data, projectId: loadedState.projectId, keyId: loadedState.keyId, translationId: loadedState.translationId));
       }, (right) async {
-        emit(CommentCreated(loadedState.comments, projectId: loadedState.projectId, keyId: loadedState.keyId, translationId: loadedState.translationId));
-        await _onGetComments(GetComments(projectId: loadedState.projectId, keyId: loadedState.keyId, translationId: loadedState.translationId), emit);
+        final List<Comment> comments = List.of(loadedState.comments);
+        comments.add(right);
+        emit(CommentCreated(comments, projectId: loadedState.projectId, keyId: loadedState.keyId, translationId: loadedState.translationId));
+        //await _onGetComments(GetComments(projectId: loadedState.projectId, keyId: loadedState.keyId, translationId: loadedState.translationId), emit);
       });
     } catch (e) {
       if (kDebugMode) {
@@ -61,8 +64,11 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
       await res.fold((left) {
         emit(CommentUpdateError(loadedState.comments, data: left.data, projectId: loadedState.projectId, keyId: loadedState.keyId, translationId: loadedState.translationId));
       }, (right) async {
-        emit(CommentUpdated(loadedState.comments, projectId: loadedState.projectId, keyId: loadedState.keyId, translationId: loadedState.translationId));
-        await _onGetComments(GetComments(projectId: loadedState.projectId, keyId: loadedState.keyId, translationId: loadedState.translationId), emit);
+        final List<Comment> comments = List.of(loadedState.comments);
+        final int index = comments.indexWhere((comment) => comment.id == event.newComment.id);
+        if (index != -1) comments[index] = right;
+        emit(CommentUpdated(comments, projectId: loadedState.projectId, keyId: loadedState.keyId, translationId: loadedState.translationId));
+        //await _onGetComments(GetComments(projectId: loadedState.projectId, keyId: loadedState.keyId, translationId: loadedState.translationId), emit);
       });
     } catch (e) {
       if (kDebugMode) {
@@ -80,8 +86,10 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
       await res.fold((left) {
         emit(CommentDeleteError(loadedState.comments, data: left.data, projectId: loadedState.projectId, keyId: loadedState.keyId, translationId: loadedState.translationId));
       }, (right) async {
-        emit(CommentDeleted(loadedState.comments, projectId: loadedState.projectId, keyId: loadedState.keyId, translationId: loadedState.translationId));
-        await _onGetComments(GetComments(projectId: loadedState.projectId, keyId: loadedState.keyId, translationId: loadedState.translationId), emit);
+        final List<Comment> comments = List.of(loadedState.comments);
+        comments.removeWhere((comment) => comment.id == event.id);
+        emit(CommentDeleted(comments, projectId: loadedState.projectId, keyId: loadedState.keyId, translationId: loadedState.translationId));
+        //await _onGetComments(GetComments(projectId: loadedState.projectId, keyId: loadedState.keyId, translationId: loadedState.translationId), emit);
       });
     } catch (e) {
       if (kDebugMode) {

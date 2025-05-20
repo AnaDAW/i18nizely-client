@@ -29,12 +29,12 @@ class CreateProject extends ProjectListEvent {
 }
 
 class UpdateProjectList extends ProjectListEvent {
-  final int id;
+  final Project project;
 
-  const UpdateProjectList(this.id);
+  const UpdateProjectList(this.project);
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [project];
 }
 
 class DeleteProjectFromList extends ProjectListEvent {

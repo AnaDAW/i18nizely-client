@@ -135,7 +135,7 @@ class _AppCollaboratorsListState extends State<AppCollaboratorsList> {
                         padding: const EdgeInsets.symmetric(horizontal: 50),
                         child: Checkbox(
                           value: widget.collaborators[i].roles.contains(CollabRole.admin),
-                          onChanged: (value) async {
+                          onChanged: (value) {
                             if (value == null) return;
 
                             late List<CollabRole> roles;
@@ -145,12 +145,8 @@ class _AppCollaboratorsListState extends State<AppCollaboratorsList> {
                               roles = [CollabRole.developer, CollabRole.translator, CollabRole.reviewer];
                             }
 
-                            try {
-                              final Collaborator newCollaborator = Collaborator(id: widget.collaborators[i].id ?? 0, user: widget.collaborators[i].user, roles: roles);
-                              await updateCollaborator(newCollaborator);
-                            } catch (e) {
-                              AppSnackBar.showSnackBar(context, text: 'Error updating collaborator', isError: true);
-                            }
+                            final Collaborator newCollaborator = Collaborator(id: widget.collaborators[i].id ?? 0, user: widget.collaborators[i].user, roles: roles);
+                            locator<ProjectBloc>().add(UpdateCollaborator(id: newCollaborator.id ?? 0, roles: newCollaborator.roles));
                           },
                         ),
                       ),
@@ -158,9 +154,9 @@ class _AppCollaboratorsListState extends State<AppCollaboratorsList> {
                         padding: const EdgeInsets.symmetric(horizontal: 40),
                         child: Checkbox(
                           value: widget.collaborators[i].roles.contains(CollabRole.developer),
-                          onChanged: (value) async {
+                          onChanged: (value) {
                             if (value == null) return;
-                            await changeCollaboratorRole(value, i, CollabRole.developer);
+                            changeCollaboratorRole(value, i, CollabRole.developer);
                           },
                         ),
                       ),
@@ -168,9 +164,9 @@ class _AppCollaboratorsListState extends State<AppCollaboratorsList> {
                         padding: const EdgeInsets.symmetric(horizontal: 60),
                         child: Checkbox(
                           value: widget.collaborators[i].roles.contains(CollabRole.translator),
-                          onChanged: (value) async {
+                          onChanged: (value) {
                             if (value == null) return;
-                            await changeCollaboratorRole(value, i, CollabRole.translator);
+                            changeCollaboratorRole(value, i, CollabRole.translator);
                           },
                         ),
                       ),
@@ -178,21 +174,17 @@ class _AppCollaboratorsListState extends State<AppCollaboratorsList> {
                         padding: const EdgeInsets.symmetric(horizontal: 35),
                         child: Checkbox(
                           value: widget.collaborators[i].roles.contains(CollabRole.reviewer),
-                          onChanged: (value) async {
+                          onChanged: (value) {
                             if (value == null) return;
-                            await changeCollaboratorRole(value, i, CollabRole.reviewer);
+                            changeCollaboratorRole(value, i, CollabRole.reviewer);
                           },
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 15),
                         child: IconButton(
-                          onPressed: () async {
-                            try {
-                              await removeCollaborator(widget.collaborators[i].id ?? 0);
-                            } catch (e) {
-                              AppSnackBar.showSnackBar(context, text: 'Error removing collaborator', isError: true);
-                            }
+                          onPressed: () {
+                            locator<ProjectBloc>().add(RemoveCollaborator(id: widget.collaborators[i].id ?? 0));
                           },
                           icon: Icon(Icons.close),
                         ),
@@ -258,8 +250,8 @@ class _AppCollaboratorsListState extends State<AppCollaboratorsList> {
     }
   }
 
-  Future<void> changeCollaboratorRole(bool value, int index, CollabRole collabRole) async {
-    List<CollabRole> roles = widget.collaborators[index].roles;
+  void changeCollaboratorRole(bool value, int index, CollabRole collabRole) {
+    List<CollabRole> roles = List.of(widget.collaborators[index].roles);
     if (value) {
       roles.remove(CollabRole.admin);
       if (!roles.contains(collabRole)) roles.add(collabRole);
@@ -268,12 +260,8 @@ class _AppCollaboratorsListState extends State<AppCollaboratorsList> {
       if (roles.isEmpty) roles.add(CollabRole.admin);
     }
 
-    try {
-      final Collaborator newCollaborator = Collaborator(id: widget.collaborators[index].id ?? 0, user: widget.collaborators[index].user, roles: roles);
-      await updateCollaborator(newCollaborator);
-    } catch (e) {
-      AppSnackBar.showSnackBar(context, text: 'Error updating collaborator', isError: true);
-    }
+    final Collaborator newCollaborator = Collaborator(id: widget.collaborators[index].id ?? 0, user: widget.collaborators[index].user, roles: roles);
+    locator<ProjectBloc>().add(UpdateCollaborator(id: newCollaborator.id ?? 0, roles: newCollaborator.roles));
   }
 
   Future<void> addCollaborator(Collaborator newCollaborator) async {
@@ -292,42 +280,6 @@ class _AppCollaboratorsListState extends State<AppCollaboratorsList> {
     });
 
     locator<ProjectBloc>().add(AddCollaborator(newCollaborator: newCollaborator));
-    return completer.future;
-  }
-
-  Future<void> updateCollaborator(Collaborator newCollaborator) async {
-    late StreamSubscription subscription;
-    final completer = Completer<void>();
-
-    subscription = locator<ProjectBloc>().stream.listen((state) {
-      if (state is CollaboratorUpdated) {
-        subscription.cancel();
-        completer.complete();
-      } else if (state is CollaboratorUpdateError) {
-        subscription.cancel();
-        completer.completeError(state.data);
-      }
-    });
-
-    locator<ProjectBloc>().add(UpdateCollaborator(id: newCollaborator.id ?? 0, roles: newCollaborator.roles));
-    return completer.future;
-  }
-
-  Future<void> removeCollaborator(int id) async {
-    late StreamSubscription subscription;
-    final completer = Completer<void>();
-
-    subscription = locator<ProjectBloc>().stream.listen((state) {
-      if (state is CollaboratorRemoved) {
-        subscription.cancel();
-        completer.complete();
-      } else if (state is CollaboratorRemoveError) {
-        subscription.cancel();
-        completer.completeError(state.data);
-      }
-    });
-
-    locator<ProjectBloc>().add(RemoveCollaborator(id: id));
     return completer.future;
   }
 }
